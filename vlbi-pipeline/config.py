@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import numpy as np
-import ba158l1_inputsv2 as inputs 
+import ba158l1_inputs as inputs 
 #set input parameters in separate py files which can be one data per input and can also be tracked for history.
 
 AIPS_NUMBER = inputs.AIPS_NUMBER
@@ -19,12 +19,12 @@ num_files = inputs.num_files #number of files to load
 do_quack = inputs.do_quack
 ap_dofit = inputs.ap_dofit
 #ap_dofit = [-1,1,1,1,1,1,1,1,1,1] #modify this if some antenna is not suitable for opacity in apcal
-solint = 4
+solint = inputs.solint
 calsource   = inputs.calsource	# calibrator for fringe fitting and bandpass(if used). '' => automatically
 target	    = inputs.target	# target sourcer continuum source 
 p_ref_cal   = inputs.p_ref_cal
 #please put the corresponding files in the outname[0]/
-logfilename = file_name.split('.')[0]
+logfilename = inputs.logfilename
 
 #####################################################
 auto_fringe = inputs.auto_fringe #for automatic step connecting step1 and step2, if =0, the following parameters must be set, please refer to the results from step1. If =1, the following parameters are ignored. It is high recommanded to set 0, especially for EVN
@@ -70,6 +70,13 @@ pol=inputs.pol  #if use I correction, set POL='I' and ues matxi; if use both x a
 # snchk=3
 # cluse=7
 ant_gan_cal = inputs.ant_gan_cal   #set this and go back to step2s
+#############################################################################
+######parms may be used in step3
+no_rate = inputs.no_rate
+rdp_parm= inputs.rdp_parm
+dwin = inputs.dwin
+rwin = inputs.rwin
+solint_cal = inputs.solint_cal
 #############################################################################
 #################
 # Control Flags #
@@ -123,7 +130,7 @@ doconcat[0] = 1  # FITLD parameter DOCONCAT
 flagfile[0] = fgfile
 antabfile[0] = antfile
 code = ''
-
+smodel=[0,0]
 #note: this version no bandpass used for fringe fitting.
 #### for mannual checking###########
 '''

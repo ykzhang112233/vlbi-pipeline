@@ -660,7 +660,7 @@ def runapcal(indata, tyver, gcver, snver, dofit, opcode):
 
 
 #################################################################################
-def run_fringecal_2(indata, fr_image, nmaps, gainuse, refant, refant_candi, calsource, solint, smodel, doband, bpver, no_rate, dwin, rwin):
+def run_fringecal_2(indata, fr_image, nmaps, gainuse, refant, refant_candi, calsource, solint, smodel, doband, bpver, no_rate, rdp_parm, dwin, rwin):
     fringe = AIPSTask('FRING')
     if fr_image.exists():
         fringe.in2data = fr_image
@@ -692,10 +692,10 @@ def run_fringecal_2(indata, fr_image, nmaps, gainuse, refant, refant_candi, cals
     fringe.docal = 1
     fringe.calsour[1:] = [calsource]
     fringe.solint = solint
-    fringe.aparm[1:] = [2, 0, 1, 0, 1, 0, 0, 0, 1]  # change if needed
+    fringe.aparm[1:] = [3, 0, 1, 0, 1, 0, 0, 0, 1]  # change if needed
     fringe.dparm[1:] = [0, dwin, rwin, 0]
     # fringe.dparm[4]    = dpfour
-    fringe.dparm[8] = 0  # zeroing rate, delay, phase?
+    fringe.dparm[8] = rdp_parm  # zeroing rate, delay, phase?
     fringe.dparm[9] = no_rate  # supressing rate(1) or not(0)?
     fringe.nmaps = nmaps
     fringe.snver = 0
@@ -1042,7 +1042,7 @@ def run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, 
     elif smode == 'A&P':
         nant = 4
     calib.aparm[1:] = nant, 0, 1, 0, 0, 0
-    calib.normaliz = 5 # to separate by IF
+    calib.normaliz = 2 # to not separate by IF
     calib.cparm[1:] = 15, 1, 0
     calib.ichansel[1] = [None,1,channels,1,0]
     calib.input()

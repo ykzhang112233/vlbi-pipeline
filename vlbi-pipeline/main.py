@@ -174,9 +174,9 @@ nmaps = 1  # NMAPS  in FRING
 # doband  = -1
 '''
 
-[dwin,rwin]=[50,100]
-no_rate = 0 #if =1,supress rate solutions in fringe, if =0 not do this.
-smodel = [0, 0]  # SMODEL in FRING step3
+# [dwin,rwin]=[50,100]
+# no_rate = config.no_rate #if =1,supress rate solutions in fringe, if =0 not do this.
+# smodel = [0, 0]  # SMODEL in FRING step3
 #----------------------------------------------------------------
 ld_fr_fringe_flag = 0
 do_gaincor_flag = 0
@@ -430,9 +430,10 @@ def run_main():
     logger.info('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 ###################################################################
     # Phase referencing analysis
-    n = 1
+    n = 0
     if step2 == 1:
-      pr_data=data[i]
+      print(data)
+      pr_data=data[0]
       for i in range(len(target)):
         print(i)
         targets=[target[i],p_ref_cal[i]]
@@ -577,9 +578,10 @@ def run_main():
             check_sncl(pr_data, 3, 8)
             logger.info('##########################')
             logger.info('Begin second fringe fitting')
-            run_fringecal_1(pr_data, refant, refant_candi, p_ref_cal[i], 8, 0, solint, -1, 0,300,300)
+            # run_fringecal_1(pr_data, refant, refant_candi, p_ref_cal[i], 8, 0, solint, -1, 0,300,300)
+            run_fringecal_2(pr_data, fr_image, 1, 8, refant, refant_candi, p_ref_cal[i],solint,smodel, -1, 0, no_rate,rdp_parm,dwin,rwin)
             runclcal2(pr_data,4,8,9,'AMBG',1,refant,[0],p_ref_cal[i],targets)
-            run_fringecal_2(pr_data, fr_image, 1, 9, refant, refant_candi, p_ref_cal[i],solint,smodel, -1, 0, no_rate,dwin,rwin)
+            run_fringecal_2(pr_data, fr_image, 1, 9, refant, refant_candi, p_ref_cal[i],solint,smodel, -1, 0, no_rate,rdp_parm,dwin,rwin)
             runclcal2(pr_data,5,9,10,'2PT',1,refant,[0],p_ref_cal[i],targets)
             logger.info('Finish fringe fitting with FRING')
             logger.info('################################')
@@ -587,7 +589,7 @@ def run_main():
             check_sncl(pr_data, 5, 10)
             logger.info('######################')
             logger.info('Doing Calib for possible better solutions')
-            run_calib_1(pr_data,fr_image,'P',10,refant,6,-1,bpver,p_ref_cal[i],0,solint)
+            run_calib_1(pr_data,fr_image,'A&P',10,refant,6,-1,bpver,p_ref_cal[i],0,solint_cal)
             runclcal2(pr_data, 6, 10, 11, '2PT', 1, refant, [0], p_ref_cal[i], targets)
             logger.info('Finishing second calibration using CALIB')
             logger.info('########################################')
@@ -620,7 +622,7 @@ def run_main():
             logger.info('######################')
         if split_before_average == 1:
             logger.info('######################')
-            logger.info('Spliting data before averaging, for further used of uvshift')
+            logger.info('Spliting data before averaging, for further useage of uvshift')
             check_sncl(pr_data, 6,11)
             split3_data=AIPSUVData(target[i],'4uvsh',1,split_seq)
             if split3_data.exists():
@@ -640,7 +642,7 @@ def run_main():
                 check_sncl(pr_data, 6,11)
                 split3_data=AIPSUVData(target[i],'4uvsh',1,split_seq)
                 logger.info('######################')
-                logger.info('Using the non_averaged data before shiftging')
+                logger.info('Using the non_averaged data before shifting')
                 uvfix_data=AIPSUVData(target[i],'UVFIX',1,split_seq)
                 if uvfix_data.exists():
                     logger.info('Clear old uvfix data')

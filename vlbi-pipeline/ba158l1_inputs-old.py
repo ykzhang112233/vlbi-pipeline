@@ -16,9 +16,9 @@ do_quack = 1
 ap_dofit = 1
 #ap_dofit = [-1,1,1,1,1,1,1,1,1,1] #modify this if some antenna is not suitable for opacity in apcal
 solint = 4
-calsource   = ['4C39.25']#,'test']	# calibrator for fringe fitting and bandpass(if used). '' => automatically
-target	    = ['J0106+00']#,'J0824+51','J0839+03']	# target sourcer continuum source 
-p_ref_cal   = ['P0108+0135']#,'P0827+5217','P0839+0319']
+calsource   = ['4C39.25','test']	# calibrator for fringe fitting and bandpass(if used). '' => automatically
+target	    = ['J0106+00','J0824+51','J0839+03']	# target sourcer continuum source 
+p_ref_cal   = ['P0108+0135','P0827+5217','P0839+0319']
 #please put the corresponding files in the outname[0]/
 logfilename = file_name.split('.')[0]
 
@@ -30,7 +30,7 @@ search_antennas = [3,2,0]
 scan_for_fringe = [1,0,30,0,1,0,32,0]
 
 auto_mapping = 0  #automatic step connecting step2 and step3, if =0, the following parameters must be set, just file name end with .fits
-man_fr_file = ['P0108-v1-mod1.fits']#,'P0827-v1-mod1.fits','P0839-v1-mod1.fits']
+man_fr_file = ['P0108-v1-mod1.fits','P0827-v1-mod1.fits','P0839-v1-mod1.fits']
 ####################mannual flagging################################
 do_flag = 1
 fgbchan=[0,0]
@@ -77,9 +77,9 @@ pol='I'  #if use I correction, set POL='I' and ues matxi; if use both x and l, s
 ant_gan_cal = 0   #set this and go back to step2s
 #############################################################################
 step1 = 0  # auto control of the flags in this block
-step2 = 1  # Auto control of the second block
-step3 = 1
-stepn = 0
+step2 = 0  # Auto control of the second block
+step3 = 0
+stepn = 1
 #############################################################################
 #in stepn
 #same with the difmap position value(not in shift after shifted), no need to reverse
