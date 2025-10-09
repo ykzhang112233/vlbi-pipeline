@@ -372,7 +372,7 @@ def run_main():
             # print i
             # print fgbchan[i]
             # print fgechan[i]
-            run_uvflg(data[0],fgtimer,fgbif[i],fgeif[i],fgbchan[i],fgechan[i],fgantennas[i],outfg)
+            run_uvflg(data[0],fgtimer[i],fgbif[i],fgeif[i],fgbchan[i],fgechan[i],fgantennas[i],outfg)
         
 ###################################################################
 #automatic search refant and fringe scan
