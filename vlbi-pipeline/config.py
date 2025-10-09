@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import numpy as np
-import ba158l1_inputs as inputs 
+import bl307fx_input as inputs 
 #set input parameters in separate py files which can be one data per input and can also be tracked for history.
 
 AIPS_NUMBER = inputs.AIPS_NUMBER
