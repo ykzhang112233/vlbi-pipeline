@@ -91,7 +91,7 @@ def deg_to_radec(pos):
 def gcal_apply(indata,matx,cluse,pol):
     clcor = AIPSTask('CLCOR')
     clcor.indata = indata
-    clcor.opcode = 'POGN'  # 'GAIN' is voltage, 'POGN' is power, use gain
+    clcor.opcode = 'GAIN'  # 'GAIN' is voltage, 'POGN' is power, use gain
     clcor.gainver = cluse
     clcor.gainuse = cluse
     clcor.stokes = pol
