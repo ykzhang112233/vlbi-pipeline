@@ -692,7 +692,7 @@ def run_fringecal_2(indata, fr_image, nmaps, gainuse, refant, refant_candi, cals
     fringe.docal = 1
     fringe.calsour[1:] = [calsource]
     fringe.solint = solint
-    fringe.aparm[1:] = [3, 0, 1, 0, 1, 0, 0, 0, 1]  # change if needed
+    fringe.aparm[1:] = [3, 0, 0, 0, 1, 0, 0, 0, 1]  # change if needed
     fringe.dparm[1:] = [0, dwin, rwin, 0]
     # fringe.dparm[4]    = dpfour
     fringe.dparm[8] = rdp_parm  # zeroing rate, delay, phase?
