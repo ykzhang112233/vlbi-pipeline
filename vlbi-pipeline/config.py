@@ -42,11 +42,11 @@ fgechan= inputs.fgechan
 fgbif=inputs.fgbif
 fgeif=inputs.fgeif
 fgantennas=inputs.fgantennas
+fgtimer = inputs.fgtimer
 #print len(fgbchan),len(fgechan),len(fgbif),len(fgantennas)
 #fgbchan,fgechan,fgbif,fgeif=[[0,0],[0,0],[5,7],[5,7]]
 #fgantennas=[[0],[7]]
-
-[fgtimer,outfg]=[inputs.fgtimer,inputs.outfg]
+outfg=inputs.outfg
 
 #############for_EVN_data_only########################################
 pipepath=inputs.pipepath
