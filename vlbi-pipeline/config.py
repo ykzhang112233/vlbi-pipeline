@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import numpy as np
-import bl307fx_input as inputs 
+import bl307gx_input as inputs 
 #set input parameters in separate py files which can be one data per input and can also be tracked for history.
 
 AIPS_NUMBER = inputs.AIPS_NUMBER
@@ -72,6 +72,7 @@ pol=inputs.pol  #if use I correction, set POL='I' and ues matxi; if use both x a
 ant_gan_cal = inputs.ant_gan_cal   #set this and go back to step2s
 #############################################################################
 ######parms may be used in step3
+del_old_mod = inputs.del_old_mod
 no_rate = inputs.no_rate
 rdp_parm= inputs.rdp_parm
 dwin = inputs.dwin

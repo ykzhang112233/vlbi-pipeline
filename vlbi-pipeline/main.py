@@ -555,7 +555,15 @@ def run_main():
         fr_image = AIPSImage(fr_nm, fr_cls, fr_dsk, fr_sq)
         if ld_fr_fringe_flag == 1:
             if fr_image.exists():
-                pass
+                if del_old_mod == True:
+                    fr_image.clrstat()
+                    fr_image.zap()
+                    logger.info('##############################')
+                    logger.info('Data already there => deleted!')
+                    logger.info('##############################')
+                    loadfr(fr_path, fr_file, fr_nm, fr_cls, fr_dsk, antname)
+                else:
+                    pass
             else:
                 loadfr(fr_path, fr_file, fr_nm, fr_cls, fr_dsk, antname)
             logger.info('###############################')
