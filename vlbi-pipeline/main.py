@@ -628,7 +628,8 @@ def run_main():
             run_split2(pr_data, p_ref_cal[i], 9, 'SCL9', doband, bpver, flagver,1,split_seq)
             run_split2(pr_data, p_ref_cal[i], 10, 'SCL10', doband, bpver, flagver,1,split_seq)
             run_split2(pr_data, p_ref_cal[i], 10, 'S10av', doband, bpver, flagver,0,split_seq)
-            run_split2(pr_data, p_ref_cal[i], 11, 'SCL11', doband, bpver, flagver,1,split_seq) 
+            run_split2(pr_data, p_ref_cal[i], 11, 'SCL11', doband, bpver, flagver,1,split_seq)
+            run_split2(pr_data, p_ref_cal[i], 11, 'S11av', doband, bpver, flagver,0,split_seq)
             logger.info('Data spliting done')
             logger.info('######################')
         if split_before_average == 1:
