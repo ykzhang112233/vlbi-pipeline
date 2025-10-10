@@ -59,7 +59,7 @@ step3 = step3
 RFI_clip_flag = 0		  # Automatic flagging of RFI by cliping auto-correlation with 2.5
 		# Download key-file from archive
 # RDBE_check	  = 0		# Check Geoblock data for RDBE errors?
-quack_flag = 0  # Run quack if special considerations (e.g. EVN p-ref)
+quack_flag = do_quack  # Run quack if special considerations (e.g. EVN p-ref)
 get_key_flag	= 0
 load_flag = 0  # Load data from disk?
 listr_flag = 0  # Print out LISTR?
@@ -67,7 +67,7 @@ dtsum_flag = 0  # Run dtsum to check antena participation?
 tasav_flag = 0  # Run tasav on original tables?
 geo_prep_flag = 0  # Run TECOR and EOP corrections? and uvflg for evn data
 inspect_flag = 0
-man_uvflg_flag = 0   #comissioning
+man_uvflg_flag = do_flag   #comissioning
 
 if step1 == 1:
     load_flag = 1
@@ -622,9 +622,12 @@ def run_main():
             logger.info('######################')
             logger.info('Spliting data')
             run_split2(pr_data, target[i], 10, 'SCL10', doband, bpver, flagver,1,split_seq)
+            run_split2(pr_data, target[i], 10, 'SCL10avg', doband, bpver, flagver,0,split_seq)
             run_split2(pr_data, target[i], 11, 'SCL11', doband, bpver, flagver,1,split_seq)
+            run_split2(pr_data, target[i], 11, 'SCL11avg', doband, bpver, flagver,0,split_seq)
             run_split2(pr_data, p_ref_cal[i], 9, 'SCL9', doband, bpver, flagver,1,split_seq)
             run_split2(pr_data, p_ref_cal[i], 10, 'SCL10', doband, bpver, flagver,1,split_seq)
+            run_split2(pr_data, p_ref_cal[i], 10, 'SCL10avg', doband, bpver, flagver,0,split_seq)
             run_split2(pr_data, p_ref_cal[i], 11, 'SCL11', doband, bpver, flagver,1,split_seq) 
             logger.info('Data spliting done')
             logger.info('######################')
