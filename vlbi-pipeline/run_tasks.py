@@ -1018,6 +1018,26 @@ def runcvel(indata, cvelsource, vel, inter_flag, doband, bpver):
 
 def run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, calsour, flagver, solint):
     channels = indata.header['naxis'][2]
+    if channels == 16:
+        bad = 1                     # remove 1 channel from each side
+    elif channels == 32:
+        bad = 2                     # remove 2 channels from each side
+    elif channels == 64:
+        bad = 4                     # remove 2 channels from each side
+    elif channels == 128:
+        bad = 8                     # remove 6 channels from each side
+    elif channels == 256:
+        bad = 10                     # remove 8 channels from each side
+    elif channels == 512:
+        bad = 16                    # remove 10 channels from each side
+    elif channels == 1024:
+        bad = 20                    # remove 12 channels from each side
+    else:
+        bad = 0
+
+    [bchan, echan] = [1+bad, channels-bad]
+
+    logger.info ('Averaging channels '+str(bchan)+' - '+str(echan)+'.')
     calib = AIPSTask('CALIB')
     calib.indata = indata
     calib.docalib = 1
@@ -1042,9 +1062,9 @@ def run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, 
     elif smode == 'A&P':
         nant = 4
     calib.aparm[1:] = nant, 0, 1, 0, 0, 0
-    calib.normaliz = 2 # to not separate by IF
-    calib.cparm[1:] = 15, 1, 0
-    calib.ichansel[1] = [None,1,channels,1,0]
+    calib.normaliz = 3 # 1,2 to not separate by IF; 3 by IF; 4 by IF and pol also
+    calib.cparm[1:] = 15, 1, 0 # (1) elevation 15 deg; (2) 0, use mean, 1 use median for normalize
+    calib.ichansel[1] = [None, bchan, echan, 1, 0]
     calib.input()
     calib.go()
 
@@ -1068,13 +1088,13 @@ def run_split2(indata, source, gainuse, outclass, doband, bpver, flagver,av_chan
     elif channels == 64:
         bad = 4                     # remove 2 channels from each side
     elif channels == 128:
-        bad = 6                     # remove 6 channels from each side
+        bad = 8                     # remove 6 channels from each side
     elif channels == 256:
-        bad = 8                     # remove 8 channels from each side
+        bad = 10                     # remove 8 channels from each side
     elif channels == 512:
-        bad = 10                    # remove 10 channels from each side
+        bad = 16                    # remove 10 channels from each side
     elif channels == 1024:
-        bad = 12                    # remove 12 channels from each side
+        bad = 20                    # remove 12 channels from each side
     else:
         bad = 0
 
@@ -1181,25 +1201,27 @@ def run_split3(indata, target, outclass, doband, bpver, gainuse, avg, fittp):
             os.popen(r'mv '+fitname+' '+outname[0]+'/')
 
 def run_split(indata, source, outclass, doband, bpver):
+
     channels = indata.header['naxis'][2]
     if channels == 16:
-        bad = 1  # remove 1 channel from each side
+        bad = 1                     # remove 1 channel from each side
     elif channels == 32:
-        bad = 2  # remove 2 channels from each side
+        bad = 2                     # remove 2 channels from each side
     elif channels == 64:
-        bad = 4  # remove 2 channels from each side
+        bad = 4                     # remove 2 channels from each side
     elif channels == 128:
-        bad = 6  # remove 6 channels from each side
+        bad = 8                     # remove 6 channels from each side
     elif channels == 256:
-        bad = 8  # remove 8 channels from each side
+        bad = 10                     # remove 8 channels from each side
     elif channels == 512:
-        bad = 10  # remove 10 channels from each side
+        bad = 16                    # remove 10 channels from each side
     elif channels == 1024:
-        bad = 12  # remove 12 channels from each side
+        bad = 20                    # remove 12 channels from each side
     else:
         bad = 0
 
-    [bchan, echan] = [1 + bad, channels - bad]
+    [bchan, echan] = [1+bad, channels-bad]
+
 
     logger.info('Averaging channels ' + str(bchan) + ' - ' + str(echan) + '.')
 
@@ -1282,13 +1304,13 @@ def run_grid(indata, source, cellsize, imsize, n, m, grid_offset, uvwtfn, robust
         elif channels == 64:
             bad = 4  # remove 2 channels from each side
         elif channels == 128:
-            bad = 6  # remove 6 channels from each side
+            bad = 8  # remove 6 channels from each side
         elif channels == 256:
-            bad = 8  # remove 8 channels from each side
+            bad = 10  # remove 8 channels from each side
         elif channels == 512:
-            bad = 10  # remove 10 channels from each side
+            bad = 15  # remove 10 channels from each side
         elif channels == 1024:
-            bad = 12  # remove 12 channels from each side
+            bad = 20  # remove 12 channels from each side
         else:
             bad = 0
 
