@@ -46,6 +46,13 @@ fgtimer = inputs.fgtimer
 #print len(fgbchan),len(fgechan),len(fgbif),len(fgantennas)
 #fgbchan,fgechan,fgbif,fgeif=[[0,0],[0,0],[5,7],[5,7]]
 #fgantennas=[[0],[7]]
+
+sp_quack_flag = inputs.sp_quack_flag
+sp_quack_ant = inputs.sp_quack_ant
+sp_quack_beg =inputs.sp_quack_beg
+sp_quack_endb =inputs.sp_quack_endb
+sp_quack_el =inputs.sp_quack_el
+
 outfg=inputs.outfg
 
 #############for_EVN_data_only########################################

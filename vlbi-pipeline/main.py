@@ -79,6 +79,7 @@ if step1 == 1:
     RFI_clip_flag = 1 # Automatic flagging of RFI by cliping auto-correlation with 2.5
     quack_flag = do_quack  # Run quack if special considerations (e.g. EVN p-ref)	
     man_uvflg_flag = do_flag
+    sp_quack = sp_quack_flag
     tasav_flag = 1	
     inspect_flag = 1
 #########################################################################
@@ -343,11 +344,18 @@ def run_main():
             runtacop(data[0],data[0], 'FG', 1, 2, 1)
         if antname == 'EVN' or antname == 'LBA':
             begquack(data[0],[0], 30./60.,2)
-            endquack(data[0],[0], 5./60.,2)
+            endquack(data[0],[0], 6./60.,2)
         elif antname == 'VLBA':
-            begquack(data[0],[0], 4./60.,2)
-            endquack(data[0],[0], 2./60.,2)
-        run_elvflag(data[0],10,2)
+            begquack(data[0],[0], 6./60.,2)
+            endquack(data[0],[0], 4./60.,2)
+        run_elvflag(data[0],15,[0],2)
+    if sp_quack_flag == 1:
+        for m in range(len(sp_quack_beg)):
+            begquack(data[0],sp_quack_ant[m],sp_quack_beg[m],outfg)
+            endquack(data[0],sp_quack_ant[m],sp_quack_endb[m],outfg)
+            run_elvflag(data[0],sp_quack_el[m],sp_quack_ant[m],outfg)
+
+
     if RFI_clip_flag >= 1:
         if data[0].table_highver('AIPS FG')>=2:
     #data[0].zap_table('AIPS FG',outfg)

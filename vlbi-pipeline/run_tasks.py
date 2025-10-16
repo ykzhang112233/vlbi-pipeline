@@ -225,10 +225,11 @@ def runsnflg(indata, inver, calsource):
 #
 
 
-def run_elvflag(indata, elv_min, outfg):
+def run_elvflag(indata, elv_min,antennas ,outfg):
     uvflg = AIPSTask('UVFLG')
     uvflg.indata = indata
     uvflg.opcode = 'FLAG'
+    uvflg.antennas[1:] = antennas
     uvflg.aparm[1:] = [0, elv_min]
     uvflg.outfgver = outfg
     logger.info('#####################################')
