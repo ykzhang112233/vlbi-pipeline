@@ -351,8 +351,8 @@ def run_main():
         run_elvflag(data[0],15,[0],2)
     if sp_quack_flag == 1:
         for m in range(len(sp_quack_beg)):
-            begquack(data[0],sp_quack_ant[m],sp_quack_beg[m],outfg)
-            endquack(data[0],sp_quack_ant[m],sp_quack_endb[m],outfg)
+            begquack(data[0],sp_quack_ant[m],sp_quack_beg[m]/60.,outfg)
+            endquack(data[0],sp_quack_ant[m],sp_quack_endb[m]/60.,outfg)
             run_elvflag(data[0],sp_quack_el[m],sp_quack_ant[m],outfg)
 
 
