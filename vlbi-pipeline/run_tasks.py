@@ -661,7 +661,7 @@ def runapcal(indata, tyver, gcver, snver, dofit, opcode):
 
 
 #################################################################################
-def run_fringecal_2(indata, fr_image, nmaps, gainuse, refant, refant_candi, calsource, solint, smodel, doband, bpver, no_rate, rdp_parm, dwin, rwin):
+def run_fringecal_2(indata, fr_image, nmaps, gainuse, refant, refant_candi, calsource, solint, smodel, doband, bpver, no_rate, rdp_parm, if_av ,dwin, rwin):
     fringe = AIPSTask('FRING')
     if fr_image.exists():
         fringe.in2data = fr_image
@@ -693,7 +693,7 @@ def run_fringecal_2(indata, fr_image, nmaps, gainuse, refant, refant_candi, cals
     fringe.docal = 1
     fringe.calsour[1:] = [calsource]
     fringe.solint = solint
-    fringe.aparm[1:] = [3, 0, 0, 0, 1, 0, 0, 0, 1]  # change if needed
+    fringe.aparm[1:] = [3, 0, 0, 0, if_av, 0, 0, 0, 1]  # change if needed. if_av =0, not average if for solution, =1, avereage IFs
     fringe.dparm[1:] = [0, dwin, rwin, 0]
     # fringe.dparm[4]    = dpfour
     fringe.dparm[8] = rdp_parm  # zeroing rate, delay, phase?
@@ -707,7 +707,7 @@ def run_fringecal_2(indata, fr_image, nmaps, gainuse, refant, refant_candi, cals
     fringe()
 
 
-def run_fringecal_1(indata, refant, refant_candi, calsource, gainuse, flagver, solint, doband, bpver, dwin, rwin):
+def run_fringecal_1(indata, refant, refant_candi, calsource, gainuse, flagver, solint, doband, bpver,if_av, dwin, rwin):
     fringe = AIPSTask('FRING')
     fringe.indata = indata
     fringe.refant = refant
@@ -718,7 +718,7 @@ def run_fringecal_1(indata, refant, refant_candi, calsource, gainuse, flagver, s
         fringe.calsour[1:] = calsource
     fringe.search[1:] = refant_candi
     fringe.solint = solint
-    fringe.aparm[1:] = [3, 0, 0, 0, 1, 0, 0, 0, 1]
+    fringe.aparm[1:] = [3, 0, 0, 0, if_av, 0, 0, 0, 1]
     fringe.dparm[1:] = [0, dwin, rwin, 0]
     # fringe.dparm[4]   = dpfour
     fringe.dparm[8] = 0
@@ -1017,7 +1017,7 @@ def runcvel(indata, cvelsource, vel, inter_flag, doband, bpver):
 #########################################################################################
 
 
-def run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, calsour, flagver, solint):
+def run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, calsour, flagver, solint, if_av):
     channels = indata.header['naxis'][2]
     if channels == 16:
         bad = 1                     # remove 1 channel from each side
@@ -1062,7 +1062,7 @@ def run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, 
         nant = 3
     elif smode == 'A&P':
         nant = 4
-    calib.aparm[1:] = nant, 0, 1, 0, 0, 0
+    calib.aparm[1:] = nant, 0, 1, 0, if_av, 0  # aparm[3], averege L, R; aparm[5]: avg ifs
     calib.normaliz = 3 # 1,2 to not separate by IF; 3 by IF; 4 by IF and pol also
     calib.cparm[1:] = 15, 1, 0 # (1) elevation 15 deg; (2) 0, use mean, 1 use median for normalize
     calib.ichansel[1] = [None, bchan, echan, 1, 0]

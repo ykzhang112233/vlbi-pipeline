@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import numpy as np
-import bl307fx_input as inputs 
+import bz118a_input as inputs 
 #set input parameters in sparate py files which can be one data per input and can also be tracked for history.
 
 AIPS_NUMBER = inputs.AIPS_NUMBER
@@ -32,6 +32,7 @@ auto_fringe = inputs.auto_fringe #for automatic step connecting step1 and step2,
 reference_antenna = inputs.reference_antenna
 search_antennas = inputs.search_antennas
 scan_for_fringe = inputs.scan_for_fringe
+av_ifs_f1 = inputs.av_ifs_f1
 
 auto_mapping = inputs.auto_mapping  #automatic step connecting step2 and step3, if =0, the following parameters must be set, just file name end with .fits
 man_fr_file = inputs.man_fr_file
@@ -78,9 +79,11 @@ pol=inputs.pol  #if use I correction, set POL='I' and ues matxi; if use both x a
 # cluse=7
 ant_gan_cal = inputs.ant_gan_cal   #set this and go back to step2s
 #############################################################################
-######parms may be used in step3
+######parms may be used in step3###
 del_old_mod = inputs.del_old_mod
 no_rate = inputs.no_rate
+av_ifs_f2=inputs.av_ifs_f2
+av_ifs_ca1=inputs.av_ifs_ca1
 rdp_parm= inputs.rdp_parm
 dwin = inputs.dwin
 rwin = inputs.rwin
