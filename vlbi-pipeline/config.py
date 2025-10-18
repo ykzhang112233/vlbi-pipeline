@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import sys
 import numpy as np
-# import bz118a_input as inputs
-import dynamic_params as inputs
+import bl307ex_input as inputs
+# import dynamic_params as inputs
 #set input parameters in sparate py files which can be one data per input and can also be tracked for history.
 
 AIPS_NUMBER = inputs.AIPS_NUMBER
