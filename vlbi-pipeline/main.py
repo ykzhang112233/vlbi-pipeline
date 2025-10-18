@@ -6,8 +6,26 @@ import sys
 # import logging
 from AIPS import AIPS
 import os
-from config import *
+import sys
 import argparse
+import importlib.util  
+
+parser = argparse.ArgumentParser(description='VLBI pipeline')
+parser.add_argument('--param-file', type=str, required=True, 
+                    help='the input parameter file, in .py format')
+args = parser.parse_args()
+
+def load_param_module(file_path):
+    spec = importlib.util.spec_from_file_location('dynamic_params', file_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules['dynamic_params'] = module  
+    spec.loader.exec_module(module)
+    return module
+
+param_module = load_param_module(args.param_file)
+
+
+from config import *
 from utils import *
 from make_utils import *
 from run_tasks import *
@@ -16,6 +34,8 @@ from check_utils import *
 from plot_utils import *
 from logging_config import logger
 
+
+
 # Init setting
 aipsver = AIPS_VERSION
 AIPS.userno =  AIPS_NUMBER
@@ -23,7 +43,7 @@ inter_flag = INTER_FLAG
 antname = antname
 
 # Setting the parameters
-parser = argparse.ArgumentParser(description="VLBI pipeline")
+# parser = argparse.ArgumentParser(description="VLBI pipeline")
 #parser.add_argument('aips-number', metavar='aips number', type=int, nargs='+', help='the AIPS number <keep only>')
 #parser.add_argument('fits_file', metavar='fits file', type=str, nargs='+', help='files file name')
 #parser.add_argument('-p', '--file-path', type=pathlib.Path, default='/data/VLBI/VLBA/', help='the data path of fits file')
