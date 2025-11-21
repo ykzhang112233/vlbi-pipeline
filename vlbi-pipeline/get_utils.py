@@ -133,10 +133,11 @@ def get_TEC(year, doy, TECU_model, geo_path):
     elif year <= 1998:
         logger.info('The observing data is too early for ionex records. Not doing tecor this time.')
     else:
-        #old way (need account)
-        path = 'https://cddis.nasa.gov/archive/gps/products/ionex/' + year1 + year2 + '/' + doy + '/'
-        os.popen(r'curl -c cookies.curl --netrc-file ~/.netrc -n -L -O ' + path + name + '.Z')
-        os.popen(r'uncompress -f ' + name + '.Z')
+        #old way (need account) not recommended
+        print("not doing cddis method this time. may modify the password for future use")
+        # path = 'https://cddis.nasa.gov/archive/gps/products/ionex/' + year1 + year2 + '/' + doy + '/'
+        # os.popen(r'curl -c cookies.curl --netrc-file ~/.netrc -n -L -O ' + path + name + '.Z')
+        # os.popen(r'uncompress -f ' + name + '.Z')
         if os.path.exists(name):
             fs = os.path.getsize(name)
             if fs >= 1024:
@@ -146,7 +147,7 @@ def get_TEC(year, doy, TECU_model, geo_path):
                 logger.info('old way not good')
                 logger.info('Try another method of downloading from VLBATECR explain')
                 yyyy = year1 + year2
-                if int(doy) <=218: #New way, no account needed! (see EXPLAIN VLBATECR in AIPS cookbook)
+                if int(yyyy) <=2023 and int(doy) <=218: #New way, no account needed! (see EXPLAIN VLBATECR in AIPS cookbook)
                     fpath = 'ftp://gdc.cddis.eosdis.nasa.gov/gps/products/ionex/'+yyyy+'/'+doy+'/jplg'+doy+'0.'+year2+'i.Z'
                     os.popen(r'curl -u anonymousdaip@nrao.edu --ftp-ssl ' + fpath )
                     os.popen(r'uncompress -f ' + name + '.Z')

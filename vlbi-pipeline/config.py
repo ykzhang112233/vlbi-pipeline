@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import numpy as np
-import bz111ac_input as inputs
+import bz111cl_input as inputs
 # import dynamic_params as inputs
 #set input parameters in sparate py files which can be one data per input and can also be tracked for history.
 
