@@ -171,15 +171,16 @@ def get_TEC(year, doy, TECU_model, geo_path):
 def get_eop(geo_path):
     if os.path.exists(geo_path + 'usno_finals.erp'):
         #+++ ZB
-        age = (time.time() - os.stat(geo_path+'usno_finals.erp')[8])/3600
-        if age<12: pass
-        else:
-           os.popen(r'curl -c cookies.curl --netrc-file ~/.netrc -n -L -O "https://cddis.nasa.gov/archive/vlbi/gsfc/ancillary/solve_apriori/usno_finals.erp"')
-           os.popen(r' rm -rf '+geo_path+'usno_finals.erp')
-           os.popen(r'mv usno_finals.erp '+geo_path)
-        print
-        '---> Use downloaed erp file'
-        # --- ZB
+        # age = (time.time() - os.stat(geo_path+'usno_finals.erp')[8])/3600
+        # if age<12: pass
+        # else:
+        #    os.popen(r'curl -c cookies.curl --netrc-file ~/.netrc -n -L -O "https://cddis.nasa.gov/archive/vlbi/gsfc/ancillary/solve_apriori/usno_finals.erp"')
+        #    os.popen(r' rm -rf '+geo_path+'usno_finals.erp')
+        #    os.popen(r'mv usno_finals.erp '+geo_path)
+        # print
+        # '---> Use downloaed erp file'
+        print("The curret usno file are valid until 2025-11-13, if the observation time is after it, you may got error in next step.")
+        print("IF that happens, please donwload the latest version of usno. If you have questions ,please contact Yingkang!")
     else:
         os.popen(
             r'curl -c cookies.curl --netrc-file ~/.netrc -n -L -O "https://cddis.nasa.gov/archive/vlbi/gsfc/ancillary/solve_apriori/usno_finals.erp"')
