@@ -505,6 +505,12 @@ def run_main():
         #	refant=select_refant2(pr_data)
             man_pcal(pr_data, refant, mp_source[0], mp_timera,6, dpfour)
             runclcal2(pr_data,3,6,7,'2pt',0,refant,[0],mp_source[0],'')
+            if len(mp_source) >= 2:
+                if scan_for_fringe2 !=[0]:
+                    man_pcal(pr_data, refant, mp_source[0], mp_timera,6, dpfour)
+                    runclcal2(pr_data,4,6,7,'2pt',0,refant,[0],mp_source[0],'')
+                else:
+                    RaiseValueError("s")
             logger.info('######################')
             logger.info('Finish mannual phase-cal')
             logger.info('######################')
