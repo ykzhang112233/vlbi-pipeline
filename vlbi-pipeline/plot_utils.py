@@ -81,7 +81,7 @@ def possmplot(uvdata, sources='', timer=[0, 0, 0, 0, 0, 0, 0, 0], gainuse=0, fla
     filename = outname[0]+'-'+possm.sources[1]+'-cl' + str(gainuse)+'-bp'+str(bpv)+'-'+str(cr)+'.possm'+str(nplot)
     lwpla.outfile = 'PWD:'+filename
     lwpla.plver = 1
-    lwpla.inver = 100
+    lwpla.inver = 500
     if os.path.exists(filename):
         os.popen('rm '+filename)
     lwpla.go()
@@ -235,7 +235,7 @@ def runsnplt(indata, inver=1, inex='cl', sources='', optype='phas', nplot=4, tim
         filename = outname[0]+'-'+inex + \
         str(inver)+'-'+optype+'-'+sources[0]+'.snplt'
     lwpla.plver = 1
-    lwpla.inver = 200
+    lwpla.inver = 500
     if os.path.exists(filename):
         os.popen('rm '+filename)
     lwpla.go()
