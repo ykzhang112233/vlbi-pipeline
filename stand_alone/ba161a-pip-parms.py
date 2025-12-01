@@ -207,7 +207,7 @@ do_gaincor_flag = 1   #set this and go back to step2s
 ##################################
 # Optional inputs for fringe fit #
 ##################################
-fr_path='/home/ykzhang/VLBA/ba161/ba161a/'
+fr_path='./ba161a/'
 fr_file='P1905-v1-mod1.fits'
 # J0157-v1-cln4.fits(2); J2300-v1-cln4.fits(0); J0004-v1-cln3(1)
 [fr_nm, fr_cls, fr_dsk, fr_sq] = ['P1905-fr','CLN',1,1]
