@@ -223,7 +223,7 @@ smodel = [0,0]                 # SMODEL in FRING
 solint = 4                     # SOLINT in FRING
 nmaps  = 1                     # NMAPS  in FRING
 no_rate1 = 0     #for first fringe(no model)#if =1, suppress rate in fringe(dparm8), if=0 fit rate as usual
-nofit_rate = 1     #for 2nd fringe(with model)#if =1, suppress rate in fringe(dparm8), if=0 fit rate as usual
+nofit_rate = 1     #for 2nd fringe(with model)#if =1, suppress rate (not zeroing) in fringe(dparm8), if=0 fit rate as usual
 #ftrate=1
 #apfive      = 1
 sncor_timer =[0]
