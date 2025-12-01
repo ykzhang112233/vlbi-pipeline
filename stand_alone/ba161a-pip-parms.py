@@ -18,20 +18,16 @@ pr_prep_flag    = 0        # Run TECOR, EOPs, ATMOS, PANG, and position shift?
 from AIPS import AIPS
 import os
 import sys
-import time
 def_file    = './vpipe_standalone_v2.py'  # Default file with main script
 
 aipsver     = '31DEC19'
 
-####################
-# Input Parameters #
-####################
 
-logfile     = 'ba161a-pype.log'  
-import sys
+############### Input Parameters part I#############
+logfile     = 'ba161a-pype.log' 
+
 file_path   = '/data/VLBI/VLBA/ba161a1/'
-geo_path    = '/home/ykzhang/Scripts/geod/'
-#fit_path    = '/home/zhangbo/Work/BeSSeL/Fortran/'
+geo_path    = '../geod/'
 TECU_model = 'jplg'
 antname     = 'VLBA'
 AIPS.userno = 162
@@ -39,6 +35,8 @@ inter_flag  = 0         # interactive (1) or non-interactive (0) mode
 n           = 1         # Number of UV-data files either to download, on disk
                         # or already in AIPS and to be analyzed
 defdisk     = 1         # Default AIPS disk to use (can be changed later)
+
+############ Input Parameters part I（end）#############
 
 #############################################################################
 ###                  Do not change or move this part                     ####
@@ -76,10 +74,10 @@ if (os.path.exists(outname[0])==False):
 #################
 # Control Flags #
 #################
-step1        = 0        #auto control of the flags in this block
+step1        = 1        #auto control of the flags in this block
  #set to 1 for automatic procedure, set 0 to enable task by task mannual checking
-step2        = 0
-step3        = 0
+step2        = 1
+step3        = 1
 ##################################
 # Data preparation and first prep#
 ##################################
@@ -99,7 +97,10 @@ if step1 == 1:
     geo_prep_flag   = 1
     dtsum_flag      = 1
     first_cal_flag  = 1        # Include ACCOR and PANG
-#########################################################################
+    
+    
+
+########################## Input Parameters part II#######################
 # information to fill after first prep #
 #########################################################################
 ## single step before step 2: find the calibrator scan as possm scan   ##
@@ -156,6 +157,8 @@ split_seq   = 1                 #for muti pyfiles in the same username, set this
 tar_names=['G221009A']
 pref_names=['P1905+1943']
 
+
+################# Input Parameters part II (end)##################
 if step2 >= 1:
     for i in range(len(tar_names)):
         target      = [tar_names[i]]         # target sourcer
@@ -186,7 +189,8 @@ if step2 >= 1:
             split_1_flag    = 2        # Split calibrated data in first run?
         execfile(r''+def_file)
 
-###########################################################################
+
+###################### Input Parameters part III###############################
 #for networks that are not well constained with tgain(e.g. EVN)
 #[[cor factor for each IF for first antenna],[cor factor for each IF for 2nd antenna]...]
 #1905
@@ -198,7 +202,7 @@ matxi=[[1.0,1.0,1.2,1.0,1.0,1.0,1.0,1.0],
 pol='I' 
 snchk=4
 cluse=8
-do_gaincor_flag = 0   #set this and go back to step2s
+do_gaincor_flag = 1   #set this and go back to step2s
 
 ##################################
 # Optional inputs for fringe fit #
@@ -230,6 +234,11 @@ if step3 == 1:
     check_delay_rate = 1
     split_2_flag     = 1
 
+
+###################################Input Parameters part III (end)####################################
+
+###########################
+# Extra step and parameters
 ######################uv-shift after find that the target source is > 50 mas from the phase center###############
 rash=-0.00237   #in arcsec, no need to times cos(dec)
 decsh=-0.00042  #in arcsec
