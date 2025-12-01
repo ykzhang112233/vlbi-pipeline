@@ -1,49 +1,10 @@
 ##############################################################################
-#       ParselTongue definition file for BeSSeL-Survey calibration           #
+#       ParselTongue definition file for VLBI calibration                    #
 #                                                                            #
-#                  written by Andreas Brunthaler                             #
-#                                                                            #
-# Changes:                                                                   #
-#                                                                            #
-# 2010/10/12 Fixed another bug in VBGLU                                      #
-# 2010/10/26 Set dparm[4]=0 in all fringe after AIPS bug was fixed           #
-#            Added checkatmos to look for zero zenith delay offsets          #
-# 2010/10/29 Added plotatmos to plot ATMOS.FITS file                         #
-#            Minor changes in plot_baseline                                  #
-# 2010/12/02 Added check_calsource, runsnflg                                 #
-# 2010/12/15 Added main script to file                                       #
-# 2010/12/20 Added DELZN, fixed bug in split, and added input model          #
-#            for fringe                                                      #
-# 2010/12/30 Added zero line in delay/rate plot, added possibility for fixed #
-#            range, added printout to logfile, added make_name_atmos         #
-# 2011/01/03 Changed position shifts from two steps (DEC, the RA) to one     #
-# 2011/01/07 Fixed bug in make_name_atmos                                    #
-# 2011/02/09 fit_geoblocks output now written also to file                   #
-# 2011/04/13 Changed format of ATMOS_NAME.FITS, implemented SX-geoblocks,    #
-#            added Mail input for download options, enable fittp of splited  #
-#            files                                                           #
-# 2011/04/15 Added check for line data in check_sx                           #
-# 2011/05/24 Fixed bug in plotting continuum sources and TECOR               #
-# 2011/05/30 Allowed multiple maps for fringe input model (nmaps)            #
-# 2011/08/09 Fixed bug in SX geoblocks and added niter for imagr             #
-# 2011/11/07 Added check that man_pcal scans are identical, added aipsver,   #
-#            added dowload of key files, changed wtthresh to 0.45            #
-# 2012/11/09 Added smodel, plot_tables and self-calibration for continuum    #
-#            sources                                                         #
-# 2013/03/13 Added bandpass calibration. First epoch products, smooth during #
-#            split                                                           #
-# 2013/12/18 Fixed CVEL behaviour for AIPS versions after 2011, and changed  #
-#            how orfit gets it velocity. Also changed CPARM[2] in INDXR to 0.#
-# 2014/09/04 Added RDBE check                                                #
-# 2015/07/07 Changed PRTAB output for 31DEC2015 version                      # 
-# 2015/07/22 Added dual_geo = 2                                              #
-# 2015/08/15 Fixed bug in dual_geo = 2                                       #
-# 2015/12/17 Keeping flags in dual-frequency geoblock data                   #
-# 2016/03/23 Fixed plotting bug in RDBE_check. Added choice of TECU model    #
-# 2016/04/06 Added weightit=3 and aparm(7)=10 in fringegeo, changed delay    #
-#            error for SX geoblocks to 3.                                    #
-#                                                                            #
+#             Orginated from Bessel project by Andreas Brunthaler            #
+#             Modified by Yingkang Zhang, 2016-2023                          #
 ##############################################################################
+
 
 version_date='2016/04/06'
 

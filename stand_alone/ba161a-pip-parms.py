@@ -1,25 +1,11 @@
 #!/usr/bin/env ParselTongue
 ##############################################################################
-# ParselTongue Script for BeSSeL-Survey calibration                          #
+# ParselTongue Script for VLBI calibration                                   #
 #                                                                            #
 # Reads in data, runs indxr, checks antenna tables, writes station_file.inp, #
 # control_file.inp and calibrator_file.inp (for continuum data), downloads   #
 # TEC-maps and EOPs, and runs TECOR and EOP corrections, runs manual         #
 # phase-cal, finge-fit on geo-sources, writes out files for fitting          #
-#                                                                            #
-# Version 2.3.0 (2016/03/22)                                                 #
-#                                                                            #
-# Changes:                                                                   #
-#                                                                            #
-# 1.0.1: Allow shifting of multiple sources                                  #
-# 1.0.2: checkatmos added to look for zeros in zenith delay offsets          #
-# 1.1.0: Slightly changed structure, full EVN capability                     #
-# 2.0.0: Moved main script to definitions file                               #
-# 2.0.1: Added DELZN, and imput model for fringe                             #
-# 2.1.0: Added plot_tables, new options and experimental self-cal            #
-# 2.2.0: Added AIPSVER, niter, get_key_flag, first epoch products            #
-# 2.3.0: Added RDBE_check                                                    #
-#                                                                            #
 ##############################################################################
 ##Currently non-used commands, just leave it there##
 download_flag   = 0           # Download data from archive? not needed  
@@ -27,11 +13,13 @@ geo_data_nr =  0              # data file with geo data? (<0 for no geoblock)
 cont        =  0              # data file with continuum data?
 line        =  0              # data file with line data?  
 pr_prep_flag    = 0        # Run TECOR, EOPs, ATMOS, PANG, and position shift?
+#=============================================================================
 ###############################
 from AIPS import AIPS
 import os
-
-def_file    = '/home/ykzhang/Scripts/BeSSel/def_bessel_vlbi-v2.py'
+import sys
+import time
+def_file    = './vpipe_standalone_v2.py'  # Default file with main script
 
 aipsver     = '31DEC19'
 
