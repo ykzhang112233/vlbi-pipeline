@@ -45,7 +45,7 @@ The data should be first downloaded to the data directory and assign it in the `
 
 2. Run the pipeline script using the command:
    ```shell
-   parseltongue ba161a-pipeline.py
+   parseltongue ba161a-pipe-parms.py
    ```
 Note for ba161: out input data have include the parameters for all three steps, so one can reproduce the whole process by running the pipeline just once with step1=1, step2=1 and step3=1.
 Usually, both `SCL10` and `SCL11` version of the target name file is good for final analysis based on the standard calibration process. There shold have no big difference between the two. (SCL11 include a further attempt on on time-dependent amplitude calibration using `CALIB` in AIPS, which may improve the image quality a bit in some cases.) Choose `SCL10` if you are conservative on it.
