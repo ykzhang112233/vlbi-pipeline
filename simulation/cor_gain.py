@@ -35,7 +35,8 @@ if __name__ == "__main__":
     indata = AIPSUVData(source_name, in_class, 1, 1)
     
     if not indata.exists():
-        print(f"Input UV data {args.data_path} does not exist in AIPS.")
+        print(args.data_path)
+        print("Input UV data does not exist in AIPS.")
         sys.exit(1)
     loadfr(args.data_path,source_name,source_name_1,out_class,1,antname)
 
