@@ -35,8 +35,8 @@ if __name__ == "__main__":
     indata = AIPSUVData(source_name, in_class, 1, 1)
     # file_name = args.data_path.split('.')[0]
     # print(file_name)
+    print(args.data_path)
     if indata.exists():
-        print(args.data_path)
         print("Input UV data already exist in AIPS.")
         print("Proceeding to gain correction...")
     else:
