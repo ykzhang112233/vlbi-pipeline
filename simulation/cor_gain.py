@@ -16,8 +16,8 @@ from run_tasks import loadfr, run_split2
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Apply gain correction to AIPS UV data.')
-    parser.add_argument('data_path', type=str, help='Input AIPS UV data name (e.g., TARGET.uvf)')
-    parser.add_argument('output_uvdata', type=str, help='Output AIPS UV data name after gain correction')
+    parser.add_argument('--data_path', type=str, help='Input AIPS UV data name (e.g., TARGET.uvf)')
+    parser.add_argument('--output_uvdata', type=str, help='Output AIPS UV data name after gain correction')
     # parser.add_argument('--gain_matrix', type=str, required=True, help='Path to gain matrix file (numpy format)')
     # parser.add_argument('--cluse', type=int, default=1, help='CL table number to use for gain calibration')
     # parser.add_argument('--pol', type=str, default='RRLL', help='Polarizations to apply gain correction (e.g., RRLL)')
