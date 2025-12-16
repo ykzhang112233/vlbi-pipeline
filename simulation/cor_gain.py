@@ -41,10 +41,10 @@ if __name__ == "__main__":
     if indata.exists():
         print("Input UV data already exist in AIPS.")
         print("Proceeding to gain correction...")
-        loadindx(args.data_dir, file_name, out_name, out_class, 1, 1, 1, 0, antname)
+        loadindx(args.data_dir, file_name, source_name, in_class, 1, 1, 1, 0, antname)
     else:
         # loadfr(args.data_dir,file_name,source_name,in_class,1,antname)
-        loadindx(args.data_dir, file_name, out_name, out_class, 1, 1, 1, 0, antname)
+        loadindx(args.data_dir, file_name, source_name, in_class, 1, 1, 1, 0, antname)
     # Load gain matrix
     # gain_matrix = np.load(args.gain_matrix)
     
