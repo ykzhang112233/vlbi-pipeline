@@ -3,7 +3,6 @@ import sys
 import os
 import sys
 import numpy as np
-from pathlib import Path
 import argparse
 import AIPS, os, math, time
 from AIPS import AIPS, AIPSDisk
@@ -34,9 +33,8 @@ if __name__ == "__main__":
     in_class = args.data_path.split('.')[1]
     out_class = "uvf"
     indata = AIPSUVData(source_name, in_class, 1, 1)
-    os.chdir(Path(args.data_path).parent)
-    file_name = Path(args.data_path).name
-    print(file_name)
+    # file_name = args.data_path.split('.')[0]
+    # print(file_name)
     if indata.exists():
         print(args.data_path)
         print("Input UV data already exist in AIPS.")
