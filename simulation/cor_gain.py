@@ -16,7 +16,8 @@ from run_tasks import loadfr, run_split2
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Apply gain correction to AIPS UV data.')
-    parser.add_argument('--data_path', type=str, help='Input AIPS UV data name (e.g., TARGET.uvf)')
+    parser.add_argument('--data_dir', type=str, help='Input AIPS UV data name (e.g., TARGET.uvf)')
+    parser.add_argument('--input_fname', type=str, required=True, help='Path to input AIPS UV data file')
     parser.add_argument('--output_uvdata', type=str, help='Output AIPS UV data name after gain correction')
     # parser.add_argument('--gain_matrix', type=str, required=True, help='Path to gain matrix file (numpy format)')
     # parser.add_argument('--cluse', type=int, default=1, help='CL table number to use for gain calibration')
@@ -27,20 +28,21 @@ if __name__ == "__main__":
     AIPS.userno =  3322
     antname = 'VLBA'
     # Load input UV data
+    file_name = args.input_fname
     source_name = "GRB221009A"
     source_name_1 = "GRB221009A_1"
     out_name = "GRB221009A_cor"
-    in_class = args.data_path.split('.')[1]
+    in_class = args.input_fname.split('.')[1]
     out_class = "uvf"
     indata = AIPSUVData(source_name, in_class, 1, 1)
     # file_name = args.data_path.split('.')[0]
-    # print(file_name)
-    print(args.data_path)
+    print(args.data_dir)
+    print(args.input_fname)
     if indata.exists():
         print("Input UV data already exist in AIPS.")
         print("Proceeding to gain correction...")
     else:
-        loadfr(args.data_path,source_name,source_name_1,out_class,1,antname)
+        loadfr(args.data_dir,file_name,source_name,in_class,1,antname)
 
     # Load gain matrix
     # gain_matrix = np.load(args.gain_matrix)
