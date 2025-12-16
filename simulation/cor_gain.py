@@ -37,11 +37,12 @@ if __name__ == "__main__":
     os.chdir(Path(args.data_path).parent)
     file_name = Path(args.data_path).name
     print(file_name)
-    if not indata.exists():
+    if indata.exists():
         print(args.data_path)
-        print("Input UV data does not exist in AIPS.")
-        sys.exit(1)
-    loadfr(args.data_path,source_name,source_name_1,out_class,1,antname)
+        print("Input UV data already exist in AIPS.")
+        print("Proceeding to gain correction...")
+    else:
+        loadfr(args.data_path,source_name,source_name_1,out_class,1,antname)
 
     # Load gain matrix
     # gain_matrix = np.load(args.gain_matrix)
