@@ -8,7 +8,7 @@
 #import AIPSTV
 #import AIPS, os, math, time
 from pylab import *
-from config import *
+# from config import *
 from check_utils import *
 #from get_utils import *
 from logging_config import logger
@@ -112,7 +112,21 @@ def gcal_apply(indata,matx,cluse,pol):
 	   # clcor.eif          = j+1
 	   # clcor()
 
+def copy_uvdata(indata, outname, outclass):
+    # copy single-source uv data
+    # replace old data if exists
+    if outclass == indata.outclass and outname == indata.name:
+        logger.error('Output class name must be different from input class name.')
+        sys.exit()
+    newdata = AIPSUVData(outname, outclass, indata.disk, 1)
+    if newdata.exists():
+        newdata.zap()
 
+    uvcop = AIPSTask('UVCOP')
+    uvcop.indata = indata
+    uvcop.go()
+
+    return newdata
 
 
 
@@ -168,23 +182,23 @@ def read_mail(mail_path, ou, op, of, inter_flag):
 
 
     if len(dates)>1:
-        print 'Found VLA/VLBA archive emails from:'
+        print('Found VLA/VLBA archive emails from:')
         for i in range(len(dates)):
-            print str(i+1)+': '+dates[i] 
+            print(str(i+1)+': '+dates[i]) 
 
         if inter_flag==1: 
             date_nr=input('Which one? (1-'+str(len(dates))+') ')-1
             if (date_nr in range(len(dates)))==False:
-                print 'No such date.'
+                print('No such date.')
                 sys.exit()
         else: 
             date_nr=len(dates)-1
 
-        print 'Using: '+date
-        print ''
+        print('Using: '+date)
+        print('')
         user=users[date_nr]
         passw=passs[date_nr]
-        print user, passw
+        print(user, passw)
 
 
     if user=='nopass': 
@@ -195,7 +209,7 @@ def read_mail(mail_path, ou, op, of, inter_flag):
         os.popen(r'wget --no-check-certificate --http-user '+user+
                  ' --http-passwd '+passw+' -t45 -O files.txt'+
                  ' https://archive.nrao.edu/secured/'+user+'/', 'w')
-        print ' https://archive.nrao.edu/secured/'+user+'/'
+        print(' https://archive.nrao.edu/secured/'+user+'/')
 
         f=open('files.txt')
         content=f.read() 
@@ -214,7 +228,7 @@ def read_mail(mail_path, ou, op, of, inter_flag):
     if inter_flag==1: 
         cont=raw_input('Use these filenames? (y/n) ')
         if cont=='n' or cont=='N':
-            print 'Using other filenames:'
+            print('Using other filenames:')
             print_download_options(ou,op,of)
             return ou, op, '', of, len(of)
 
@@ -225,17 +239,16 @@ def read_mail(mail_path, ou, op, of, inter_flag):
 
 
 def print_download_options(user,passw,file_names,file_sizes):
-    print '    file        = range(n)'
-    print '    arch_user   = \''+user+'\''
-    print '    arch_pass   = \''+passw+'\''  
-    print ''
+    print('    file        = range(n)')
+    print('    arch_user   = \''+user+'\'')
+    print('    arch_pass   = \''+passw+'\'')
+    print('')
     
     n=0
     for i in range(0,len(file_names)):
-        print '    file['+str(n)+'] = \''+file_names[i]+'\' ('+file_sizes[i]+')'
+        print('    file['+str(n)+'] = \''+file_names[i]+'\' ('+file_sizes[i]+')')
         n=n+1
-    print ''
-
+    print('')
 def data_info(indata, i, geo, cont, line):
     if indata.exists():
         frq=get_center_freq(indata)/1e9
