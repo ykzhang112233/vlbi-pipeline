@@ -183,16 +183,20 @@ def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12):
     print(snr, rms, pkx, pky)
     nm = 0
     while snr > snr_threshold:
-        if nm > max_iterations:
+        if nm >= max_iterations:
             break
         difmap.sendline('addcmp 0.1,true,%f,%f,true,0,false,1,false,0,true,0' % (pkx, pky))
         difmap.expect('0>')
-        difmap.sendline('modelfit 50')
+        difmap.sendline('modelfit 80')
         difmap.expect('0>', timeout=500)
         snr, rms, pkx, pky = getsnr(difmap)
         print(snr, rms, pkx, pky)
         nm += 1
     return nm
+def note_mod_parms(difmap):
+    difmap.sendline('modelfit 80')
+    difmap.expect('0>', timeout=500)
+
 
 def prepare_observation(difmap, filename, freq):
     """准备观测：加载文件，选择偏振，设置地图大小和 UV 权重"""
