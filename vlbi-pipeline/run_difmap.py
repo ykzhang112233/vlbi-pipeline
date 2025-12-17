@@ -128,6 +128,7 @@ def apscal(difmap,solint):
     difmap.sendline('selfcal true,true,%s' % solint)
     difmap.expect('0>')
     return
+
 def modfcal(difmap,snrcut,numcut):
     nm=0
     snr,rms,pkx,pky=getsnr(difmap)
@@ -146,6 +147,62 @@ def modfcal(difmap,snrcut,numcut):
             print(snr,rms,pkx,pky)
             nm=nm+1
     return
+
+# ========== 模块化工具函数 ==========
+
+def init_difmap(timeout=8000000):
+    """初始化 difmap 会话并返回 difmap 对象和日志文件名"""
+    difmap = pexpect.spawn('difmap')
+    difmap.waitnoecho
+    difmap.expect('0>')
+    p = re.compile(r'(difmap.log_?\d*)')
+    logfile = p.findall(difmap.before.decode())[0]
+    difmap.timeout = timeout
+    return difmap, logfile
+
+def cleanup_difmap(difmap, logfile):
+    """关闭 difmap 会话并删除日志文件"""
+    difmap.sendline('quit')
+    difmap.close()
+    if os.path.isfile(logfile):
+        os.remove(logfile)
+
+def setup_mapsize(difmap, freq):
+    """根据频率设置地图大小"""
+    if freq <= 3:
+        difmap.sendline('mapsize 2048,0.4')
+    elif 3.1 <= freq <= 10:
+        difmap.sendline('mapsize 2048,0.2')
+    elif freq >= 10.1:
+        difmap.sendline('mapsize 2048,0.1')
+    difmap.expect('0>')
+
+def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12):
+    """迭代模型拟合：持续添加组件直到 SNR 低于阈值或达到最大迭代次数"""
+    snr, rms, pkx, pky = getsnr(difmap)
+    print(snr, rms, pkx, pky)
+    nm = 0
+    while snr > snr_threshold:
+        if nm > max_iterations:
+            break
+        difmap.sendline('addcmp 0.1,true,%f,%f,true,0,false,1,false,0,true,0' % (pkx, pky))
+        difmap.expect('0>')
+        difmap.sendline('modelfit 50')
+        difmap.expect('0>', timeout=500)
+        snr, rms, pkx, pky = getsnr(difmap)
+        print(snr, rms, pkx, pky)
+        nm += 1
+    return nm
+
+def prepare_observation(difmap, filename, freq):
+    """准备观测：加载文件，选择偏振，设置地图大小和 UV 权重"""
+    difmap.sendline('obs %s' % filename)
+    difmap.expect('0>')
+    difmap.sendline('select i')
+    difmap.expect('0>')
+    setup_mapsize(difmap, freq)
+    difmap.sendline('uvw 0,-1')
+    difmap.expect('0>')
             
             
 def difmap_image(band):#imaging
@@ -260,7 +317,27 @@ def modfit1(step,freq,solint): #direct auto-model fitting with point models
     if os.path.isfile(logfile):
         os.remove(logfile)
         
-def modfit2(freq): # mod files after mannual cleaning
+def modfit2(freq): # mod files after mannual cleaning (使用模块化函数重构)
+    difmap, logfile = init_difmap()
+    images = get_splt()
+    
+    for i in range(images.size):
+        name2 = images[i] + '.uvf'
+        names = name2[:-4] + '-clnmod'
+        print(name2)
+        
+        if not os.path.exists('%s.mod' % names):
+            prepare_observation(difmap, name2, freq)
+            iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12)
+            difmap.sendline('save %s' % names)
+            difmap.expect('0>')
+            print('done %s' % names)
+        else:
+            print('model already there, move on')
+    
+    cleanup_difmap(difmap, logfile)
+        
+def modfit_single(freq): # model fit for single compnent
     difmap = pexpect.spawn('difmap')
     difmap.waitnoecho
     difmap.expect('0>')
@@ -312,8 +389,6 @@ def modfit2(freq): # mod files after mannual cleaning
     difmap.close()
     if os.path.isfile(logfile):
         os.remove(logfile)
-        
-        
         
 def check():
     difmap = pexpect.spawn('difmap')
