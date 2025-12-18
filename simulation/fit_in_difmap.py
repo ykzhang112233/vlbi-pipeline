@@ -24,7 +24,11 @@ def cleanup_difmap(difmap, logfile):
     difmap.sendline('quit')
     difmap.close()
     if os.path.isfile(logfile):
-        os.remove(logfile)
+        try:
+            os.remove(logfile)
+        except Exception:
+            print(f"Can not find or delete logfile: {logfile}, will just ignore it.")
+            pass
         
 def setup_mapsize(difmap, freq):
     """根据频率设置地图大小"""

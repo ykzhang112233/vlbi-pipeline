@@ -98,7 +98,7 @@ def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str):
             p.unlink()
             print(f"[PID {os.getpid()}] Deleted temporary file: {out_uv}")
         except Exception:
-            print(f"[PID {os.getpid()}] Failed to delete temporary file: {out_uv}")
+            print(f"[PID {os.getpid()}] Failed to delete temporary file: {out_uv}, will just ignore it.")
             pass
 
     return recs
