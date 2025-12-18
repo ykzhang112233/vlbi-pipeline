@@ -61,7 +61,7 @@ def apply_gains_to_uvfits_by_surgery(
     os.chdir(in_file.parent)
     shutil.copyfile(in_file.name, out_uvfits)
 
-    with fits.open(out_uvfits, mode="update", memmap=True) as hdul:
+    with fits.open(out_uvfits, mode="update", memmap=False) as hdul:
         # UVFITS visibilities 通常在 PRIMARY 的 random groups 里
         hdu = hdul[0]
         gdata = hdu.data  # GroupData
