@@ -1,0 +1,245 @@
+import pexpect
+import os
+import sys
+import re
+import time
+import numpy as np
+import pandas as pd
+from pathlib import Path
+import argparse
+
+
+def init_difmap(timeout=8000000):
+    """初始化 difmap 会话并返回 difmap 对象和日志文件名"""
+    difmap = pexpect.spawn('difmap')
+    difmap.waitnoecho
+    difmap.expect('0>')
+    p = re.compile(r'(difmap.log_?\d*)')
+    logfile = p.findall(difmap.before.decode())[0]
+    difmap.timeout = timeout
+    return difmap, logfile
+
+def cleanup_difmap(difmap, logfile):
+    """关闭 difmap 会话并删除日志文件"""
+    difmap.sendline('quit')
+    difmap.close()
+    if os.path.isfile(logfile):
+        os.remove(logfile)
+        
+def setup_mapsize(difmap, freq):
+    """根据频率设置地图大小"""
+    if freq <= 3:
+        difmap.sendline('mapsize 2048,0.4')
+    elif 3.1 <= freq <= 10:
+        difmap.sendline('mapsize 2048,0.2')
+    elif freq >= 10.1:
+        difmap.sendline('mapsize 2048,0.1')
+    difmap.expect('0>')
+
+def prepare_observation(difmap, filename,file_exname, freq):
+    """准备观测：加载文件，选择偏振，设置地图大小和 UV 权重"""
+    uvf_file = filename + '.' + file_exname
+    difmap.sendline('obs %s' % uvf_file)
+    difmap.expect('0>')
+    difmap.sendline('select i')
+    difmap.expect('0>')
+    setup_mapsize(difmap, freq)
+    difmap.sendline('uvw 0,-2')
+    difmap.expect('0>')
+
+def getsnr_difmap(difmap):
+    difmap.sendline('invert')
+    difmap.expect('0>')
+    difmap.sendline('print peak(flux,max)/imstat(rms)')
+    difmap.expect('0>')
+    # 修改正则表达式以支持科学计数法（如 7.333e-5）
+    p = re.compile(r'([-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?)')
+    s = difmap.before.decode()
+    print(p.findall(s))
+    snr = float(p.findall(s)[0])
+    difmap.sendline('print imstat(rms)')
+    difmap.expect('0>')
+    s2 = difmap.before.decode()
+    rms = float(p.findall(s2)[0])
+    difmap.sendline('print peak(x,max)')
+    difmap.expect('0>')
+    s3 = difmap.before.decode()
+    peakx = float(p.findall(s3)[0])
+    difmap.sendline('print peak(y,max)')
+    difmap.expect('0>')
+    s4 = difmap.before.decode()
+    peaky = float(p.findall(s4)[0])
+    return snr,rms,peakx,peaky
+
+def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12, model_type = 1):
+    """迭代模型拟合：持续添加组件直到 SNR 低于阈值或达到最大迭代次数
+    parm:
+        difmap: the difmap progress from initi_difmap
+        snr_threshold: the snr cut to decide how many iterations to go
+        max_iteration: the maximum iterations. The progress will end if either of the above two parms reach the limit
+        model_type: 0, delta; 1, gaussian; 2-4 not used, see difmap >help addcmp
+    """
+    snr, rms, pkx, pky = getsnr_difmap(difmap)
+    print(snr, rms, pkx, pky)
+    nm = 0
+    while snr > snr_threshold:
+        if nm >= max_iterations:
+            print('limit reached, stop fitting')
+            break
+        difmap.sendline('addcmp 0.1,true,%f,%f,true,0,false,1,false,0,true,%i' % (pkx, pky, model_type))
+        difmap.expect('0>')
+        difmap.sendline('modelfit 80')
+        difmap.expect('0>', timeout=500)
+        snr, rms, pkx, pky = getsnr_difmap(difmap)
+        print(snr, rms, pkx, pky)
+        nm += 1
+    return nm
+
+def read_observation(difmap,filename):
+    par_file = filename + '.par'
+    difmap.sendline('@ %s' % par_file)
+    difmap.expect('0>')
+    
+def parse_model_table(
+        text: str, 
+        default_freq=None
+        ) -> pd.DataFrame:
+    rows = []
+
+    def to_float(tok: str) -> float:
+        # 兼容偶尔出现的 0.123v 这种标记（这里一般不会出现在 East/North 表，但顺手处理）
+        tok = tok.rstrip("v")
+        try:
+            return float(tok)
+        except Exception:
+            return np.nan
+
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith("#") or line.startswith("!") or line.startswith("-"):
+            continue
+        if "0>" in line:
+            continue
+
+        parts = line.split()
+
+        # 有些 difmap 输出会带 component 编号（第一列是整数），这里做兼容
+        comp_id = None
+        if parts and parts[0].isdigit():
+            comp_id = int(parts[0])
+            parts = parts[1:]
+
+        # East/North 那张表：最短到 theta_err 一共 15 列
+        if len(parts) < 15:
+            continue
+
+        # 关键：只吃 East/North 那张表（第7列是 shape，且是纯字母，如 gauss/point）
+        # 这能自动跳过你前面那行 "0.00346423v 0.141708v ... 1"
+        if not (len(parts) > 6 and parts[6].isalpha()):
+            continue
+
+        row = {
+            "component_id": comp_id,
+            "flux_jy": to_float(parts[0]),
+            "flux_err_jy": to_float(parts[1]),
+            "x_arcsec": to_float(parts[2]),
+            "x_err_arcsec": to_float(parts[3]),
+            "y_arcsec": to_float(parts[4]),
+            "y_err_arcsec": to_float(parts[5]),
+            "type": parts[6],
+            "ra_deg": to_float(parts[7]),
+            "dec_deg": to_float(parts[8]),
+            "major_fwhm_arcsec": to_float(parts[9]),
+            "major_fwhm_err_arcsec": to_float(parts[10]),
+            "minor_fwhm_arcsec": to_float(parts[11]),
+            "minor_fwhm_err_arcsec": to_float(parts[12]),
+            "theta_deg": to_float(parts[13]),
+            "theta_err_deg": to_float(parts[14]),
+            "freq_hz": np.nan,
+            "spectral_index": np.nan,
+            "spectral_index_err": np.nan,
+        }
+
+        # 如果后面真的有 freq/specIndex，就补上
+        if len(parts) >= 16:
+            row["freq_hz"] = to_float(parts[15])
+        if len(parts) >= 17:
+            row["spectral_index"] = to_float(parts[16])
+        if len(parts) >= 18:
+            row["spectral_index_err"] = to_float(parts[17])
+
+        # 如果输出没带 freq，但你知道观测频率，就用 default_freq 补齐
+        if (np.isnan(row["freq_hz"]) or row["freq_hz"] == 0.0) and default_freq is not None:
+            row["freq_hz"] = float(default_freq)
+
+        rows.append(row)
+
+    df = pd.DataFrame(rows)
+
+    # 如果 component_id 一列全是空，就删掉，表更干净
+    if "component_id" in df.columns and df["component_id"].isna().all():
+        df = df.drop(columns=["component_id"])
+
+    return df
+
+def get_model_parm(difmap, prompt=r"0>"):
+    """
+    在 difmap 里执行一条命令，并返回从命令回显到下一个提示符之间的全部文本输出。
+    参数:
+        difmap: difmap 进程对象
+        prompt: difmap 提示符的正则表达式，默认为 "0>"
+    返回:
+        str: 命令输出的文本(text)
+    """
+    cmd = 'modelfit 0'
+    difmap.sendline(cmd)
+    difmap.expect(prompt)
+    out = difmap.before or b""
+    print(out)
+    if isinstance(out, bytes):
+        out = out.decode("utf-8", errors="replace")
+    out = out.replace("\r", "")
+
+    # difmap 通常会回显你输入的命令，把第一行是命令的情况去掉
+    lines = out.splitlines()
+    if lines and lines[0].strip() == cmd.strip():
+        lines = lines[1:]
+    return "\n".join(lines).strip()
+
+def main(
+        uvf_path:Path,
+        freq:float
+        )->pd.Series:
+    filepath = Path(uvf_path)
+    file_dir = filepath.parent
+    filename = filepath.stem
+    file_exname = filepath.suffix.lstrip('.')
+    difmap, logfile = init_difmap()
+    prepare_observation(difmap, filename,file_exname, freq)
+    nm = iterative_modelfit(difmap, snr_threshold=5, max_iterations=1, model_type = 1)
+    print(f"Total fitted components: {nm}")
+    model_text = get_model_parm(difmap)
+    print("Model fitting output:")
+    print(model_text)
+    df_model = parse_model_table(model_text, default_freq=None)
+    print("Parsed model parameters:")
+    print(df_model)
+    cleanup_difmap(difmap, logfile)
+    return df_model
+        
+
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Fit model to UV data using difmap.')
+    parser.add_argument('--file_path', type=str, required=True, help='Input uv file path (e.g., /path/to/TARGET.uvf)')
+    args = parser.parse_args()
+    filepath = Path(args.file_path)
+    freq = 8.6  # GHz, set your frequency here
+    df_result = main(filepath, freq)
+    print("Final fitted model parameters:")
+    print(df_result)
+### Usage example:
+## python fit_in_difmap.py --file_path ./simulation/fits_uvtest.uvf

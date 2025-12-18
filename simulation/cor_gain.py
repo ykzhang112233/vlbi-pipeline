@@ -1,18 +1,16 @@
 import time
-import sys
+import sys, shutil
 import os
 import sys
 import numpy as np
 import argparse
-import AIPS, os, math, time
-from AIPS import AIPS, AIPSDisk
-from AIPSTask import AIPSTask, AIPSList
-from AIPSData import AIPSUVData, AIPSImage
-from Wizardry.AIPSData import AIPSUVData as WAIPSUVData
-sys.path.append('../vlbi-pipeline/')
-from utils import gcal_apply,copy_uvdata
-from run_tasks import loadfr, run_split2, loadindx
+from pathlib import Path
+from astropy.io import fits
 
+# Note: this single script file read the gain factor array/matrix and 
+#      apply the gain factor to the uvfits data by surgery (directly modify the vis data in uvfits file)
+#      input: original uvfits file, gain factor array/matrix
+#      output: uvfits file after gain application (numbers)
 
 def gen_ant_dict(
         ant_nums: int, 
@@ -113,56 +111,27 @@ def apply_gains_to_uvfits_by_surgery(
 
     return out_uvfits
 
+def main(gains_list, input_uv, out_suffix):
+
+    ant_nums = len(gains_list)
+    ant_dict = gen_ant_dict(ant_nums, np.array(gains_list))
+    filepath = Path(input_uv)
+    os.mkdir(filepath.parent / "cor_gain_uvfits", exist_ok=True)
+    out_uv = filepath.parent / "cor_gain_uvfits" / f"{filepath.stem}_{out_suffix}{filepath.suffix}"
+    out_uvdata = apply_gains_to_uvfits_by_surgery(filepath,out_uv,ant_dict)
+    print(f"Gain correction applied and file with {out_suffix} saved to {out_uvdata}.")
+
+    return out_uvdata
 
 if __name__ == "__main__":
-    gains_test = [3,3,3,3,3,3,3,3]
-    ant_nums = 8
-    ant_dict = gen_ant_dict(ant_nums, np.array(gains_test))
-    print(ant_dict)
-    out_uv = "fits_uvtest2.uvf"
-    out_uvdata = apply_gains_to_uvfits_by_surgery(filepath,out_uv,ant_dict)
-    
-    
-    
-    
-    
-    parser = argparse.ArgumentParser(description='Apply gain correction to AIPS UV data.')
-    parser.add_argument('--data_dir', type=str, help='Input AIPS UV data name (e.g., TARGET.uvf)')
-    parser.add_argument('--input_fname', type=str, required=True, help='Path to input AIPS UV data file')
-    parser.add_argument('--output_uvdata', type=str, help='Output AIPS UV data name after gain correction')
-    # parser.add_argument('--gain_matrix', type=str, required=True, help='Path to gain matrix file (numpy format)')
-    # parser.add_argument('--cluse', type=int, default=1, help='CL table number to use for gain calibration')
-    # parser.add_argument('--pol', type=str, default='RRLL', help='Polarizations to apply gain correction (e.g., RRLL)')
-    
+    parser = argparse.ArgumentParser(description='Apply gain correction to UV data.')
+    parser.add_argument('--uv_name', type=str, required=True, help='Input AIPS UV data name (e.g., TARGET.uvf)')
+    parser.add_argument('--gcor_list', type=list, required=True, help='the list contain gain factor for each antenna')
+    parser.add_argument('--out_suffix', type=str, required=True, help='Suffix for the output UV data file name')
     args = parser.parse_args()
-    aipsver = '31DEC19'
-    AIPS.userno =  3322
-    antname = 'VLBA'
-    # Load input UV data
-    file_name = args.input_fname
-    source_name = "GRB221009A"
-    source_name_1 = "GRB221009A_1"
-    out_name = "GRB221009A_cor"
-    in_class = args.input_fname.split('.')[1]
-    out_class = "uvf"
-    indata = AIPSUVData(source_name, in_class, 1, 1)
-    # file_name = args.data_path.split('.')[0]
-    print(args.data_dir)
-    print(args.input_fname)
-    if indata.exists():
-        print("Input UV data already exist in AIPS.")
-        print("Proceeding to gain correction...")
-        loadindx(args.data_dir, file_name, source_name, in_class, 1, 1, 1, 0, antname)
-    else:
-        # loadfr(args.data_dir,file_name,source_name,in_class,1,antname)
-        loadindx(args.data_dir, file_name, source_name, in_class, 1, 1, 1, 0, antname)
-    # Load gain matrix
-    # gain_matrix = np.load(args.gain_matrix)
-    
-    # # Apply gain correction
-    # gcal_apply(indata, gain_matrix, args.cluse, args.pol)
-    
-    # # Save corrected data to output UV data
-    # copy_uvdata(indata, args.output_uvdata.split('.')[0], args.output_uvdata.split('.')[1])
-    
-    # print(f"Gain correction applied and saved to {args.output_uvdata}.")
+    gains_list = args.gcor_list
+    input_uv = args.uv_name
+    out_suffix = args.out_suffix
+    main(gains_list, input_uv, out_suffix)
+### Usage example:
+# python cor_gain.py --uv_name "data/target.uvf" --gcor_list "[1.0, 0.95, 1.05, 1.02]" --out_suffix "gcor_1"
