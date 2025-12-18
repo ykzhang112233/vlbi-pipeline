@@ -21,6 +21,6 @@ echo "Logging Python output to ${LOGFILE}"
 
 # run the python script, capture both stdout and stderr, and also show on terminal
 python sim_main.py     --input_uv  "$INPUT_FILE" \
-                       --nants 8 --gain_range 0.1 --sim_times 10 \
+                       --nants 8 --gain_range 0.1 --sim_times 1000 \
                        --out_dir "$OUT_DIR" 2>&1 | tee "$LOGFILE"
 
