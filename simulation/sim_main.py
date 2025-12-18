@@ -59,7 +59,7 @@ if __name__ == "__main__":
     parser.add_argument('--nants', type=int, default=10, help='Number of antennas')
     parser.add_argument('--gain_range', type=float, default=0.1, help='Gain variation range (e.g., 0.1 for ±10%)')
     parser.add_argument('--sim_times', type=int, default=10, help='Number of simulation times')
-    parser.add_argument('--out_dir', type=str, default='./simulation/', help='Output directory for simulation results')
+    parser.add_argument('--out_dir', type=str, default='./simulations/', help='Output directory for simulation results')
     args = parser.parse_args()
     filepath = Path(args.input_uv)
     nants = args.nants
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     out_dir = Path(args.out_dir)
 
     os.chdir(filepath.parent)
-    
+    os.makedirs(out_dir, exist_ok=True)
 
     records = []
     for i in range(sim_times):
@@ -77,7 +77,8 @@ if __name__ == "__main__":
         out_uv = cor_gain.main(
             gains_list=gains.tolist(),
             input_uv=filepath,
-            out_suffix=f"gainvar_{i+1}"
+            out_suffix=f"gainvar_{i+1}",
+            out_dir=out_dir
         )
         df_model = fit_in_difmap.main(
             uvf_path=out_uv,

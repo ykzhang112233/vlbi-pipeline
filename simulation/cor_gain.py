@@ -111,13 +111,14 @@ def apply_gains_to_uvfits_by_surgery(
 
     return out_uvfits
 
-def main(gains_list, input_uv, out_suffix):
+def main(gains_list, input_uv, out_suffix, out_dir):
 
     ant_nums = len(gains_list)
     ant_dict = gen_ant_dict(ant_nums, np.array(gains_list))
     filepath = Path(input_uv)
-    os.mkdir(filepath.parent / "cor_gain_uvfits", exist_ok=True)
-    out_uv = filepath.parent / "cor_gain_uvfits" / f"{filepath.stem}_{out_suffix}{filepath.suffix}"
+    os.chdir(filepath.parent)
+    os.makedirs(out_dir, exist_ok=True)
+    out_uv = Path(out_dir) / f"{filepath.stem}_{out_suffix}{filepath.suffix}"
     out_uvdata = apply_gains_to_uvfits_by_surgery(filepath,out_uv,ant_dict)
     print(f"Gain correction applied and file with {out_suffix} saved to {out_uvdata}.")
 
@@ -128,6 +129,7 @@ if __name__ == "__main__":
     parser.add_argument('--uv_name', type=str, required=True, help='Input AIPS UV data name (e.g., TARGET.uvf)')
     parser.add_argument('--gcor_list', type=list, required=True, help='the list contain gain factor for each antenna')
     parser.add_argument('--out_suffix', type=str, required=True, help='Suffix for the output UV data file name')
+    parser.add_argument('--out_dir', type=str, default='./simulations/', help='Output directory for corrected UV data')
     args = parser.parse_args()
     gains_list = args.gcor_list
     input_uv = args.uv_name
