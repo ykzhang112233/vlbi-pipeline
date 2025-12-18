@@ -4,10 +4,13 @@
 set -euo pipefail
 
 # directory where python will write results (should match python --out_dir)
-INPUT_FILE="/groups/public_cluster/home/ykzhang/VLBI/grb_data/bl307/calibrated_data_GRB221009a-v1/GRB221009A-ba161b1.uvf"
-OUT_DIR="/groups/public_cluster/home/ykzhang/VLBI/grb_data/bl307/calibrated_data_GRB221009a-v1/simulations/"
+FNAME="GRB221009A-ba161b1"
+
+DIR="/groups/public_cluster/home/ykzhang/VLBI/grb_data/bl307/calibrated_data_GRB221009a-v1/"
+INPUT_FILE="$DIR/$FNAME.uvf"
+OUT_DIR="$DIR/simulations/"
 # directory to store logs
-LOG_DIR="$OUT_DIR/logs"
+LOG_DIR="$OUT_DIR/logs_$FNAME"
 mkdir -p "$LOG_DIR"
 
 # timestamped, unique logfile name
