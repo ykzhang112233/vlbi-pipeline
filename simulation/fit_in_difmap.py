@@ -217,6 +217,7 @@ def main(
     file_dir = filepath.parent
     filename = filepath.stem
     file_exname = filepath.suffix.lstrip('.')
+    os.chdir(file_dir)
     difmap, logfile = init_difmap()
     prepare_observation(difmap, filename,file_exname, freq)
     nm = iterative_modelfit(difmap, snr_threshold=5, max_iterations=1, model_type = 1)
