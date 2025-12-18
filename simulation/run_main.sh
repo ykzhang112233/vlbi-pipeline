@@ -4,7 +4,7 @@
 set -euo pipefail
 
 # directory where python will write results (should match python --out_dir)
-OUT_DIR="/groups/public_cluster/home/ykzhang/VLBI/grb_data/bl307/calibrated_data_GRB221009a-v1/simulation/"
+OUT_DIR="/groups/public_cluster/home/ykzhang/VLBI/grb_data/bl307/calibrated_data_GRB221009a-v1/simulations/"
 # directory to store logs
 LOG_DIR="$OUT_DIR/logs"
 mkdir -p "$LOG_DIR"
