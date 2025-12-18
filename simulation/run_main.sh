@@ -4,7 +4,7 @@
 set -euo pipefail
 
 # directory where python will write results (should match python --out_dir)
-FNAME="GRB221009A-ba161c1"
+FNAME="GRB221009A-bl307bx1"
 # ba161(abc)1 and bl307(bcdefg)x1
 N_ANT=9
 # a1,b1,c1  b,c,d ,e, f, g
