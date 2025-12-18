@@ -96,7 +96,9 @@ def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str):
     if p.is_file():
         try:
             p.unlink()
+            print(f"[PID {os.getpid()}] Deleted temporary file: {out_uv}")
         except Exception:
+            print(f"[PID {os.getpid()}] Failed to delete temporary file: {out_uv}")
             pass
 
     return recs
@@ -108,13 +110,14 @@ if __name__ == "__main__":
     parser.add_argument('--nants', type=int, default=10, help='Number of antennas')
     parser.add_argument('--gain_range', type=float, default=0.1, help='Gain variation range (e.g., 0.1 for ±10%)')
     parser.add_argument('--sim_times', type=int, default=10, help='Number of simulation times')
-    parser.add_argument('--out_dir', type=str, default='./simulations/', help='Output directory for simulation results')
+    parser.add_argument('--out_dir', type=str, default='./simulations/', help='Prefix for output directory for simulation results')
     args = parser.parse_args()
     filepath = Path(args.input_uv)
+    file_name = filepath.stem
     nants = args.nants
     gain_range = args.gain_range
     sim_times = args.sim_times
-    out_dir = Path(args.out_dir)
+    out_dir = Path(args.out_dir + file_name)
     os.chdir(filepath.parent)
     os.makedirs(out_dir, exist_ok=True)
     records = []
