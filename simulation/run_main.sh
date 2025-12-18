@@ -17,6 +17,6 @@ echo "Logging Python output to ${LOGFILE}"
 
 # run the python script, capture both stdout and stderr, and also show on terminal
 python sim_main.py     --input_uv /groups/public_cluster/home/ykzhang/VLBI/grb_data/bl307/calibrated_data_GRB221009a-v1/GRB221009A-ba161a1.uvf \
-                       --nants 8 --gain_range 0.1 --sim_times 20 \
+                       --nants 8 --gain_range 0.1 --sim_times 1000 \
                        --out_dir "$OUT_DIR" 2>&1 | tee "$LOGFILE"
 
