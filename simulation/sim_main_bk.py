@@ -16,8 +16,6 @@ import pandas as pd
 #     gen_ant_dict,
 #     )
 import fit_in_difmap, cor_gain
-from concurrent.futures import ProcessPoolExecutor, as_completed
-import multiprocessing
 
 
 
@@ -57,51 +55,6 @@ def clear_uv(filename):
     print(f"Deleted temporary file: {filename}")
 
 
-def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str):
-    """Helper to run a single simulation iteration in a worker process.
-
-    Returns a list of record dicts for this simulation.
-    """
-    import os
-    from pathlib import Path
-    import fit_in_difmap, cor_gain
-
-    filepath = Path(filepath_str)
-    out_dir = Path(out_dir_str)
-
-    gains = gen_antenna_gains(nants, gain_range=gain_range, dist="uniform", seed=i)
-    # Use process id in logging so it's easier to trace parallel runs
-    print(f"[PID {os.getpid()}] Simulation {i+1}/{os.environ.get('SIM_TIMES', '?')}, Generated Gains: {gains}")
-
-    out_uv = cor_gain.main(
-        gains_list=gains.tolist(),
-        input_uv=filepath,
-        out_suffix=f"gainvar_{i+1}",
-        out_dir=out_dir,
-    )
-
-    df_model = fit_in_difmap.main(
-        uvf_path=out_uv,
-        freq=9,
-    )
-
-    recs = []
-    for rec in df_model.to_dict(orient='records'):
-        rec['gains'] = ','.join([f"{g:.2f}" for g in gains])
-        rec['simulation_id'] = i + 1
-        recs.append(rec)
-
-    # remove temporary uv if produced
-    p = Path(out_uv)
-    if p.is_file():
-        try:
-            p.unlink()
-        except Exception:
-            pass
-
-    return recs
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Simulate gain variations and fit models in Difmap.")
     parser.add_argument('--input_uv', type=str, required=True, help='Input uv file path (e.g., /path/to/TARGET.uvf)')
@@ -115,26 +68,29 @@ if __name__ == "__main__":
     gain_range = args.gain_range
     sim_times = args.sim_times
     out_dir = Path(args.out_dir)
+
     os.chdir(filepath.parent)
     os.makedirs(out_dir, exist_ok=True)
+
     records = []
-
-    # Parallel execution using processes. Each worker runs one simulation iteration.
-    # WARNING: ensure `cor_gain.main` and `fit_in_difmap.main` are safe to run concurrently
-    # (no shared temp files). We pass strings/paths to workers to avoid cwd issues.
-    max_workers = min(sim_times, os.cpu_count() or 6)
-    os.environ['SIM_TIMES'] = str(sim_times)
-
-    if max_workers <= 1:
-        # fallback to serial execution
-        for i in range(sim_times):
-            records.extend(_run_one_sim(i, str(filepath), nants, gain_range, str(out_dir)))
-    else:
-        with ProcessPoolExecutor(max_workers=max_workers) as exe:
-            futures = {exe.submit(_run_one_sim, i, str(filepath), nants, gain_range, str(out_dir)): i for i in range(sim_times)}
-            for fut in as_completed(futures):
-                recs = fut.result()
-                records.extend(recs)
+    for i in range(sim_times):
+        gains = gen_antenna_gains(nants, gain_range=gain_range, dist="uniform", seed=i)
+        print(f"Simulation {i+1}/{sim_times}, Generated Gains: {gains}")
+        out_uv = cor_gain.main(
+            gains_list=gains.tolist(),
+            input_uv=filepath,
+            out_suffix=f"gainvar_{i+1}",
+            out_dir=out_dir
+        )
+        df_model = fit_in_difmap.main(
+            uvf_path=out_uv,
+            freq=2.3
+        )
+        clear_uv(out_uv)
+        for rec in df_model.to_dict(orient='records'):
+            rec['gains'] = ','.join([f"{g:.2f}" for g in gains])
+            rec['simulation_id'] = i + 1
+            records.append(rec)
     df_all = pd.DataFrame.from_records(records)
     output_csv = out_dir / "simulated_source_parms.csv"
     df_all.to_csv(output_csv, index=False)
