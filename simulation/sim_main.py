@@ -3,18 +3,18 @@ import pexpect, os
 from pathlib import Path
 import argparse
 import pandas as pd
-from simulation.fit_in_difmap import (
-    init_difmap,
-    prepare_observation,
-    getsnr_difmap,
-    cleanup_difmap,
-    get_model_parm,
-    parse_model_table,
-    )
-from simulation.cor_gain import (
-    apply_gains_to_uvfits_by_surgery,
-    gen_ant_dict,
-    )
+# from simulation.fit_in_difmap import (
+#     init_difmap,
+#     prepare_observation,
+#     getsnr_difmap,
+#     cleanup_difmap,
+#     get_model_parm,
+#     parse_model_table,
+#     )
+# from simulation.cor_gain import (
+#     apply_gains_to_uvfits_by_surgery,
+#     gen_ant_dict,
+#     )
 import fit_in_difmap, cor_gain
 
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     out_dir = Path(args.out_dir)
 
     os.chdir(filepath.parent)
-    out_dir.mkdir(parents=True, exist_ok=True)
+    
 
     records = []
     for i in range(sim_times):
