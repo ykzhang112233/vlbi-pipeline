@@ -39,6 +39,7 @@ def setup_mapsize(difmap, freq):
 def prepare_observation(difmap, filename,file_exname, freq):
     """准备观测：加载文件，选择偏振，设置地图大小和 UV 权重"""
     uvf_file = filename + '.' + file_exname
+    print(f"Loading UV file: {uvf_file}")
     difmap.sendline('obs %s' % uvf_file)
     difmap.expect('0>')
     difmap.sendline('select i')
@@ -237,7 +238,7 @@ if __name__ == "__main__":
     parser.add_argument('--file_path', type=str, required=True, help='Input uv file path (e.g., /path/to/TARGET.uvf)')
     args = parser.parse_args()
     filepath = Path(args.file_path)
-    freq = 8.6  # GHz, set your frequency here
+    freq = 9  # GHz, set your frequency here
     df_result = main(filepath, freq)
     print("Final fitted model parameters:")
     print(df_result)
