@@ -86,8 +86,9 @@ def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12, model_type 
     """
     snr, rms, pkx, pky = getsnr_difmap(difmap)
     print(snr, rms, pkx, pky)
-    if pkx >=2.5 or pky >=2.5: # for weak sources, force start point to (0,0)
-        pkx=0; pky=0
+    if snr <=5: # for weak sources, force start point to (0,0)
+        if pkx >=2 or pky >=2: 
+            pkx=0; pky=0
     nm = 0
     while snr > snr_threshold:
         if nm >= max_iterations:
