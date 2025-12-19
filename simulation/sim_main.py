@@ -53,8 +53,12 @@ def clear_uv(filename):
     """删除中间文件"""
     p = Path(filename)
     if p.is_file():
-        p.unlink()
-    print(f"Deleted temporary file: {filename}")
+        try:
+            p.unlink()
+            print(f"[PID {os.getpid()}] Deleted temporary file: {out_uv}")
+        except Exception:
+            print(f"[PID {os.getpid()}] Failed to delete temporary file: {out_uv}, will just ignore it.")
+            pass
 
 
 def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str):
@@ -93,14 +97,7 @@ def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str):
         recs.append(rec)
 
     # remove temporary uv if produced
-    p = Path(out_uv)
-    if p.is_file():
-        try:
-            p.unlink()
-            print(f"[PID {os.getpid()}] Deleted temporary file: {out_uv}")
-        except Exception:
-            print(f"[PID {os.getpid()}] Failed to delete temporary file: {out_uv}, will just ignore it.")
-            pass
+    # clear_uv(out_uv)
 
     return recs
 
