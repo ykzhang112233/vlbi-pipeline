@@ -69,16 +69,17 @@ def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str):
     filepath = Path(filepath_str)
     out_dir = Path(out_dir_str)
 
-    gains = gen_antenna_gains(nants, gain_range=gain_range, dist="uniform", seed=i)
+    gains = gen_antenna_gains(nants, gain_range=gain_range, dist="uniform") #, seed=None, not necessary to set seed in parallel, give pure random
     # Use process id in logging so it's easier to trace parallel runs
     print(f"[PID {os.getpid()}] Simulation {i+1}/{os.environ.get('SIM_TIMES', '?')}, Generated Gains: {gains}")
-
+    # add: if mod start with 'jk', do jackknife by ant or time, gains_list are not necessary, only nants used, can just give a random
+    # gains = np.ones(nants)  # dummy gains for jk mode
     out_uv = cor_gain.main(
         gains_list=gains.tolist(),
         input_uv=filepath,
-        out_suffix=f"gainvar_{i+1}",
+        out_suffix=f"gainvar_{i+1}", #change this if add jk
         out_dir=out_dir,
-    )
+    ) # add parm for mode: gain_var, jk_ant, jk_time --- duplicate this and use different output for cor_gain.main
 
     df_model = fit_in_difmap.main(
         uvf_path=out_uv,

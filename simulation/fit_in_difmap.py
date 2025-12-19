@@ -82,7 +82,7 @@ def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12, model_type 
         difmap: the difmap progress from initi_difmap
         snr_threshold: the snr cut to decide how many iterations to go
         max_iteration: the maximum iterations. The progress will end if either of the above two parms reach the limit
-        model_type: 0, delta; 1, gaussian; 2-4 not used, see difmap >help addcmp
+        model_type: 0, delta; 1, circular gaussian; 2, elliptical gaussian
     """
     snr, rms, pkx, pky = getsnr_difmap(difmap)
     print(snr, rms, pkx, pky)
@@ -91,9 +91,18 @@ def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12, model_type 
         if nm >= max_iterations:
             print('limit reached, stop fitting')
             break
-        difmap.sendline('addcmp 0.1,true,%f,%f,true,0,false,1,false,0,true,%i' % (pkx, pky, model_type))
+        # help addcmp flux, v_flux, xpos, ypos, v_pos, major, v_major, ratio, v_ration, theta, v_theta, type
+        if model_type not in [0,1,2]:
+            print("model_type must be 0 (delta), 1 (circular gaussian), or 2 (elliptical gaussian). Using default circular gaussian (1).")
+            model_type = 1
+        if model_type == 0:
+            difmap.sendline('addcmp 0.1,true,%f,%f,true,0,false,1,false,0,true,0' % (pkx, pky))
+        elif model_type == 1:
+            difmap.sendline('addcmp 0.1,true,%f,%f,true,0.3,true,1,false,0,true,1' % (pkx, pky))
+        else: # for elliptical gaussian
+            difmap.sendline('addcmp 0.1,true,%f,%f,true,0.3,true,1,true,0,true,1' % (pkx, pky))
         difmap.expect('0>')
-        difmap.sendline('modelfit 80')
+        difmap.sendline('modelfit 90')
         difmap.expect('0>', timeout=500)
         snr, rms, pkx, pky = getsnr_difmap(difmap)
         print(snr, rms, pkx, pky)
