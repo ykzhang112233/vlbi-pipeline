@@ -86,6 +86,8 @@ def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12, model_type 
     """
     snr, rms, pkx, pky = getsnr_difmap(difmap)
     print(snr, rms, pkx, pky)
+    if pkx >=2.5 or pky >=2.5: # for weak sources, force to fit (0,0)
+        pkx=0; pky=0
     nm = 0
     while snr > snr_threshold:
         if nm >= max_iterations:
@@ -233,7 +235,7 @@ def main(
     os.chdir(file_dir)
     difmap, logfile = init_difmap()
     prepare_observation(difmap, filename,file_exname, freq)
-    nm = iterative_modelfit(difmap, snr_threshold=5, max_iterations=1, model_type = 1)
+    nm = iterative_modelfit(difmap, snr_threshold=3, max_iterations=1, model_type = 1)
     print(f"Total fitted components: {nm}")
     model_text = get_model_parm(difmap)
     print("Model fitting output:")
