@@ -118,7 +118,7 @@ if __name__ == "__main__":
     nants = args.nants
     auto = args.auto_set
     print(auto)
-    if auto == True: # change this hardcode setting if use --auto_set
+    if auto: # change this hardcode setting if use --auto_set
         print("Running with hardcoded auto settings for experiments.")
         epcoch_list = ['GRB221009A-ba161a1', 'GRB221009A-ba161b1', 'GRB221009A-ba161c1',
                        'GRB221009A-bl307bx1', 'GRB221009A-bl307cx1', 'GRB221009A-bl307dx1',
