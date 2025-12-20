@@ -115,7 +115,7 @@ if __name__ == "__main__":
     file_name = filepath.stem
     nants = args.nants
     auto = args.auto_set
-    if auto == True:
+    if auto == True: # change this hardcode setting if use --auto_set
         print("Running with hardcoded auto settings for experiments.")
         epcoch_list = ['GRB221009A-ba161a1', 'GRB221009A-ba161b1', 'GRB221009A-ba161c1',
                        'GRB221009A-bl307bx1', 'GRB221009A-bl307cx1', 'GRB221009A-bl307dx1',
@@ -156,7 +156,17 @@ if __name__ == "__main__":
                     recs = fut.result()
                     records.extend(recs)
         df_all = pd.DataFrame.from_records(records)
-        output_csv = out_dir / "simulated_source_parms.csv"
+        out_csv_name = f"simulated_source_parms_{epcoch_list[idx]}_{sim_times}.csv"
+        output_csv = out_dir / out_csv_name
+        # rename if necessary to avoid overwrite
+        if output_csv.is_file():
+            count = 1
+            while True:
+                new_name = output_csv.with_name(f"{output_csv.stem}_v{count}{output_csv.suffix}")
+                if not new_name.is_file():
+                    output_csv = new_name
+                    break
+                count += 1
         df_all.to_csv(output_csv, index=False)
         print(f"All simulation results saved to {output_csv}.")
 ### Usage example:
