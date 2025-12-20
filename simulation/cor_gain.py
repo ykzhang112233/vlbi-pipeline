@@ -137,6 +137,6 @@ if __name__ == "__main__":
     gains_list = args.gcor_list
     input_uv = args.uv_name
     out_suffix = args.out_suffix
-    main(gains_list, input_uv, out_suffix)
+    main(gains_list, input_uv, out_suffix, args.out_dir)
 ### Usage example:
-# python cor_gain.py --uv_name "data/target.uvf" --gcor_list "[1.0, 0.95, 1.05, 1.02]" --out_suffix "gcor_1"
+# python cor_gain.py --uv_name "data/target.uvf" --gcor_list "[1.0, 0.95, 1.05, 1.02]" --out_suffix "gcor_1" --out_dir "./corrected_uvs/"
