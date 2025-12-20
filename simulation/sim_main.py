@@ -61,7 +61,7 @@ def clear_uv(filename):
             pass
 
 
-def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str):
+def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str, clear_temp_uv=True):
     """Helper to run a single simulation iteration in a worker process.
 
     Returns a list of record dicts for this simulation.
@@ -97,7 +97,8 @@ def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str):
         recs.append(rec)
 
     # remove temporary uv if produced
-    # clear_uv(out_uv)
+    if clear_temp_uv:
+        clear_uv(out_uv)
 
     return recs
 
@@ -110,6 +111,7 @@ if __name__ == "__main__":
     parser.add_argument('--gain_range', type=float, default=0.1, help='Gain variation range (e.g., 0.1 for ±10%)')
     parser.add_argument('--sim_times', type=int, default=10, help='Number of simulation times')
     parser.add_argument('--out_dir', type=str, default='./simulations/', help='Prefix for output directory for simulation results')
+    parser.add_argument('--clear_temp_uv', type=bool, default=True, help='Whether to clear temporary uv files after simulation')
     args = parser.parse_args()
     filepath = Path(args.input_uv)
     file_name = filepath.stem
@@ -171,3 +173,8 @@ if __name__ == "__main__":
         print(f"All simulation results saved to {output_csv}.")
 ### Usage example:
 ## python sim_gain_var.py --input_uv ./simulation/fits_uvtest.uvf --nants 10 --gain_range 0.1 --sim_times 20 --out_dir ./simulation/results/
+## python sim_gain_var.py --input_uv ./simulation/GRB221009A-ba161a1.uvf 
+#                         --auto_set False  --gain_range 0.1 
+#                         --sim_times 50 --out_dir ./simulation/results/
+#                         --clear_temp_uv True
+
