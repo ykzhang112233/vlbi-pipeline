@@ -139,7 +139,7 @@ if __name__ == "__main__":
         nants = nant_list[idx]
         filepath = Path(args.input_uv.replace(file_name, epcoch_list[idx]))
         print(f"Starting simulations for epoch {epcoch_list[idx]} with {nants} antennas.")
-        out_dir = Path(args.out_dir + epcoch_list[idx])
+        out_dir = Path(args.out_dir) / epcoch_list[idx]
         os.chdir(filepath.parent)
         os.makedirs(out_dir, exist_ok=True)
         records = []
