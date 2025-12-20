@@ -117,6 +117,7 @@ if __name__ == "__main__":
     file_name = filepath.stem
     nants = args.nants
     auto = args.auto_set
+    print(auto)
     if auto == True: # change this hardcode setting if use --auto_set
         print("Running with hardcoded auto settings for experiments.")
         epcoch_list = ['GRB221009A-ba161a1', 'GRB221009A-ba161b1', 'GRB221009A-ba161c1',
