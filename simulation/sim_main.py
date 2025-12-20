@@ -106,6 +106,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Simulate gain variations and fit models in Difmap.")
     parser.add_argument('--input_uv', type=str, required=True, help='Input uv file path (e.g., /path/to/TARGET.uvf)')
     parser.add_argument('--nants', type=int, default=10, help='Number of antennas')
+    parser.add_argument('--auto_set', type=str, default=False, help='Run with hardcoded settings for certain experiments')
     parser.add_argument('--gain_range', type=float, default=0.1, help='Gain variation range (e.g., 0.1 for ±10%)')
     parser.add_argument('--sim_times', type=int, default=10, help='Number of simulation times')
     parser.add_argument('--out_dir', type=str, default='./simulations/', help='Prefix for output directory for simulation results')
@@ -113,32 +114,50 @@ if __name__ == "__main__":
     filepath = Path(args.input_uv)
     file_name = filepath.stem
     nants = args.nants
+    auto = args.auto_set
+    if auto == True:
+        print("Running with hardcoded auto settings for experiments.")
+        epcoch_list = ['GRB221009A-ba161a1', 'GRB221009A-ba161b1', 'GRB221009A-ba161c1',
+                       'GRB221009A-bl307bx1', 'GRB221009A-bl307cx1', 'GRB221009A-bl307dx1',
+                        'GRB221009A-bl307ex1', 'GRB221009A-bl307fx1', 'GRB221009A-bl307gx1']
+        nant_list = [8,9,9,9,9,10,9,11,11]
+        list_len = len(epcoch_list)
+    else:
+        epcoch_list = [file_name]
+        nant_list = [nants]
+        list_len = 1
     gain_range = args.gain_range
     sim_times = args.sim_times
-    out_dir = Path(args.out_dir + file_name)
-    os.chdir(filepath.parent)
-    os.makedirs(out_dir, exist_ok=True)
-    records = []
+
 
     # Parallel execution using processes. Each worker runs one simulation iteration.
     # WARNING: ensure `cor_gain.main` and `fit_in_difmap.main` are safe to run concurrently
     # (no shared temp files). We pass strings/paths to workers to avoid cwd issues.
-    max_workers = min(sim_times, os.cpu_count() or 6)
-    os.environ['SIM_TIMES'] = str(sim_times)
+    for idx in range(list_len):
+        nants = nant_list[idx]
+        filepath = Path(args.input_uv.replace(file_name, epcoch_list[idx]))
+        print(f"Starting simulations for epoch {epcoch_list[idx]} with {nants} antennas.")
+        out_dir = Path(args.out_dir + epcoch_list[idx])
+        os.chdir(filepath.parent)
+        os.makedirs(out_dir, exist_ok=True)
+        records = []
 
-    if max_workers <= 1:
-        # fallback to serial execution
-        for i in range(sim_times):
-            records.extend(_run_one_sim(i, str(filepath), nants, gain_range, str(out_dir)))
-    else:
-        with ProcessPoolExecutor(max_workers=max_workers) as exe:
-            futures = {exe.submit(_run_one_sim, i, str(filepath), nants, gain_range, str(out_dir)): i for i in range(sim_times)}
-            for fut in as_completed(futures):
-                recs = fut.result()
-                records.extend(recs)
-    df_all = pd.DataFrame.from_records(records)
-    output_csv = out_dir / "simulated_source_parms.csv"
-    df_all.to_csv(output_csv, index=False)
-    print(f"All simulation results saved to {output_csv}.")
+        max_workers = min(sim_times, os.cpu_count() or 6)
+        os.environ['SIM_TIMES'] = str(sim_times)
+
+        if max_workers <= 1:
+            # fallback to serial execution
+            for i in range(sim_times):
+                records.extend(_run_one_sim(i, str(filepath), nants, gain_range, str(out_dir)))
+        else:
+            with ProcessPoolExecutor(max_workers=max_workers) as exe:
+                futures = {exe.submit(_run_one_sim, i, str(filepath), nants, gain_range, str(out_dir)): i for i in range(sim_times)}
+                for fut in as_completed(futures):
+                    recs = fut.result()
+                    records.extend(recs)
+        df_all = pd.DataFrame.from_records(records)
+        output_csv = out_dir / "simulated_source_parms.csv"
+        df_all.to_csv(output_csv, index=False)
+        print(f"All simulation results saved to {output_csv}.")
 ### Usage example:
 ## python sim_gain_var.py --input_uv ./simulation/fits_uvtest.uvf --nants 10 --gain_range 0.1 --sim_times 20 --out_dir ./simulation/results/
