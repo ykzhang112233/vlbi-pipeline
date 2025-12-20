@@ -107,18 +107,22 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Simulate gain variations and fit models in Difmap.")
     parser.add_argument('--input_uv', type=str, required=True, help='Input uv file path (e.g., /path/to/TARGET.uvf)')
     parser.add_argument('--nants', type=int, default=10, help='Number of antennas')
-    parser.add_argument('--auto_set', type=str, default=False, help='Run with hardcoded settings for certain experiments')
+    # Boolean flags: provide both enable/disable forms for robust CLI parsing
+    parser.add_argument('--auto_set', dest='auto_set', action='store_true', help='Run with hardcoded settings for certain experiments')
+    parser.add_argument('--no-auto_set', dest='auto_set', action='store_false', help='Disable hardcoded settings for experiments')
+    parser.set_defaults(auto_set=False)
     parser.add_argument('--gain_range', type=float, default=0.1, help='Gain variation range (e.g., 0.1 for ±10%)')
     parser.add_argument('--sim_times', type=int, default=10, help='Number of simulation times')
     parser.add_argument('--out_dir', type=str, default='./simulations/', help='Prefix for output directory for simulation results')
-    parser.add_argument('--clear_temp_uv', type=bool, default=True, help='Whether to clear temporary uv files after simulation')
+    parser.add_argument('--clear_temp_uv', dest='clear_temp_uv', action='store_true', help='Clear temporary uv files after simulation')
+    parser.add_argument('--no-clear_temp_uv', dest='clear_temp_uv', action='store_false', help='Do not clear temporary uv files after simulation')
+    parser.set_defaults(clear_temp_uv=True)
     args = parser.parse_args()
     filepath = Path(args.input_uv)
     file_name = filepath.stem
     nants = args.nants
     auto = args.auto_set
     clear_uvs = args.clear_temp_uv
-    print(auto)
     if auto: # change this hardcode setting if use --auto_set
         print("Running with hardcoded auto settings for experiments.")
         epcoch_list = ['GRB221009A-ba161a1', 'GRB221009A-ba161b1', 'GRB221009A-ba161c1',
@@ -176,7 +180,7 @@ if __name__ == "__main__":
 ### Usage example:
 ## python sim_gain_var.py --input_uv ./simulation/fits_uvtest.uvf --nants 10 --gain_range 0.1 --sim_times 20 --out_dir ./simulation/results/
 ## python sim_gain_var.py --input_uv ./simulation/GRB221009A-ba161a1.uvf 
-#                         --auto_set False  --gain_range 0.1 
+#                         --no-auto_set  --gain_range 0.1 
 #                         --sim_times 50 --out_dir ./simulation/results/
-#                         --clear_temp_uv True
+#                         --no-clear_temp_uv
 

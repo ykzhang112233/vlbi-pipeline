@@ -24,8 +24,8 @@ LOGFILE="$LOG_DIR/run-${TS}-$FNAME.log"
 echo "Logging Python output to ${LOGFILE}"
 
 # run the python script, capture both stdout and stderr, and also show on terminal
-python sim_main.py     --input_uv  "$INPUT_FILE" --auto_set True  \
+python sim_main.py     --input_uv  "$INPUT_FILE" --auto_set  \
                        --nants $N_ANT --gain_range 0.1 --sim_times $N_SIM \
                        --out_dir "$OUT_DIR" \
-                       --clear_temp_uv False 2>&1 | tee "$LOGFILE"
+                       --no-clear_temp_uv 2>&1 | tee "$LOGFILE"
 
