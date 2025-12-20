@@ -19,7 +19,7 @@ mkdir -p "$LOG_DIR"
 
 # timestamped, unique logfile name
 TS=$(date +"%Y%m%d-%H%M%S")
-LOGFILE="$LOG_DIR/run-${TS}-$FNAME.log"
+LOGFILE="$LOG_DIR/run-${TS}.log"
 
 echo "Logging Python output to ${LOGFILE}"
 
