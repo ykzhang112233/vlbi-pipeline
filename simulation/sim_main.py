@@ -55,9 +55,9 @@ def clear_uv(filename):
     if p.is_file():
         try:
             p.unlink()
-            print(f"[PID {os.getpid()}] Deleted temporary file: {out_uv}")
+            print(f"[PID {os.getpid()}] Deleted temporary file: {filename}")
         except Exception:
-            print(f"[PID {os.getpid()}] Failed to delete temporary file: {out_uv}, will just ignore it.")
+            print(f"[PID {os.getpid()}] Failed to delete temporary file: {filename}, will just ignore it.")
             pass
 
 
