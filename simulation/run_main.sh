@@ -9,7 +9,8 @@ FNAME="GRB221009A-bl307gx1"
 N_ANT=11
 # a1,b1,c1  b,c,d ,e, f, g
 # 8,9,9,    9,9,10,9,11,11
-N_SIM=100
+# if you set --auto_set, then FNAME and N_ANT are not used, change hard_coded parms in the sim_main.py
+N_SIM=1000
 DIR="/groups/public_cluster/home/ykzhang/VLBI/grb_data/bl307/calibrated_data_GRB221009a-v1/"
 INPUT_FILE="$DIR/$FNAME.uvf"
 OUT_DIR="$DIR/simulations/"
