@@ -117,6 +117,7 @@ if __name__ == "__main__":
     file_name = filepath.stem
     nants = args.nants
     auto = args.auto_set
+    clear_uvs = args.clear_temp_uv
     print(auto)
     if auto: # change this hardcode setting if use --auto_set
         print("Running with hardcoded auto settings for experiments.")
@@ -151,10 +152,10 @@ if __name__ == "__main__":
         if max_workers <= 1:
             # fallback to serial execution
             for i in range(sim_times):
-                records.extend(_run_one_sim(i, str(filepath), nants, gain_range, str(out_dir)))
+                records.extend(_run_one_sim(i, str(filepath), nants, gain_range, str(out_dir), clear_uvs))
         else:
             with ProcessPoolExecutor(max_workers=max_workers) as exe:
-                futures = {exe.submit(_run_one_sim, i, str(filepath), nants, gain_range, str(out_dir)): i for i in range(sim_times)}
+                futures = {exe.submit(_run_one_sim, i, str(filepath), nants, gain_range, str(out_dir), clear_uvs): i for i in range(sim_times)}
                 for fut in as_completed(futures):
                     recs = fut.result()
                     records.extend(recs)
