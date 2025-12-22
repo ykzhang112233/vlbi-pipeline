@@ -61,7 +61,7 @@ def clear_uv(filename):
             pass
 
 
-def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str, clear_temp_uv=True):
+def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear_temp_uv=True):
     """Helper to run a single simulation iteration in a worker process.
 
     Returns a list of record dicts for this simulation.
@@ -78,12 +78,28 @@ def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str, clear_temp_uv=
     print(f"[PID {os.getpid()}] Simulation {i+1}/{os.environ.get('SIM_TIMES', '?')}, Generated Gains: {gains}")
     # add: if mod start with 'jk', do jackknife by ant or time, gains_list are not necessary, only nants used, can just give a random
     # gains = np.ones(nants)  # dummy gains for jk mode
-    out_uv = cor_gain.main(
-        gains_list=gains.tolist(),
-        input_uv=filepath,
-        out_suffix=f"gainvar_{i+1}", #change this if add jk
-        out_dir=out_dir,
-    ) # add parm for mode: gain_var, jk_ant, jk_time --- duplicate this and use different output for cor_gain.main
+    # out_uv = cor_gain.main(
+    #     gains_list=gains.tolist(),
+    #     input_uv=filepath,
+    #     out_suffix=f"gainvar_{i+1}", #change this if add jk
+    #     out_dir=out_dir,
+    # ) # add parm for mode: gain_var, jk_ant, jk_time --- duplicate this and use different output for cor_gain.main
+    
+    if sim_mode == 'gain_var':
+        out_suffix = f"gainvar_{i+1}"
+    elif sim_mode == 'jk_drop_ant':
+        out_suffix = f"jk_dropant_{i+1}"  # cycle through antennas
+    elif sim_mode == 'jk_drop_time':
+        out_suffix = f"jk_droptbin_{i+1}"  # cycle through 10 time bins
+    else:
+        raise ValueError("sim_mode must be 'gain_var', 'jk_drop_ant', or 'jk_drop_time'")
+
+    out_uv, outparm_name, outparm = cor_gain.main(
+        gains_list=gains.tolist(), 
+        input_uv=filepath, 
+        out_suffix=out_suffix, 
+        out_dir=out_dir, 
+        mode=sim_mode)
 
     df_model = fit_in_difmap.main(
         uvf_path=out_uv,
@@ -92,7 +108,8 @@ def _run_one_sim(i, filepath_str, nants, gain_range, out_dir_str, clear_temp_uv=
 
     recs = []
     for rec in df_model.to_dict(orient='records'):
-        rec['gains'] = ','.join([f"{g:.2f}" for g in gains])
+        # rec['gains'] = ','.join([f"{g:.2f}" for g in gains])
+        rec[outparm_name] = outparm
         rec['simulation_id'] = i + 1
         recs.append(rec)
 
@@ -113,6 +130,7 @@ if __name__ == "__main__":
     parser.set_defaults(auto_set=False)
     parser.add_argument('--gain_range', type=float, default=0.1, help='Gain variation range (e.g., 0.1 for ±10%)')
     parser.add_argument('--sim_times', type=int, default=10, help='Number of simulation times')
+    parser.add_argument('--s_mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time'], help='Simulation mode: gain variation or jackknife')
     parser.add_argument('--out_dir', type=str, default='./simulations/', help='Prefix for output directory for simulation results')
     parser.add_argument('--clear_temp_uv', dest='clear_temp_uv', action='store_true', help='Clear temporary uv files after simulation')
     parser.add_argument('--no-clear_temp_uv', dest='clear_temp_uv', action='store_false', help='Do not clear temporary uv files after simulation')
@@ -136,6 +154,7 @@ if __name__ == "__main__":
         list_len = 1
     gain_range = args.gain_range
     sim_times = args.sim_times
+    sim_mode = args.s_mode
 
 
     # Parallel execution using processes. Each worker runs one simulation iteration.
@@ -144,27 +163,35 @@ if __name__ == "__main__":
     for idx in range(list_len):
         nants = nant_list[idx]
         filepath = Path(args.input_uv.replace(file_name, epcoch_list[idx]))
-        print(f"Starting simulations for epoch {epcoch_list[idx]} with {nants} antennas.")
+        print(f"Starting {sim_mode} simulations for epoch {epcoch_list[idx]} with {nants} antennas.")
         out_dir = Path(args.out_dir) / epcoch_list[idx]
         os.chdir(filepath.parent)
         os.makedirs(out_dir, exist_ok=True)
         records = []
-
+        if sim_mode.startswith('jk'):
+            # in jk mode, sim_times is determined by nants or other parms, here just set a large number to cover all
+            if sim_mode == 'jk_drop_ant':
+                print(f"updating sim_times to number of antennas: {nants} for jk_drop_ant mode.")
+                sim_times = nants  # drop each antenna once
+            elif sim_mode == 'jk_drop_time':
+                print(f"updating sim_times to 10 for jk_drop_time mode.")
+                sim_times = 10  # drop each time bin once
+            print(f"Simulation mode: {sim_mode}, will run {sim_times} simulations per epoch.")
         max_workers = min(sim_times, os.cpu_count() or 6)
         os.environ['SIM_TIMES'] = str(sim_times)
 
         if max_workers <= 1:
             # fallback to serial execution
             for i in range(sim_times):
-                records.extend(_run_one_sim(i, str(filepath), nants, gain_range, str(out_dir), clear_uvs))
+                records.extend(_run_one_sim(i, str(filepath), nants, gain_range,sim_mode, str(out_dir), clear_uvs))
         else:
             with ProcessPoolExecutor(max_workers=max_workers) as exe:
-                futures = {exe.submit(_run_one_sim, i, str(filepath), nants, gain_range, str(out_dir), clear_uvs): i for i in range(sim_times)}
+                futures = {exe.submit(_run_one_sim, i, str(filepath), nants, gain_range, sim_mode, str(out_dir), clear_uvs): i for i in range(sim_times)}
                 for fut in as_completed(futures):
                     recs = fut.result()
                     records.extend(recs)
         df_all = pd.DataFrame.from_records(records)
-        out_csv_name = f"simulated_source_parms_{epcoch_list[idx]}_{sim_times}.csv"
+        out_csv_name = f"simulated_source_parms_{epcoch_list[idx]}_{sim_mode}_{sim_times}.csv"
         output_csv = out_dir / out_csv_name
         # rename if necessary to avoid overwrite
         if output_csv.is_file():
@@ -181,6 +208,7 @@ if __name__ == "__main__":
 ## python sim_gain_var.py --input_uv ./simulation/fits_uvtest.uvf --nants 10 --gain_range 0.1 --sim_times 20 --out_dir ./simulation/results/
 ## python sim_gain_var.py --input_uv ./simulation/GRB221009A-ba161a1.uvf 
 #                         --no-auto_set  --gain_range 0.1 
+#                         --s_mode jk_drop_ant
 #                         --sim_times 50 --out_dir ./simulation/results/
 #                         --no-clear_temp_uv
 
