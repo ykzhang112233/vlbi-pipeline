@@ -242,10 +242,15 @@ def jackknife_drop_time_frac(
         data = gdata.data
         if data.shape[-1] != 3:
             raise ValueError(f"Unexpected DATA last axis (expect 3=Re/Im/Wt), got {data.shape}")
-
-        # 你的文件：DATE 已经是完整 JD（含小数天），_DATE 基本为 0
-        t = np.asarray(gdata["DATE"], dtype=float)  # shape (Nrec,)
-        print(t[0])
+        cols = set([n.upper() for n in gdata.columns.names])
+        if "DATE" not in cols:
+            raise RuntimeError(f"No DATE column found. Available={sorted(cols)}")
+        if "_DATE" not in cols:
+            raise RuntimeError(f"No _DATE column found. Available={sorted(cols)}")
+        
+        date = np.asarray(gdata["DATE"], dtype=float)
+        ddate = np.asarray(gdata["_DATE"], dtype=float)
+        t = date + ddate  # 真实 JD（天）
         tmin, tmax = float(np.nanmin(t)), float(np.nanmax(t))
         edges = np.linspace(tmin, tmax, n_bins + 1)  # 等时间宽度
         print(edges)
