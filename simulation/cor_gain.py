@@ -245,10 +245,10 @@ def jackknife_drop_time_frac(
 
         # 你的文件：DATE 已经是完整 JD（含小数天），_DATE 基本为 0
         t = np.asarray(gdata["DATE"], dtype=float)  # shape (Nrec,)
-
+        print(t[0])
         tmin, tmax = float(np.nanmin(t)), float(np.nanmax(t))
         edges = np.linspace(tmin, tmax, n_bins + 1)  # 等时间宽度
-
+        print(edges)
         t0, t1 = edges[bin_index], edges[bin_index + 1]
         # 最后一段包含右端点避免漏掉最后一个时刻
         if bin_index == n_bins - 1:
@@ -296,6 +296,7 @@ def main(gains_list, input_uv, out_suffix, out_dir, mode='gain_var'):
     elif mode == 'jk_drop_time':
         # here the out_suffix is like jk_droptbin_1, just extract the bin index
         bin_index = int(out_suffix.split('_')[-1]) - 1  # make it start from 0
+        print(f"Dropping time bin index: {bin_index}")
         out_uvdata, vis_dropped, time_bin_dropped = jackknife_drop_time_frac(filepath,out_uv,n_bins=10,bin_index=bin_index,zero_data=True)
         out_par_name = "dropped_time"
         out_par = f"dropped time bin: {time_bin_dropped}, dropped visibilities: {vis_dropped}"
