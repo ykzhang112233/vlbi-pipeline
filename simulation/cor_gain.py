@@ -245,10 +245,10 @@ def jackknife_drop_time_frac(
 
         # 你的文件：DATE 已经是完整 JD（含小数天），_DATE 基本为 0
         t = np.asarray(gdata["DATE"], dtype=float)  # shape (Nrec,)
-
+        print(t[0])
         tmin, tmax = float(np.nanmin(t)), float(np.nanmax(t))
         edges = np.linspace(tmin, tmax, n_bins + 1)  # 等时间宽度
-
+        print(edges)
         t0, t1 = edges[bin_index], edges[bin_index + 1]
         # 最后一段包含右端点避免漏掉最后一个时刻
         if bin_index == n_bins - 1:
