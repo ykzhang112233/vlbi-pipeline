@@ -11,6 +11,7 @@ N_ANT=11
 N_SIM=1000
 # for jk_ related mode, N_SIM is not used, the number of jk samples is determined by N_ANT or other parms in sim_main.py
 SIM_MODE="jk_drop_ant"  # options: gain_var, jk_drop_ant, jk_drop_time
+
 DIR="/groups/public_cluster/home/ykzhang/VLBI/grb_data/bl307/calibrated_data_GRB221009a-v1/"
 INPUT_FILE="$DIR/$FNAME.uvf"
 OUT_DIR="$DIR/simulations/"
