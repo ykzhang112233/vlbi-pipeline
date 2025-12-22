@@ -212,7 +212,7 @@ def get_model_parm(difmap):
         str: 命令输出的文本(text)
     """
     difmap.sendline('modelfit 0')
-    difmap.expect('0>', timeout=500)
+    difmap.expect('0>', timeout=1000)
     out = difmap.before or b""
     print(out)
     if isinstance(out, bytes):
