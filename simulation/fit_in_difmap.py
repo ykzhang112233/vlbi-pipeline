@@ -110,6 +110,8 @@ def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12, model_type 
         difmap.expect('0>', timeout=5000)
         snr, rms, pkx, pky = getsnr_difmap(difmap)
         print(snr, rms, pkx, pky)
+        difmap.sendline('modelfit 100')
+        difmap.expect('0>', timeout=1000)
         nm += 1
     return nm
 

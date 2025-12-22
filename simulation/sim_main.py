@@ -180,7 +180,7 @@ if __name__ == "__main__":
             elif sim_mode == 'jk_drop_time':
                 print(f"updating sim_times to 10 for jk_drop_time mode.")
                 # sim_times = 10  # drop each time bin once
-            print(f"Simulation mode: {sim_mode}, will run {sim_times} simulations per epoch.")
+        print(f"Simulation mode: {sim_mode}, will run {sim_times} simulations per epoch.")
         max_workers = min(sim_times, os.cpu_count() or 5)
         os.environ['SIM_TIMES'] = str(sim_times)
 
