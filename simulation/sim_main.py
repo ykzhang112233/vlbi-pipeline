@@ -90,10 +90,10 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
         print(f"[PID {os.getpid()}] Applying gain variation simulation with suffix: {out_suffix}")
         print(f"[PID {os.getpid()}] Gains applied: {gains}")
     elif sim_mode == 'jk_drop_ant':
-        out_suffix = f"jk_dropant_{i+1}"  # cycle through antennas
+        out_suffix = f"jk_dropant_{i % nants + 1}"  # cycle through antennas
         print(f"[PID {os.getpid()}] Applying jackknife drop antenna simulation with suffix: {out_suffix}")
     elif sim_mode == 'jk_drop_time':
-        out_suffix = f"jk_droptbin_{i+1}"  # cycle through 10 time bins
+        out_suffix = f"jk_droptbin_{i % 10 + 1}"  # cycle through 10 time bins
         print(f"[PID {os.getpid()}] Applying jackknife drop time bin simulation with suffix: {out_suffix}")
     else:
         raise ValueError("sim_mode must be 'gain_var', 'jk_drop_ant', or 'jk_drop_time'")
@@ -176,12 +176,12 @@ if __name__ == "__main__":
             # in jk mode, sim_times is determined by nants or other parms, here just set a large number to cover all
             if sim_mode == 'jk_drop_ant':
                 print(f"updating sim_times to number of antennas: {nants} for jk_drop_ant mode.")
-                sim_times = nants  # drop each antenna once
+                # sim_times = nants  # drop each antenna once
             elif sim_mode == 'jk_drop_time':
                 print(f"updating sim_times to 10 for jk_drop_time mode.")
-                sim_times = 10  # drop each time bin once
+                # sim_times = 10  # drop each time bin once
             print(f"Simulation mode: {sim_mode}, will run {sim_times} simulations per epoch.")
-        max_workers = min(sim_times, os.cpu_count() or 6)
+        max_workers = min(sim_times, os.cpu_count() or 5)
         os.environ['SIM_TIMES'] = str(sim_times)
 
         if max_workers <= 1:

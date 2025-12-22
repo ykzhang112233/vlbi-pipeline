@@ -176,6 +176,11 @@ def jackknife_drop_antenna(
     zero_data: If True, set Re/Im to 0 for dropped records (cleaner; does not affect DIFMAP because weight=0)
     """
     os.chdir(in_file.parent)
+    ant_map = load_antenna_map_uvfits(in_file)
+    ant_name = ant_map.get(drop_ant, f"ANT{drop_ant}")
+    if os.path.exists(out_uvfits):
+        print(f"Warning: output file {out_uvfits} already exists, in this mode, no need to overwrite.")
+        return out_uvfits, "0 of 0", ant_name
     shutil.copyfile(in_file.name, out_uvfits)
     warnings.filterwarnings("ignore", category=VerifyWarning)
     with fits.open(out_uvfits, mode="update", memmap=False) as hdul:
@@ -194,8 +199,6 @@ def jackknife_drop_antenna(
             a1, a2 = baseline_to_ants(int(bl))
             if a1 == drop_ant or a2 == drop_ant:
                 mask[i] = True
-        ant_map = load_antenna_map_uvfits(in_file)
-        ant_name = ant_map.get(drop_ant, f"ANT{drop_ant}")
         print(f"Dropping antenna {drop_ant} ({ant_name}), total records modified: ", np.sum(mask))
         n_drop = int(mask.sum())
         v_drop = f"{int(mask.sum())} of {gdata.shape[0]}"
@@ -235,6 +238,10 @@ def jackknife_drop_time_frac(
     if not (0 <= bin_index < n_bins):
         raise ValueError(f"bin_index must be in [0, {n_bins-1}]")
     os.chdir(in_uvfits.parent)
+    n_drop = f"{bin_index + 1}th out of {n_bins} time bins"
+    if os.path.exists(out_uvfits):
+        print(f"Warning: output file {out_uvfits} already exists, in this mode, no need to overwrite.")
+        return out_uvfits, "0 of 0", n_drop
     shutil.copyfile(in_uvfits, out_uvfits)
     warnings.filterwarnings("ignore", category=VerifyWarning)
     with fits.open(out_uvfits, mode="update", memmap=False) as hdul:
@@ -261,7 +268,7 @@ def jackknife_drop_time_frac(
         else:
             mask = (t >= t0) & (t < t1)
         v_drop = f"{int(mask.sum())} of {gdata.shape[0]}."
-        n_drop = f"{bin_index + 1}th out of {n_bins} time bins"
+        
         # 置零权重（DIFMAP 等效丢弃）
         data[mask, ..., 2] = 0.0
         if zero_data:
