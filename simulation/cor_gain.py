@@ -6,7 +6,8 @@ import numpy as np
 import argparse
 from pathlib import Path
 from astropy.io import fits
-
+import warnings
+from astropy.io.fits.verify import VerifyWarning
 # Note: this single script file read the gain factor array/matrix and 
 #      apply the gain factor to the uvfits data by surgery (directly modify the vis data in uvfits file)
 #      input: original uvfits file, gain factor array/matrix
@@ -60,10 +61,8 @@ def apply_gains_to_uvfits_by_surgery(
     """
     os.chdir(in_file.parent)
     shutil.copyfile(in_file.name, out_uvfits)
-    import warnings
-    from astropy.io.fits.verify import VerifyWarning
+
     warnings.filterwarnings("ignore", category=VerifyWarning)
-    
     with fits.open(out_uvfits, mode="update", memmap=False) as hdul:
         # UVFITS visibilities 通常在 PRIMARY 的 random groups 里
         hdu = hdul[0]
@@ -123,6 +122,7 @@ def load_antenna_map_uvfits(path: str) -> dict[int, str]:
       - 天线号列：ANTENNA_NO 或 NOSTA
       - 名称列：ANNAME 或 ANNAME1（少见）
     """
+    warnings.filterwarnings("ignore", category=VerifyWarning)
     with fits.open(path) as hdul:
         # 你的文件里 EXTNAME 就是 "AIPS AN"
         an_hdu = None
@@ -177,7 +177,7 @@ def jackknife_drop_antenna(
     """
     os.chdir(in_file.parent)
     shutil.copyfile(in_file.name, out_uvfits)
-
+    warnings.filterwarnings("ignore", category=VerifyWarning)
     with fits.open(out_uvfits, mode="update", memmap=False) as hdul:
         hdu = hdul[0]
         gdata = hdu.data
@@ -236,7 +236,7 @@ def jackknife_drop_time_frac(
         raise ValueError(f"bin_index must be in [0, {n_bins-1}]")
     os.chdir(in_uvfits.parent)
     shutil.copyfile(in_uvfits, out_uvfits)
-
+    warnings.filterwarnings("ignore", category=VerifyWarning)
     with fits.open(out_uvfits, mode="update", memmap=False) as hdul:
         gdata = hdul[0].data
         data = gdata.data
