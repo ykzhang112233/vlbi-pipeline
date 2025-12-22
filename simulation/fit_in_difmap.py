@@ -86,9 +86,10 @@ def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12, model_type 
     """
     snr, rms, pkx, pky = getsnr_difmap(difmap)
     print(snr, rms, pkx, pky)
-    if snr <=5: # for weak sources, force start point to (0,0)
-        if pkx >=2 or pky >=2: 
-            pkx=0; pky=0
+    if snr <=6: # for weak sources, force start point to (0,0)
+        # if pkx >=2 or pky >=2: 
+        print("weak source, set start point to (0,0)")
+        pkx=0; pky=0
     nm = 0
     while snr > snr_threshold:
         if nm >= max_iterations:
@@ -105,8 +106,8 @@ def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12, model_type 
         else: # for elliptical gaussian
             difmap.sendline('addcmp 0.1,true,%f,%f,true,0.3,true,1,true,0,true,1' % (pkx, pky))
         difmap.expect('0>')
-        difmap.sendline('modelfit 90')
-        difmap.expect('0>', timeout=500)
+        difmap.sendline('modelfit 100')
+        difmap.expect('0>', timeout=5000)
         snr, rms, pkx, pky = getsnr_difmap(difmap)
         print(snr, rms, pkx, pky)
         nm += 1
@@ -201,7 +202,7 @@ def parse_model_table(
 
     return df
 
-def get_model_parm(difmap, prompt=r"0>"):
+def get_model_parm(difmap):
     """
     在 difmap 里执行一条命令，并返回从命令回显到下一个提示符之间的全部文本输出。
     参数:
@@ -210,9 +211,8 @@ def get_model_parm(difmap, prompt=r"0>"):
     返回:
         str: 命令输出的文本(text)
     """
-    cmd = 'modelfit 0'
-    difmap.sendline(cmd)
-    difmap.expect(prompt)
+    difmap.sendline('modelfit 0')
+    difmap.expect('0>', timeout=500)
     out = difmap.before or b""
     print(out)
     if isinstance(out, bytes):
@@ -221,8 +221,8 @@ def get_model_parm(difmap, prompt=r"0>"):
 
     # difmap 通常会回显你输入的命令，把第一行是命令的情况去掉
     lines = out.splitlines()
-    if lines and lines[0].strip() == cmd.strip():
-        lines = lines[1:]
+    # if lines and lines[0].strip() == cmd.strip():
+    lines = lines[1:]
     return "\n".join(lines).strip()
 
 def main(
