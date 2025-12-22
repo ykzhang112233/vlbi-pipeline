@@ -9,7 +9,7 @@ FNAME="GRB221009A-bl307cx1"
 # [8,9,9, 9,9,10,9,11,11]
 N_ANT=9
 # if you set --auto_set, then FNAME and N_ANT are not used, change hard_coded parms in the sim_main.py
-N_SIM=100
+N_SIM=20
 # for jk_ related mode, N_SIM is not used, the number of jk samples is determined by N_ANT or other parms in sim_main.py
 SIM_MODE="jk_drop_time"  # options: gain_var, jk_drop_ant, jk_drop_time
 
