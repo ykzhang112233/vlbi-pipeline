@@ -296,6 +296,7 @@ def main(gains_list, input_uv, out_suffix, out_dir, mode='gain_var'):
     elif mode == 'jk_drop_time':
         # here the out_suffix is like jk_droptbin_1, just extract the bin index
         bin_index = int(out_suffix.split('_')[-1]) - 1  # make it start from 0
+        print(f"Dropping time bin index: {bin_index}")
         out_uvdata, vis_dropped, time_bin_dropped = jackknife_drop_time_frac(filepath,out_uv,n_bins=10,bin_index=bin_index,zero_data=True)
         out_par_name = "dropped_time"
         out_par = f"dropped time bin: {time_bin_dropped}, dropped visibilities: {vis_dropped}"
