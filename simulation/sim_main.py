@@ -75,7 +75,7 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
 
     gains = gen_antenna_gains(nants, gain_range=gain_range, dist="uniform") #, seed=None, not necessary to set seed in parallel, give pure random
     # Use process id in logging so it's easier to trace parallel runs
-    print(f"[PID {os.getpid()}] Simulation {i+1}/{os.environ.get('SIM_TIMES', '?')}, Generated Gains: {gains}")
+    print(f"[PID {os.getpid()}] Simulation {i+1}/{os.environ.get('SIM_TIMES', '?')}")
     # add: if mod start with 'jk', do jackknife by ant or time, gains_list are not necessary, only nants used, can just give a random
     # gains = np.ones(nants)  # dummy gains for jk mode
     # out_uv = cor_gain.main(
@@ -87,10 +87,14 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
     
     if sim_mode == 'gain_var':
         out_suffix = f"gainvar_{i+1}"
+        print(f"[PID {os.getpid()}] Applying gain variation simulation with suffix: {out_suffix}")
+        print(f"[PID {os.getpid()}] Gains applied: {gains}")
     elif sim_mode == 'jk_drop_ant':
         out_suffix = f"jk_dropant_{i+1}"  # cycle through antennas
+        print(f"[PID {os.getpid()}] Applying jackknife drop antenna simulation with suffix: {out_suffix}")
     elif sim_mode == 'jk_drop_time':
         out_suffix = f"jk_droptbin_{i+1}"  # cycle through 10 time bins
+        print(f"[PID {os.getpid()}] Applying jackknife drop time bin simulation with suffix: {out_suffix}")
     else:
         raise ValueError("sim_mode must be 'gain_var', 'jk_drop_ant', or 'jk_drop_time'")
 
