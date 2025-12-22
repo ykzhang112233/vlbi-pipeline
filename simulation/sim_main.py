@@ -176,10 +176,14 @@ if __name__ == "__main__":
             # in jk mode, sim_times is determined by nants or other parms, here just set a large number to cover all
             if sim_mode == 'jk_drop_ant':
                 print(f"updating sim_times to number of antennas: {nants} for jk_drop_ant mode.")
-                # sim_times = nants  # drop each antenna once
+                if sim_times <= nants:
+                    print(f"Note: sim_times {sim_times} is less than nants {nants}, updating to nants for at least one drop per antenna.")
+                    sim_times = nants  # drop each antenna once
             elif sim_mode == 'jk_drop_time':
                 print(f"updating sim_times to 10 for jk_drop_time mode.")
-                # sim_times = 10  # drop each time bin once
+                if sim_times <= 10:
+                    print(f"Note: sim_times {sim_times} is less than 10, updating to 10 for at least one drop per time bin.")
+                    sim_times = 10  # drop each time bin once
         print(f"Simulation mode: {sim_mode}, will run {sim_times} simulations per epoch.")
         max_workers = min(sim_times, os.cpu_count() or 5)
         os.environ['SIM_TIMES'] = str(sim_times)

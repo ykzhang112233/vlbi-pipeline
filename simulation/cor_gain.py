@@ -261,6 +261,7 @@ def jackknife_drop_time_frac(
         tmin, tmax = float(np.nanmin(t)), float(np.nanmax(t))
         edges = np.linspace(tmin, tmax, n_bins + 1)  # 等时间宽度
         print(edges)
+        # todo: try make random starting time and 1/10 time width for more robust jk test
         t0, t1 = edges[bin_index], edges[bin_index + 1]
         # 最后一段包含右端点避免漏掉最后一个时刻
         if bin_index == n_bins - 1:
