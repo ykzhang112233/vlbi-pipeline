@@ -316,6 +316,7 @@ def random_drop_timeblock(
     
     os.chdir(in_uvfits.parent)
     rng = np.random.default_rng(seed)
+    # will overwrite if exists, will error is they are the same file
     shutil.copyfile(in_uvfits, out_uvfits)
 
     warnings.filterwarnings("ignore", category=VerifyWarning)
