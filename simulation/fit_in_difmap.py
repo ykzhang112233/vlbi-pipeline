@@ -2,7 +2,7 @@ import pexpect
 import os
 import sys
 import re
-import time
+import time, shutil
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -239,12 +239,14 @@ def get_model_parm(difmap):
 def main(
         uvf_path:Path,
         freq:float,
-        script_path:str = 'single_mf_dfmp',
+        script_path:str = './single_mf_dfmp',
         )->pd.Series:
     filepath = Path(uvf_path)
-    script_path = script_path
+    # copy the script in the code directory to the working directory
     file_dir = filepath.parent
     filename = filepath.stem
+    shutil.copy(script_path, file_dir)
+    script_name =  'single_mf_dfmp'
     file_exname = filepath.suffix.lstrip('.')
     os.chdir(file_dir)
     difmap, logfile = init_difmap()
@@ -252,7 +254,7 @@ def main(
     selection = 1
     if  selection == 1:
         print("Using difmap script for model fitting.")
-        read_difmap_script(difmap,script_path,filename)
+        read_difmap_script(difmap,script_name,filename)
     else:
         print("Using iterative modelfit for model fitting.")
         nm = iterative_modelfit(difmap, snr_threshold=3, max_iterations=1, model_type = 1)
