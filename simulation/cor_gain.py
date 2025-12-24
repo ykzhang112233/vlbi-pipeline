@@ -292,7 +292,7 @@ def random_drop_timeblock(
     drop_frac: float = 0.10,
     edge_frac: float = 0.01,
     seed: int | None = None,
-    zero_data: bool = True,
+    zero_data: bool = False,
 ):
     """
     在有效时间区间内随机选择一个连续时间窗并丢弃（weight=0）。
