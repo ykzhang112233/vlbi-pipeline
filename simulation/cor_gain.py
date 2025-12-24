@@ -391,7 +391,7 @@ def main(gains_list, input_uv, out_suffix, out_dir, mode='gain_var'):
     elif mode == 'jk_drop_ant':
         # here the out_suffix is like jk_dropant_1, just extract the ant number
         ant_to_drop = int(out_suffix.split('_')[-1])
-        out_uvdata, vis_dropped, ant_dropped = jackknife_drop_antenna(filepath,out_uv,drop_ant=ant_to_drop,zero_data=True)
+        out_uvdata, vis_dropped, ant_dropped = jackknife_drop_antenna(filepath,out_uv,drop_ant=ant_to_drop,zero_data=False)
         out_par_name = "dropped_ant"
         out_par = f"dropped antenna: {ant_dropped}, dropped visibilities: {vis_dropped}"
         print(f"Jackknife (drop antenna {ant_dropped}) applied and file with {out_suffix} saved to {out_uvdata}.")
@@ -399,7 +399,7 @@ def main(gains_list, input_uv, out_suffix, out_dir, mode='gain_var'):
         # here the out_suffix is like jk_droptbin_1, just extract the bin index
         bin_index = int(out_suffix.split('_')[-1]) - 1  # make it start from 0
         print(f"Dropping time bin index: {bin_index}")
-        out_uvdata, vis_dropped, time_bin_dropped = jackknife_drop_time_frac(filepath,out_uv,n_bins=10,bin_index=bin_index,zero_data=True)
+        out_uvdata, vis_dropped, time_bin_dropped = jackknife_drop_time_frac(filepath,out_uv,n_bins=10,bin_index=bin_index,zero_data=False)
         # new method: random drop time block
         out_par_name = "dropped_time"
         out_par = f"dropped time bin: {time_bin_dropped}, dropped visibilities: {vis_dropped}"
