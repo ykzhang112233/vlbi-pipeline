@@ -248,11 +248,13 @@ def main(
     file_exname = filepath.suffix.lstrip('.')
     os.chdir(file_dir)
     difmap, logfile = init_difmap()
+    prepare_observation(difmap, filename,file_exname, freq)
     selection = 1
     if  selection == 1:
+        print("Using difmap script for model fitting.")
         read_difmap_script(difmap,script_path,filename)
     else:
-        prepare_observation(difmap, filename,file_exname, freq)
+        print("Using iterative modelfit for model fitting.")
         nm = iterative_modelfit(difmap, snr_threshold=3, max_iterations=1, model_type = 1)
         print(f"Total fitted components: {nm}")
     model_text = get_model_parm(difmap)
