@@ -166,7 +166,7 @@ def jackknife_drop_antenna(
     in_file: Path,
     out_uvfits: str,
     drop_ant: int,
-    zero_data: bool = True,
+    zero_data: bool = False,
     ):
     """
     生成一个“等效删除某天线”的 UVFITS：
@@ -226,7 +226,7 @@ def jackknife_drop_time_frac(
     out_uvfits: str,
     n_bins: int = 10,
     bin_index: int = 0,
-    zero_data: bool = True,
+    zero_data: bool = False,
 ):
     """
     用 DATE(JD, 含小数天) 作为时间轴，把观测时间跨度均分成 n_bins 段，
