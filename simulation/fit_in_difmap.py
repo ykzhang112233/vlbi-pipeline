@@ -122,7 +122,7 @@ def read_observation(difmap,filename):
 
 def read_difmap_script(difmap,script_path,outname):
     difmap.sendline('@%s %s' % (script_path, outname))
-    difmap.expect('Writing difmap environment.*0>',timeout=500)
+    difmap.expect('Writing difmap environment.*0>',timeout=5000)
 
 def save_model(difmap,filename):
     mod_file = filename
