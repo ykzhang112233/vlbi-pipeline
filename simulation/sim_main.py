@@ -95,9 +95,11 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
     elif sim_mode == 'jk_drop_time':
         out_suffix = f"jk_droptbin_{i % 10 + 1}"  # cycle through 10 time bins
         print(f"[PID {os.getpid()}] Applying jackknife drop time bin simulation with suffix: {out_suffix}")
+    elif sim_mode == 'jk_drop_timeblock':
+        out_suffix = f"jk_droptblock_{i + 1}" 
+        print(f"[PID {os.getpid()}] Applying jackknife drop time block simulation with suffix: {out_suffix}")
     else:
-        raise ValueError("sim_mode must be 'gain_var', 'jk_drop_ant', or 'jk_drop_time'")
-
+        raise ValueError("sim_mode must be 'gain_var', 'jk_drop_ant', 'jk_drop_time', or 'jk_drop_timeblock'")
     out_uv, outparm_name, outparm = cor_gain.main(
         gains_list=gains.tolist(), 
         input_uv=filepath, 
