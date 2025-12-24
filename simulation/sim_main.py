@@ -106,11 +106,14 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
         out_suffix=out_suffix, 
         out_dir=out_dir, 
         mode=sim_mode)
-
+    
+    do_debug = False
+    if not clear_temp_uv:
+        do_debug =  True
     df_model = fit_in_difmap.main(
         uvf_path=out_uv,
         freq=9,
-        debug=False,  # set true if needed
+        debug=do_debug,  # set true if needed
     )
 
     recs = []
