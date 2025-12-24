@@ -110,6 +110,7 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
     df_model = fit_in_difmap.main(
         uvf_path=out_uv,
         freq=9,
+        debug=False,  # set true if needed
     )
 
     recs = []

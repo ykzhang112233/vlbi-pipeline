@@ -124,7 +124,7 @@ def read_difmap_script(difmap,script_path,outname):
     difmap.sendline('@%s %s' % (script_path, outname))
     difmap.expect('Writing difmap environment.*0>',timeout=5000)
 
-def save_model(difmap,filename):
+def save_df_file(difmap,filename):
     mod_file = filename
     difmap.sendline('save %s' % mod_file)
     difmap.expect('0>')
@@ -240,6 +240,7 @@ def main(
         uvf_path:Path,
         freq:float,
         script_path:str = './single_mf_dfmp',
+        debug:bool = False,
         )->pd.Series:
     filepath = Path(uvf_path)
     # copy the script in the code directory to the working directory
@@ -253,7 +254,7 @@ def main(
     prepare_observation(difmap, filename,file_exname, freq)
     selection = 0
     if  selection == 1:
-        filename= filename + '_sc'
+        filename= filename + '_scr'
         print("Using difmap script for model fitting.")
         read_difmap_script(difmap,script_name,filename)
     else:
@@ -266,6 +267,9 @@ def main(
     df_model = parse_model_table(model_text, default_freq=None)
     print("Parsed model parameters:")
     print(df_model)
+    if debug:
+        print("Debug mode, will save difmap output files")
+        save_df_file(difmap,filename + '_sav')
     cleanup_difmap(difmap, logfile)
     return df_model
         
