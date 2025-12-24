@@ -116,6 +116,15 @@ def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12, model_type 
         nm += 1
     return nm
 
+def simple_modelfit(difmap):
+    """简单模型拟合：执行一次 modelfit 命令"""
+    difmap.sendline('addcmp 0.1,true,0,0,true,0.3,true,1,false,0,true,1')
+    difmap.expect('0>')
+    difmap.sendline('modelfit 100')
+    difmap.expect('0>', timeout=5000)
+    difmap.sendline('modelfit 50')
+    difmap.expect('0>', timeout=1000)
+                       
 def read_observation(difmap,filename):
     par_file = filename + '.par'
     difmap.sendline('@ %s' % par_file)
@@ -254,7 +263,11 @@ def main(
     difmap, logfile = init_difmap()
     prepare_observation(difmap, filename,file_exname, freq)
     selection = 0
-    if  selection == 1:
+    if selection == 0:
+        # simple modelfit
+        print("Using simple modelfit for model fitting.")
+        simple_modelfit(difmap)
+    elif  selection == 1:
         filename= filename + '_scr'
         print("Using difmap script for model fitting.")
         read_difmap_script(difmap,script_name,filename)
