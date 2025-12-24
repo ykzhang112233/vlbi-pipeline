@@ -119,7 +119,16 @@ def read_observation(difmap,filename):
     par_file = filename + '.par'
     difmap.sendline('@ %s' % par_file)
     difmap.expect('0>')
-    
+
+def read_difmap_script(difmap,script_path,outname):
+    difmap.sendline('@%s %s' % (script_path, outname))
+    difmap.expect('Writing difmap environment.*0>',timeout=500)
+
+def save_model(difmap,filename):
+    mod_file = filename
+    difmap.sendline('save %s' % mod_file)
+    difmap.expect('0>')
+ 
 def parse_model_table(
         text: str, 
         default_freq=None
@@ -214,7 +223,7 @@ def get_model_parm(difmap):
         str: 命令输出的文本(text)
     """
     difmap.sendline('modelfit 0')
-    difmap.expect('0>', timeout=1000)
+    difmap.expect('0>', timeout=100)
     out = difmap.before or b""
     print(out)
     if isinstance(out, bytes):
@@ -229,17 +238,23 @@ def get_model_parm(difmap):
 
 def main(
         uvf_path:Path,
-        freq:float
+        freq:float,
+        script_path:str = 'single_mf_dfmp',
         )->pd.Series:
     filepath = Path(uvf_path)
+    script_path = script_path
     file_dir = filepath.parent
     filename = filepath.stem
     file_exname = filepath.suffix.lstrip('.')
     os.chdir(file_dir)
     difmap, logfile = init_difmap()
-    prepare_observation(difmap, filename,file_exname, freq)
-    nm = iterative_modelfit(difmap, snr_threshold=3, max_iterations=1, model_type = 1)
-    print(f"Total fitted components: {nm}")
+    selection = 1
+    if  selection == 1:
+        read_difmap_script(difmap,script_path,filename)
+    else:
+        prepare_observation(difmap, filename,file_exname, freq)
+        nm = iterative_modelfit(difmap, snr_threshold=3, max_iterations=1, model_type = 1)
+        print(f"Total fitted components: {nm}")
     model_text = get_model_parm(difmap)
     print("Model fitting output:")
     print(model_text)
@@ -258,7 +273,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     filepath = Path(args.file_path)
     freq = 9  # GHz, set your frequency here
-    df_result = main(filepath, freq)
+    script_path = 'single_mf_dfmp'
+    df_result = main(filepath, script_path, freq)
     print("Final fitted model parameters:")
     print(df_result)
 ### Usage example:

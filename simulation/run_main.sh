@@ -9,7 +9,7 @@ FNAME="GRB221009A-bl307cx1"
 # [8,9,9, 9,9,10,9,11,11]
 N_ANT=9
 # if you set --auto_set, then FNAME and N_ANT are not used, change hard_coded parms in the sim_main.py
-N_SIM=20
+N_SIM=100
 # for jk_ related mode, N_SIM is not used, the number of jk samples is determined by N_ANT or other parms in sim_main.py
 SIM_MODE="jk_drop_time"  # options: gain_var, jk_drop_ant, jk_drop_time
 
@@ -27,7 +27,7 @@ LOGFILE="$LOG_DIR/run-${TS}.log"
 echo "Logging Python output to ${LOGFILE}"
 
 # run the python script, capture both stdout and stderr, and also show on terminal
-python sim_main.py     --input_uv  "$INPUT_FILE" --auto_set  \
+python sim_main.py     --input_uv  "$INPUT_FILE" --no_auto_set  \
                        --nants $N_ANT --gain_range 0.1 --sim_times $N_SIM \
                        --s_mode $SIM_MODE --out_dir "$OUT_DIR" \
                        --no-clear_temp_uv 2>&1 | tee "$LOGFILE"

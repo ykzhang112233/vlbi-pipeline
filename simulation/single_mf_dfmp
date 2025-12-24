@@ -1,0 +1,20 @@
+!-----------------------------------------------------------------------
+!A simple model fitting script for difmap, usage: @single_mf_dfmp save_file_name
+! Output: the difmap style saved files with the given save_file_name
+! ------------------------ -----------------------   ----------------
+
+
+select i
+mapsize 2048,0.1
+
+addcmp 0.1,true,0,0,true,0.2,True,1,false,0,true,1
+
+modelfit 100
+print "************** FINISHED model fitting **************"
+
+save %1
+
+
+
+
+
