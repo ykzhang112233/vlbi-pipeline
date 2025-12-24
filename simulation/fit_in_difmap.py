@@ -253,6 +253,7 @@ def main(
     prepare_observation(difmap, filename,file_exname, freq)
     selection = 1
     if  selection == 1:
+        filename= filename + '_sc'
         print("Using difmap script for model fitting.")
         read_difmap_script(difmap,script_name,filename)
     else:
