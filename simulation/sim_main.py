@@ -134,7 +134,7 @@ if __name__ == "__main__":
     parser.set_defaults(auto_set=False)
     parser.add_argument('--gain_range', type=float, default=0.1, help='Gain variation range (e.g., 0.1 for ±10%)')
     parser.add_argument('--sim_times', type=int, default=10, help='Number of simulation times')
-    parser.add_argument('--s_mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time'], help='Simulation mode: gain variation or jackknife')
+    parser.add_argument('--s_mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock'], help='Simulation mode: gain variation or jackknife')
     parser.add_argument('--out_dir', type=str, default='./simulations/', help='Prefix for output directory for simulation results')
     parser.add_argument('--clear_temp_uv', dest='clear_temp_uv', action='store_true', help='Clear temporary uv files after simulation')
     parser.add_argument('--no-clear_temp_uv', dest='clear_temp_uv', action='store_false', help='Do not clear temporary uv files after simulation')
@@ -184,6 +184,7 @@ if __name__ == "__main__":
                 if sim_times <= 10:
                     print(f"Note: sim_times {sim_times} is less than 10, updating to 10 for at least one drop per time bin.")
                     sim_times = 10  # drop each time bin once
+
         print(f"Simulation mode: {sim_mode}, will run {sim_times} simulations per epoch.")
         max_workers = min(sim_times, os.cpu_count() or 5)
         os.environ['SIM_TIMES'] = str(sim_times)

@@ -251,7 +251,7 @@ def main(
     os.chdir(file_dir)
     difmap, logfile = init_difmap()
     prepare_observation(difmap, filename,file_exname, freq)
-    selection = 1
+    selection = 0
     if  selection == 1:
         filename= filename + '_sc'
         print("Using difmap script for model fitting.")

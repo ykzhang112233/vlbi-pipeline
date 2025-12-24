@@ -286,7 +286,7 @@ def jackknife_drop_time_frac(
 
     return out_uvfits, v_drop, n_drop
 
-def random_drop_timeblock_uvfits(
+def random_drop_timeblock(
     in_uvfits: Path,
     out_uvfits: str,
     drop_frac: float = 0.10,
@@ -399,10 +399,19 @@ def main(gains_list, input_uv, out_suffix, out_dir, mode='gain_var'):
         bin_index = int(out_suffix.split('_')[-1]) - 1  # make it start from 0
         print(f"Dropping time bin index: {bin_index}")
         out_uvdata, vis_dropped, time_bin_dropped = jackknife_drop_time_frac(filepath,out_uv,n_bins=10,bin_index=bin_index,zero_data=True)
+        # new method: random drop time block
         out_par_name = "dropped_time"
         out_par = f"dropped time bin: {time_bin_dropped}, dropped visibilities: {vis_dropped}"
         print(f"Jackknife (drop time bin {time_bin_dropped}) applied and file with {out_suffix} saved to {out_uvdata}.")
-    
+    elif mode == 'jk_drop_timeblock':
+        out_uvdata, vis_dropped, time_frac_dropped = random_drop_timeblock(filepath,out_uv,drop_frac=0.10,edge_frac=0.01)
+        out_par_name = "dropped_timeblock"
+        out_par = f"dropped time block: {time_frac_dropped}, dropped visibilities: {vis_dropped}"
+        print(f"Jackknife (drop time block {time_frac_dropped}) applied and file with {out_suffix} saved to {out_uvdata}.")
+    else:
+        raise ValueError(f"Unknown mode: {mode}")
+
+
 
     return out_uvdata, out_par_name, out_par
 
@@ -412,7 +421,7 @@ if __name__ == "__main__":
     parser.add_argument('--gcor_list', type=list, required=True, help='the list contain gain factor for each antenna')
     parser.add_argument('--out_suffix', type=str, required=True, help='Suffix for the output UV data file name')
     parser.add_argument('--out_dir', type=str, default='./simulations/', help='Output directory for corrected UV data')
-    parser.add_argument('--mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time'], help='Mode of operation: gain variation or jackknife')
+    parser.add_argument('--mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock'], help='Mode of operation: gain variation or jackknife')
     args = parser.parse_args()
     gains_list = args.gcor_list
     input_uv = args.uv_name
