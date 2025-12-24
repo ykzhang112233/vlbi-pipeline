@@ -102,6 +102,7 @@ def iterative_modelfit(difmap, snr_threshold=5.5, max_iterations=12, model_type 
         if model_type == 0:
             difmap.sendline('addcmp 0.1,true,%f,%f,true,0,false,1,false,0,true,0' % (pkx, pky))
         elif model_type == 1:
+            pkx,pky = 0,0
             difmap.sendline('addcmp 0.1,true,%f,%f,true,0.3,true,1,false,0,true,1' % (pkx, pky))
         else: # for elliptical gaussian
             difmap.sendline('addcmp 0.1,true,%f,%f,true,0.3,true,1,true,0,true,1' % (pkx, pky))
