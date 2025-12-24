@@ -231,7 +231,7 @@ def jackknife_drop_time_frac(
     """
     用 DATE(JD, 含小数天) 作为时间轴，把观测时间跨度均分成 n_bins 段，
     丢弃第 bin_index 段（weight=0，可选 Re/Im=0），写出新 uvfits。
-
+    # old version, only work for fix times time bins (e.g. 10 bins, so maximum 10 jk samples)
     - n_bins: 例如 10
     - bin_index: 0..n_bins-1
     """
@@ -281,6 +281,92 @@ def jackknife_drop_time_frac(
         hdul[0].header.add_history(
             f"JACKKNIFE: drop time-fraction bin {bin_index+1}/{n_bins}, "
             f"JD[{t0:.10f},{t1:.10f}] span~{span_min:.2f}min nrec={n_drop}"
+        )
+        hdul.flush()
+
+    return out_uvfits, v_drop, n_drop
+
+def random_drop_timeblock_uvfits(
+    in_uvfits: Path,
+    out_uvfits: str,
+    drop_frac: float = 0.10,
+    edge_frac: float = 0.01,
+    seed: int | None = None,
+    zero_data: bool = True,
+):
+    """
+    在有效时间区间内随机选择一个连续时间窗并丢弃（weight=0）。
+    
+    时间轴：t = DATE + _DATE (day)
+    
+    参数：
+      drop_frac : 丢弃窗口占有效时长的比例（0<drop_frac<1），如 0.10
+      edge_frac : 两端缓冲比例（0<=edge_frac<0.5），如 0.05 表示
+                 有效区间为 [tmin+0.05*span, tmax-0.05*span]
+      seed      : 随机种子（可复现）；None 则使用全局随机
+      zero_data : True 则同时将 Re/Im 置 0（更干净；权重为0已足够）
+    
+    返回：
+      (t_start, t_end, n_drop)
+    """
+    if not (0.0 < drop_frac < 1.0):
+        raise ValueError("drop_frac must be in (0, 1)")
+    if not (0.0 <= edge_frac < 0.5):
+        raise ValueError("edge_frac must be in [0, 0.5)")
+    
+    os.chdir(in_uvfits.parent)
+    rng = np.random.default_rng(seed)
+    shutil.copyfile(in_uvfits, out_uvfits)
+
+    warnings.filterwarnings("ignore", category=VerifyWarning)
+    with fits.open(out_uvfits, mode="update", memmap=False) as hdul:
+        gdata = hdul[0].data
+        data = gdata.data
+        if data.shape[-1] != 3:
+            raise ValueError(f"Unexpected DATA last axis (expect 3=Re/Im/Wt), got {data.shape}")
+
+        cols = set([n.upper() for n in gdata.columns.names])
+        if "DATE" not in cols or "_DATE" not in cols:
+            raise RuntimeError(f"Need DATE and _DATE columns. Available={sorted(cols)}")
+
+        t = np.asarray(gdata["DATE"], dtype=float) + np.asarray(gdata["_DATE"], dtype=float)
+
+        tmin, tmax = float(np.nanmin(t)), float(np.nanmax(t))
+        span = tmax - tmin
+        if span <= 0:
+            raise RuntimeError("Time span is non-positive; cannot drop time block.")
+
+        # 定义有效区间（可去掉两端边缘）
+        te0 = tmin + edge_frac * span
+        te1 = tmax - edge_frac * span
+        eff_span = te1 - te0
+        if eff_span <= 0:
+            raise RuntimeError("Effective time span is non-positive; edge_frac too large?")
+
+        # 丢弃窗口长度
+        w = drop_frac * eff_span
+        if w <= 0:
+            raise RuntimeError("Drop window length is non-positive.")
+
+        # 随机选起点，保证窗口完全落在有效区间内
+        t_start = rng.uniform(te0, te1 - w)
+        t_end = t_start + w
+
+        mask = (t >= t_start) & (t < t_end)
+        v_drop = f"{int(mask.sum())} of {gdata.shape[0]}"
+        start_frac = (t_start - tmin) / span * 100
+        end_frac = (t_end - tmin) / span * 100
+        n_drop = f"Dropping {start_frac:.2f}% - {end_frac:.2f}% of total time span."
+
+        # 丢弃：权重置0（可选置0数据）
+        data[mask, ..., 2] = 0.0
+        if zero_data:
+            data[mask, ..., 0] = 0.0
+            data[mask, ..., 1] = 0.0
+
+        hdul[0].header.add_history(
+            f"RANDOM_TIME_DROP: drop_frac={drop_frac:.4f} edge_frac={edge_frac:.4f} "
+            f"JD[{t_start:.10f},{t_end:.10f}) nrec={n_drop}"
         )
         hdul.flush()
 

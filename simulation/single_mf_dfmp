@@ -12,7 +12,7 @@ addcmp 0.1,true,0,0,true,0.2,True,1,false,0,true,1
 modelfit 100
 print "************** FINISHED model fitting **************"
 
-save %1
+!save %1
 
 
 
