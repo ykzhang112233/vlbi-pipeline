@@ -70,12 +70,15 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
     from pathlib import Path
     import fit_in_difmap, cor_gain
 
+    pid = os.getpid()
     filepath = Path(filepath_str)
     out_dir = Path(out_dir_str)
+    sim_dir = out_dir /f"sim_uv_pid_{pid}" / f"sim_{i+1:04d}"
+    sim_dir.makedirs(exist_ok=True)
 
     gains = gen_antenna_gains(nants, gain_range=gain_range, dist="uniform") #, seed=None, not necessary to set seed in parallel, give pure random
     # Use process id in logging so it's easier to trace parallel runs
-    print(f"[PID {os.getpid()}] Simulation {i+1}/{os.environ.get('SIM_TIMES', '?')}")
+    print(f"[PID {pid}] Simulation {i+1}/{os.environ.get('SIM_TIMES', '?')}")
     # add: if mod start with 'jk', do jackknife by ant or time, gains_list are not necessary, only nants used, can just give a random
     # gains = np.ones(nants)  # dummy gains for jk mode
     # out_uv = cor_gain.main(
@@ -87,24 +90,24 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
     
     if sim_mode == 'gain_var':
         out_suffix = f"gainvar_{i+1}"
-        print(f"[PID {os.getpid()}] Applying gain variation simulation with suffix: {out_suffix}")
-        print(f"[PID {os.getpid()}] Gains applied: {gains}")
+        print(f"[PID {pid}] Applying gain variation simulation with suffix: {out_suffix}")
+        print(f"[PID {pid}] Gains applied: {gains}")
     elif sim_mode == 'jk_drop_ant':
         out_suffix = f"jk_dropant_{i % nants + 1}"  # cycle through antennas
-        print(f"[PID {os.getpid()}] Applying jackknife drop antenna simulation with suffix: {out_suffix}")
+        print(f"[PID {pid}] Applying jackknife drop antenna simulation with suffix: {out_suffix}")
     elif sim_mode == 'jk_drop_time':
         out_suffix = f"jk_droptbin_{i % 10 + 1}"  # cycle through 10 time bins
-        print(f"[PID {os.getpid()}] Applying jackknife drop time bin simulation with suffix: {out_suffix}")
+        print(f"[PID {pid}] Applying jackknife drop time bin simulation with suffix: {out_suffix}")
     elif sim_mode == 'jk_drop_timeblock':
         out_suffix = f"jk_droptblock_{i + 1}" 
-        print(f"[PID {os.getpid()}] Applying jackknife drop time block simulation with suffix: {out_suffix}")
+        print(f"[PID {pid}] Applying jackknife drop time block simulation with suffix: {out_suffix}")
     else:
         raise ValueError("sim_mode must be 'gain_var', 'jk_drop_ant', 'jk_drop_time', or 'jk_drop_timeblock'")
     out_uv, outparm_name, outparm = cor_gain.main(
         gains_list=gains.tolist(), 
         input_uv=filepath, 
         out_suffix=out_suffix, 
-        out_dir=out_dir, 
+        out_dir=sim_dir,  # specify sim_dir to avoid conflicts, old is out_dir
         mode=sim_mode)
     
     do_debug = False
