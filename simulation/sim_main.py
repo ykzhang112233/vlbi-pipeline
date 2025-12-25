@@ -168,7 +168,7 @@ if __name__ == "__main__":
     gain_range = args.gain_range
     sim_times = args.sim_times
     sim_mode = args.s_mode
-
+    pid = os.getpid()
 
     # Parallel execution using processes. Each worker runs one simulation iteration.
     # WARNING: ensure `cor_gain.main` and `fit_in_difmap.main` are safe to run concurrently
@@ -209,7 +209,7 @@ if __name__ == "__main__":
                     recs = fut.result()
                     records.extend(recs)
         df_all = pd.DataFrame.from_records(records)
-        out_csv_name = f"simulated_source_parms_{epcoch_list[idx]}_{sim_mode}_{sim_times}.csv"
+        out_csv_name = f"simulated_source_parms_{epcoch_list[idx]}_{sim_mode}_{sim_times}_pid{pid}.csv"
         output_csv = out_dir / out_csv_name
         # rename if necessary to avoid overwrite
         if output_csv.is_file():
