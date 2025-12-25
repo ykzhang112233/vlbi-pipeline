@@ -73,7 +73,7 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
     pid = os.getpid()
     filepath = Path(filepath_str)
     out_dir = Path(out_dir_str)
-    sim_dir = out_dir /f"sim_uv_pid_{pid}" / f"sim_{i+1:04d}"
+    sim_dir = out_dir /f"sim_uv" / f"sim_{i+1:04d}_pid_{pid}"
     os.makedirs(sim_dir, exist_ok=True)
 
     gains = gen_antenna_gains(nants, gain_range=gain_range, dist="uniform") #, seed=None, not necessary to set seed in parallel, give pure random
