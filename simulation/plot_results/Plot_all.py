@@ -42,7 +42,9 @@ def resolve_input_file(file_name):
         Existing path to use, preferring .csv over .txt if both are options.
     """
     # If the provided file exists, use it directly
+    print(file_name)
     if os.path.exists(file_name):
+        print(f"Using provided file: {file_name}")
         return file_name
 
     stem, ext = os.path.splitext(file_name)
@@ -211,8 +213,7 @@ def load_multi_column_data_pandas(file_path):
             df = pd.read_csv(
                 file_path,
                 comment='#',
-                header=None,
-                sep=None,
+                sep=",",
                 engine='python'
             )
         else:
@@ -230,15 +231,15 @@ def load_multi_column_data_pandas(file_path):
             return None
 
         # Take first 4 columns and coerce to numeric; drop non-numeric rows
-        df = df.iloc[:, :4].apply(pd.to_numeric, errors='coerce').dropna()
+        # df = df.iloc[:, :4].apply(pd.to_numeric, errors='coerce').dropna()
         if len(df) == 0:
             print(f"Warning: No valid numeric rows found in {file_path}")
             return None
-
-        flux = df.iloc[:, 0].to_numpy()
-        x = df.iloc[:, 1].to_numpy()
-        y = df.iloc[:, 2].to_numpy()
-        size = df.iloc[:, 3].to_numpy()
+        # print(df)
+        flux = df['flux_jy']
+        x = df['x_arcsec']
+        y = df['y_arcsec']
+        size = df['major_fwhm_mas']
 
         data_dict = {
             'flux_mjy': flux * 1000.0,
@@ -327,7 +328,6 @@ def plot_epoch_histogram(ax, sizes, epoch_name, subplot_label):
 
 def create_nature_style_plot(
         file_names: list = None
-
         ):
     """
     Create a 3x3 grid of histograms for all epochs.
@@ -369,7 +369,7 @@ def create_nature_style_plot(
     for i, (file_name, epoch_name) in enumerate(zip(all_files, all_epoch_names)):
         if i >= len(axes):
             break
-            
+        
         actual_path = resolve_input_file(file_name)
         if actual_path is None:
             print(f"Skipping {file_name}: no .csv or .txt found.")
@@ -580,12 +580,12 @@ def main():
     all_files = ['simulated_source_parms_GRB221009A-ba161a1_jk_drop_timeblock_2000.csv',
                 'simulated_source_parms_GRB221009A-ba161b1_jk_drop_timeblock_2000.csv',
                 'simulated_source_parms_GRB221009A-ba161c1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307b1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307c1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307d1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307e1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307f1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307g1_jk_drop_timeblock_2000.csv']
+                'simulated_source_parms_GRB221009A-bl307bx1_jk_drop_timeblock_2000.csv',
+                'simulated_source_parms_GRB221009A-bl307cx1_jk_drop_timeblock_2000.csv',
+                'simulated_source_parms_GRB221009A-bl307dx1_jk_drop_timeblock_2000.csv',
+                'simulated_source_parms_GRB221009A-bl307ex1_jk_drop_timeblock_2000.csv',
+                'simulated_source_parms_GRB221009A-bl307fx1_jk_drop_timeblock_2000.csv',
+                'simulated_source_parms_GRB221009A-bl307gx1_jk_drop_timeblock_2000.csv']
 
     # Resolve and report missing
     missing_files = []
@@ -598,7 +598,7 @@ def main():
         print("Continuing with available files...\n")
     
     # Create the figure and get data
-    fig, all_data = create_nature_style_plot()
+    fig, all_data = create_nature_style_plot(file_names=all_files)
     
     # Save as PDF with high quality
     pdf_filename = "Time_MC.pdf"
