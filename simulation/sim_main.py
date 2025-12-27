@@ -56,6 +56,21 @@ def clear_uv(filename):
         try:
             p.unlink()
             print(f"[PID {os.getpid()}] Deleted temporary file: {filename}")
+            # also remove the associated file with certain name pattern if exists
+            # and also remove the parent dir
+            add_name = "single_mf_dfmp"
+            p_add = p.parent / add_name
+            if p_add.is_file():
+                p_add.unlink()
+                print(f"[PID {os.getpid()}] Deleted associated temporary file: {add_name}")
+            p_parent = p.parent
+            if p_parent.is_dir():
+                try:
+                    p_parent.rmdir()
+                    print(f"[PID {os.getpid()}] Deleted temporary directory: {p_parent}")
+                except OSError:
+                    pass  # Directory not empty or other error, ignore
+
         except Exception:
             print(f"[PID {os.getpid()}] Failed to delete temporary file: {filename}, will just ignore it.")
             pass
