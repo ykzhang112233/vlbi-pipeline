@@ -133,6 +133,25 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
         freq=9,
         debug=do_debug,  # set true if needed
     )
+    # if the df_model is not in valid format, clear the uv output and retry entil valid result is obtained
+    retry_count = 0
+    while (df_model['flux_jy'].isnull().any()) and retry_count <= 10:
+        print(f"[PID {pid}] Warning: Fitted model is empty or invalid (all flux_jy are NaN). Retrying simulation {i+1} (attempt {retry_count + 1}/5).")
+        # clear the previous uv file
+        clear_uv(out_uv)
+        # rerun cor_gain and fit_in_difmap
+        out_uv, outparm_name, outparm = cor_gain.main(
+            gains_list=gains.tolist(), 
+            input_uv=filepath, 
+            out_suffix=out_suffix, 
+            out_dir=sim_dir,  # specify sim_dir to avoid conflicts, old is out_dir
+            mode=sim_mode)
+        df_model = fit_in_difmap.main(
+            uvf_path=out_uv,
+            freq=9,
+            debug=do_debug,  # set true if needed
+        )
+        retry_count += 1
 
     recs = []
     for rec in df_model.to_dict(orient='records'):
