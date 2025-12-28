@@ -212,7 +212,9 @@ def parse_model_table(
         # 如果输出没带 freq，但你知道观测频率，就用 default_freq 补齐
         if (np.isnan(row["freq_hz"]) or row["freq_hz"] == 0.0) and default_freq is not None:
             row["freq_hz"] = float(default_freq)
-
+        # if the fitted size is zero or too large, return a all nan row: hardcoded criteria
+        if row["major_fwhm_mas"] <= 0.02 or row["major_fwhm_mas"] >= 1.4:
+            row["flux_jy"] = np.nan
         rows.append(row)
 
     df = pd.DataFrame(rows)
