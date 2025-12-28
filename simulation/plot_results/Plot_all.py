@@ -577,16 +577,32 @@ def main():
     print("="*80)
     
     # Define desired files (will resolve to .csv when present)
-    all_files = ['simulated_source_parms_GRB221009A-ba161a1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-ba161b1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-ba161c1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307bx1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307cx1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307dx1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307ex1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307fx1_jk_drop_timeblock_2000.csv',
-                'simulated_source_parms_GRB221009A-bl307gx1_jk_drop_timeblock_2000.csv']
-
+    data_method = 'jk_timeblock'  # gain, jk_timeblock
+    if data_method == 'gain':
+        work_dir = './gain_var_v1'
+        all_files = ['simulated_source_parms_GRB221009A-ba161a1_gain_var_2000.csv',
+                    'simulated_source_parms_GRB221009A-ba161b1_gain_var_2000.csv',
+                    'simulated_source_parms_GRB221009A-ba161c1_gain_var_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307bx1_gain_var_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307cx1_gain_var_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307dx1_gain_var_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307ex1_gain_var_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307fx1_gain_var_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307gx1_gain_var_2000.csv']
+        out_file_name = "Gain_Variation_MC.pdf"
+    elif data_method == 'jk_timeblock':
+        work_dir = './jk_timeblock_v1'
+        all_files = ['simulated_source_parms_GRB221009A-ba161a1_jk_drop_timeblock_2000.csv',
+                    'simulated_source_parms_GRB221009A-ba161b1_jk_drop_timeblock_2000.csv',
+                    'simulated_source_parms_GRB221009A-ba161c1_jk_drop_timeblock_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307bx1_jk_drop_timeblock_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307cx1_jk_drop_timeblock_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307dx1_jk_drop_timeblock_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307ex1_jk_drop_timeblock_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307fx1_jk_drop_timeblock_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307gx1_jk_drop_timeblock_2000.csv']
+        out_file_name = "JK_TimeBlock_MC.pdf"
+    os.chdir(work_dir)
     # Resolve and report missing
     missing_files = []
     for f in all_files:
@@ -601,7 +617,7 @@ def main():
     fig, all_data = create_nature_style_plot(file_names=all_files)
     
     # Save as PDF with high quality
-    pdf_filename = "Time_MC.pdf"
+    pdf_filename = out_file_name
     with PdfPages(pdf_filename) as pdf:
         pdf.savefig(fig, bbox_inches='tight', dpi=300)
     
