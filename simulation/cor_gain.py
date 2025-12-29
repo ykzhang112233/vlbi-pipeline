@@ -374,7 +374,7 @@ def random_drop_timeblock(
     return out_uvfits, v_drop, n_drop
 
 def random_drop_timeblock_per_ant(
-    in_uvfits: str,
+    in_uvfits: Path,
     out_uvfits: str,
     ant_nums: int | None = None, # start from 1
     drop_frac: float = 0.10,
@@ -397,7 +397,7 @@ def random_drop_timeblock_per_ant(
         raise ValueError("drop_frac must be in (0, 1)")
     if not (0.0 <= edge_frac < 0.5):
         raise ValueError("edge_frac must be in [0, 0.5)")
-
+    os.chdir(in_uvfits.parent)
     rng = np.random.default_rng(seed)
     shutil.copyfile(in_uvfits, out_uvfits)
 
