@@ -116,8 +116,11 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
     elif sim_mode == 'jk_drop_timeblock':
         out_suffix = f"jk_droptblock_{i + 1}" 
         print(f"[PID {pid}] Applying jackknife drop time block simulation with suffix: {out_suffix}")
+    elif sim_mode == 'jk_drop_timeblockv2':
+        out_suffix = f"jk_droptblockv2_{i + 1}" 
+        print(f"[PID {pid}] Applying jackknife drop time block v2 simulation with suffix: {out_suffix}")
     else:
-        raise ValueError("sim_mode must be 'gain_var', 'jk_drop_ant', 'jk_drop_time', or 'jk_drop_timeblock'")
+        raise ValueError("sim_mode must be 'gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock', or 'jk_drop_timeblockv2'")
     out_uv, outparm_name, outparm = cor_gain.main(
         gains_list=gains.tolist(), 
         input_uv=filepath, 
