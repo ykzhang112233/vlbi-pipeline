@@ -401,6 +401,7 @@ def random_drop_timeblock_per_ant(
     rng = np.random.default_rng(seed)
     shutil.copyfile(in_uvfits, out_uvfits)
 
+    warnings.filterwarnings("ignore", category=VerifyWarning)
     with fits.open(out_uvfits, mode="update", memmap=False) as hdul:
         gdata = hdul[0].data
         data = gdata.data
