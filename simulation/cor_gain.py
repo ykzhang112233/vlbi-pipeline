@@ -373,6 +373,108 @@ def random_drop_timeblock(
 
     return out_uvfits, v_drop, n_drop
 
+def random_drop_timeblock_per_ant(
+    in_uvfits: str,
+    out_uvfits: str,
+    ant_nums: int | None = None, # start from 1
+    drop_frac: float = 0.10,
+    edge_frac: float = 0.02,
+    seed: int | None = None,
+    zero_data: bool = False,   # 强烈建议默认 False：只置 weight=0
+    ):
+    """
+    每个天线独立随机选择一个连续时间窗（长度=drop_frac*有效时长），
+    并将所有包含该天线、且时间落在该窗内的记录置 weight=0。
+
+    时间：t = DATE + _DATE （单位 day）
+    有效区间： [tmin+edge_frac*span, tmax-edge_frac*span]
+
+    返回：
+      windows: dict {ant: (t_start, t_end)}
+      n_drop:  被置0权重的记录数
+    """
+    if not (0.0 < drop_frac < 1.0):
+        raise ValueError("drop_frac must be in (0, 1)")
+    if not (0.0 <= edge_frac < 0.5):
+        raise ValueError("edge_frac must be in [0, 0.5)")
+
+    rng = np.random.default_rng(seed)
+
+    # 原子写：先写临时，再替换，避免并行读到半成品
+    tmp = out_uvfits + f".tmp.{os.getpid()}"
+    shutil.copyfile(in_uvfits, tmp)
+
+    with fits.open(tmp, mode="update", memmap=False) as hdul:
+        gdata = hdul[0].data
+        data = gdata.data
+        if data.shape[-1] != 3:
+            raise ValueError(f"Unexpected DATA last axis (expect 3=Re/Im/Wt), got {data.shape}")
+
+        date = np.asarray(gdata["DATE"], dtype=float)
+        ddate = np.asarray(gdata["_DATE"], dtype=float)
+        t = date + ddate  # 真实 JD (day)
+
+        baseline_arr = gdata.par("BASELINE")
+        max_a1=0
+        max_a2=0
+        for i, bl in enumerate(baseline_arr):
+            a1, a2 = baseline_to_ants(int(bl))
+            # estimate the maximum antenna number
+            if a1 > max_a1:
+                max_a1 = a1
+            if a2 > max_a2:
+                max_a2 = a2
+        max_ant = max(max_a1, max_a2)
+        print(f"Maximum antenna number in data: {max_ant}")
+
+        # 自动推断天线集合（如果不传 ant_nums）
+        if ant_nums is None:
+            print("No ant_nums provided, inferring from data...")
+            ants = list(range(1, max_ant + 1))
+        else:
+            ants = list(range(1, ant_nums + 1))
+        print(f"Processing antennas: {ants}")
+        tmin, tmax = float(np.nanmin(t)), float(np.nanmax(t))
+        span = tmax - tmin
+        if span <= 0:
+            raise RuntimeError("Time span is non-positive.")
+
+        te0 = tmin + edge_frac * span
+        te1 = tmax - edge_frac * span
+        eff_span = te1 - te0
+        if eff_span <= 0:
+            raise RuntimeError("Effective span <= 0 (edge_frac too large?).")
+
+        w = drop_frac * eff_span
+        if w <= 0:
+            raise RuntimeError("Drop window length <= 0.")
+
+        # 给每根天线生成独立窗口
+        windows_dropped = {} # dict {ant: (t_start, t_end)}
+        for ant in ants:
+            t_start = rng.uniform(te0, te1 - w)
+            windows_dropped[ant] = (t_start, t_start + w)
+
+        # # 计算 mask：若记录时间落在 ant1 或 ant2 的窗口内 → drop
+        mask = np.zeros(t.shape[0], dtype=bool)
+        for ant, (ts, te) in windows_dropped.items():
+            mask |= ((a1 == ant) & (t >= ts) & (t < te)) | ((a2 == ant) & (t >= ts) & (t < te))
+
+        v_drop = int(mask.sum())
+
+        # 关键：只置权重，避免相位置零伪数据    
+        data[mask, ..., 2] = 0.0
+        if zero_data:
+            data[mask, ..., 0] = 0.0
+            data[mask, ..., 1] = 0.0
+
+        hdul[0].header.add_history(
+            f"RANDOM_ANT_TIME_DROP: per-antenna drop_frac={drop_frac:.4f} edge_frac={edge_frac:.4f} nrec={v_drop}"
+        )
+        hdul.flush()
+
+    os.replace(tmp, out_uvfits)  # 原子替换
+    return out_uvfits,  v_drop, windows_dropped
 
 def main(gains_list, input_uv, out_suffix, out_dir, mode='gain_var'):
 
@@ -409,6 +511,11 @@ def main(gains_list, input_uv, out_suffix, out_dir, mode='gain_var'):
         out_par_name = "dropped_timeblock"
         out_par = f"dropped time block: {time_frac_dropped}, dropped visibilities: {vis_dropped}"
         print(f"Jackknife (drop time block {time_frac_dropped}) applied and file with {out_suffix} saved to {out_uvdata}.")
+    elif mode == 'jk_drop_timeblockv2':
+        out_uvdata, vis_dropped, time_windows_dropped = random_drop_timeblock_per_ant(filepath,out_uv,ant_nums=ant_nums,drop_frac=0.10,edge_frac=0.01)
+        out_par_name = "dropped_timeblockv2"
+        out_par = f"dropped time block: {time_windows_dropped}, dropped visibilities: {vis_dropped}"
+        print(f"Jackknife (drop time block {time_windows_dropped}) applied and file with {out_suffix} saved to {out_uvdata}.")
     else:
         raise ValueError(f"Unknown mode: {mode}")
 
