@@ -177,7 +177,7 @@ if __name__ == "__main__":
     parser.set_defaults(auto_set=False)
     parser.add_argument('--gain_range', type=float, default=0.1, help='Gain variation range (e.g., 0.1 for ±10%)')
     parser.add_argument('--sim_times', type=int, default=10, help='Number of simulation times')
-    parser.add_argument('--s_mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock'], help='Simulation mode: gain variation or jackknife')
+    parser.add_argument('--s_mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock', 'jk_drop_timeblockv2'], help='Simulation mode: gain variation or jackknife')
     parser.add_argument('--out_dir', type=str, default='./simulations/', help='Prefix for output directory for simulation results')
     parser.add_argument('--clear_temp_uv', dest='clear_temp_uv', action='store_true', help='Clear temporary uv files after simulation')
     parser.add_argument('--no-clear_temp_uv', dest='clear_temp_uv', action='store_false', help='Do not clear temporary uv files after simulation')

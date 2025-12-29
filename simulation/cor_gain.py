@@ -529,7 +529,7 @@ if __name__ == "__main__":
     parser.add_argument('--gcor_list', type=list, required=True, help='the list contain gain factor for each antenna')
     parser.add_argument('--out_suffix', type=str, required=True, help='Suffix for the output UV data file name')
     parser.add_argument('--out_dir', type=str, default='./simulations/', help='Output directory for corrected UV data')
-    parser.add_argument('--mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock'], help='Mode of operation: gain variation or jackknife')
+    parser.add_argument('--mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock', 'jk_drop_timeblockv2'], help='Mode of operation: gain variation or jackknife')
     args = parser.parse_args()
     gains_list = args.gcor_list
     input_uv = args.uv_name
