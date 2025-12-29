@@ -399,10 +399,7 @@ def random_drop_timeblock_per_ant(
         raise ValueError("edge_frac must be in [0, 0.5)")
 
     rng = np.random.default_rng(seed)
-
-    # 原子写：先写临时，再替换，避免并行读到半成品
-    tmp = out_uvfits + f".tmp.{os.getpid()}"
-    shutil.copyfile(in_uvfits, tmp)
+    shutil.copyfile(in_uvfits, out_uvfits)
 
     with fits.open(tmp, mode="update", memmap=False) as hdul:
         gdata = hdul[0].data
@@ -473,7 +470,6 @@ def random_drop_timeblock_per_ant(
         )
         hdul.flush()
 
-    os.replace(tmp, out_uvfits)  # 原子替换
     return out_uvfits,  v_drop, windows_dropped
 
 def main(gains_list, input_uv, out_suffix, out_dir, mode='gain_var'):
