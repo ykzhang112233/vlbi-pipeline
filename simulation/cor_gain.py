@@ -469,9 +469,11 @@ def random_drop_timeblock_per_ant(
         mask = ((t >= s1) & (t < e1)) | ((t >= s2) & (t < e2))
         # 记录每根天线的窗
         #transform mjd to fraction of total time span
-        trange_a = (starts[i] - tmin) / span
-        trange_b = (ends[i] - tmin) / span
-        windows_dropped = {ant: (trange_a, trange_b) for i, ant in enumerate(ants)}
+        trange_a = (starts - tmin) / span
+        trange_b = (ends   - tmin) / span
+        windows_dropped = {int(ant): (float(trange_a[j]), float(trange_b[j]))
+                        for j, ant in enumerate(ants)}
+        print("Random drop time windows per antenna (fraction of total time span):")
         v_drop = int(mask.sum())
 
         # 关键：只置权重，避免相位置零伪数据    
@@ -483,7 +485,8 @@ def random_drop_timeblock_per_ant(
         hdul[0].header.add_history(
             f"RANDOM_ANT_TIME_DROP: per-antenna drop_frac={drop_frac:.4f} edge_frac={edge_frac:.4f} nrec={v_drop}"
         )
-        hdul.flush()
+        hdul.verify("silentfix")
+        hdul.flush(output_verify="silentfix")
 
     return out_uvfits,  v_drop, windows_dropped
 
