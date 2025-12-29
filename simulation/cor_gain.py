@@ -412,26 +412,22 @@ def random_drop_timeblock_per_ant(
         ddate = np.asarray(gdata["_DATE"], dtype=float)
         t = date + ddate  # 真实 JD (day)
 
-        baseline_arr = gdata.par("BASELINE")
-        max_a1=0
-        max_a2=0
-        for i, bl in enumerate(baseline_arr):
-            a1, a2 = baseline_to_ants(int(bl))
-            # estimate the maximum antenna number
-            if a1 > max_a1:
-                max_a1 = a1
-            if a2 > max_a2:
-                max_a2 = a2
-        max_ant = max(max_a1, max_a2)
-        print(f"Maximum antenna number in data: {max_ant}")
+        bl = np.asarray(gdata["BASELINE"], dtype=float)
+        bl_int = np.rint(bl).astype(int)
+        a1 = bl_int // 256
+        a2 = bl_int % 256
 
         # 自动推断天线集合（如果不传 ant_nums）
         if ant_nums is None:
             print("No ant_nums provided, inferring from data...")
-            ants = list(range(1, max_ant + 1))
+            ants = np.unique(np.concatenate([a1, a2])).astype(int)
+            ants = ants[ants > 0]  # 去掉 0
+            if ants.size == 0:
+                raise RuntimeError("No valid antenna numbers decoded from BASELINE.")
         else:
             ants = list(range(1, ant_nums + 1))
         print(f"Processing antennas: {ants}")
+        # calculate effective time range
         tmin, tmax = float(np.nanmin(t)), float(np.nanmax(t))
         span = tmax - tmin
         if span <= 0:
@@ -444,20 +440,38 @@ def random_drop_timeblock_per_ant(
             raise RuntimeError("Effective span <= 0 (edge_frac too large?).")
 
         w = drop_frac * eff_span
+
         if w <= 0:
             raise RuntimeError("Drop window length <= 0.")
+        
+        # 为了向量化：建立从 ant_num -> index 的映射，并存每根天线的窗
+        ant_to_idx = {ant: i for i, ant in enumerate(ants.tolist())}
+        idx1 = np.array([ant_to_idx.get(x, -1) for x in a1], dtype=int)
+        idx2 = np.array([ant_to_idx.get(x, -1) for x in a2], dtype=int)
 
-        # 给每根天线生成独立窗口
-        windows_dropped = {} # dict {ant: (t_start, t_end)}
-        for ant in ants:
-            t_start = rng.uniform(te0, te1 - w)
-            windows_dropped[ant] = (t_start, t_start + w)
+        # 每根天线一个随机窗
+        starts = np.empty(len(ants), dtype=float)
+        ends = np.empty(len(ants), dtype=float)
+        for i in range(len(ants)):
+            s = rng.uniform(te0, te1 - w)
+            starts[i] = s
+            ends[i] = s + w
 
-        # # 计算 mask：若记录时间落在 ant1 或 ant2 的窗口内 → drop
-        mask = np.zeros(t.shape[0], dtype=bool)
-        for ant, (ts, te) in windows_dropped.items():
-            mask |= ((a1 == ant) & (t >= ts) & (t < te)) | ((a2 == ant) & (t >= ts) & (t < te))
+        # 每条记录对应的 ant1/ant2 窗
+        # idx 可能为 -1（极少见），做保护：-1 的窗给 NaN
+        s1 = np.full(t.shape[0], np.nan); e1 = np.full(t.shape[0], np.nan)
+        s2 = np.full(t.shape[0], np.nan); e2 = np.full(t.shape[0], np.nan)
+        ok1 = idx1 >= 0; ok2 = idx2 >= 0
+        s1[ok1] = starts[idx1[ok1]]; e1[ok1] = ends[idx1[ok1]]
+        s2[ok2] = starts[idx2[ok2]]; e2[ok2] = ends[idx2[ok2]]
 
+        # 若时间落在 ant1 或 ant2 的窗口内，则 drop
+        mask = ((t >= s1) & (t < e1)) | ((t >= s2) & (t < e2))
+        # 记录每根天线的窗
+        #transform mjd to fraction of total time span
+        trange_a = (starts[i] - tmin) / span
+        trange_b = (ends[i] - tmin) / span
+        windows_dropped = {ant: (trange_a, trange_b) for i, ant in enumerate(ants)}
         v_drop = int(mask.sum())
 
         # 关键：只置权重，避免相位置零伪数据    
