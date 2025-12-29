@@ -445,7 +445,8 @@ def random_drop_timeblock_per_ant(
             raise RuntimeError("Drop window length <= 0.")
         
         # 为了向量化：建立从 ant_num -> index 的映射，并存每根天线的窗
-        ant_to_idx = {ant: i for i, ant in enumerate(ants.tolist())}
+        ants = np.asarray(ants, dtype=int)
+        ant_to_idx = {ant: i for i, ant in enumerate(ants)}
         idx1 = np.array([ant_to_idx.get(x, -1) for x in a1], dtype=int)
         idx2 = np.array([ant_to_idx.get(x, -1) for x in a2], dtype=int)
 
@@ -485,8 +486,7 @@ def random_drop_timeblock_per_ant(
         hdul[0].header.add_history(
             f"RANDOM_ANT_TIME_DROP: per-antenna drop_frac={drop_frac:.4f} edge_frac={edge_frac:.4f} nrec={v_drop}"
         )
-        hdul.verify("silentfix")
-        hdul.flush(output_verify="silentfix")
+        hdul.flush()
 
     return out_uvfits,  v_drop, windows_dropped
 
