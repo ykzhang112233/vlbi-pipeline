@@ -472,7 +472,7 @@ def random_drop_timeblock_per_ant(
         #transform mjd to fraction of total time span
         trange_a = (starts - tmin) / span
         trange_b = (ends   - tmin) / span
-        windows_dropped = {int(ant): (float(trange_a[j]), float(trange_b[j]))
+        windows_dropped = {int(ant): (round(float(trange_a[j]), 3), round(float(trange_b[j]), 3))
                         for j, ant in enumerate(ants)}
         print("Random drop time windows per antenna (fraction of total time span):")
         v_drop = int(mask.sum())
