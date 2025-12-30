@@ -138,8 +138,18 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
     )
     # if the df_model is not in valid format, clear the uv output and retry entil valid result is obtained
     retry_count = 0
-    while (df_model['flux_jy'].isnull().any()) and retry_count <= 10:
-        print(f"[PID {pid}] Warning: Fitted model is empty or invalid (all flux_jy are NaN). Retrying simulation {i+1} (attempt {retry_count + 1}/5).")
+
+    def need_retry(df_model) -> bool:
+        if df_model is None:
+            return True
+        if not hasattr(df_model, "empty") or df_model.empty:
+            return True
+        if "flux_jy" not in df_model.columns:
+            return True
+        return df_model["flux_jy"].isnull().any()
+
+    while need_retry(df_model) and retry_count <= 20:
+        print(f"[PID {pid}] Warning: Fitted model is empty or invalid (all flux_jy are NaN). Retrying simulation {i+1} (attempt {retry_count + 1}/20).")
         # clear the previous uv file
         clear_uv(out_uv)
         # rerun cor_gain and fit_in_difmap
