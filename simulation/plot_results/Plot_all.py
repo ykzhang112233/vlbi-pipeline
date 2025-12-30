@@ -205,7 +205,6 @@ def load_multi_column_data_pandas(file_path):
     dict or None
         Dictionary of numpy arrays with converted units, or None if failed.
     """
-
     try:
         ext = os.path.splitext(file_path)[1].lower()
         if ext == '.csv':
@@ -322,7 +321,7 @@ def plot_epoch_histogram(ax, sizes, epoch_name, subplot_label):
     ax.set_xlim(left=min_val * 0.9, right=max_val * 1.2)
     
     # Set labels and grid
-    ax.set_xlabel('Time-varied Size (mas)', fontsize=9)
+    ax.set_xlabel('Fitted Size (mas)', fontsize=9)
     ax.set_ylabel('Probability Density', fontsize=9)
     ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.5)
 
