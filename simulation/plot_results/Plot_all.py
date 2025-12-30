@@ -577,7 +577,7 @@ def main():
     print("="*80)
     
     # Define desired files (will resolve to .csv when present)
-    data_method = 'jk_timeblock'  # gain, jk_timeblock
+    data_method = 'jk_time_per-ant'  # gain, jk_timeblock, jk_time_per-ant
     if data_method == 'gain':
         work_dir = './gain_var_v1'
         all_files = ['simulated_source_parms_GRB221009A-ba161a1_gain_var_2000.csv',
@@ -602,6 +602,21 @@ def main():
                     'simulated_source_parms_GRB221009A-bl307fx1_jk_drop_timeblock_2000.csv',
                     'simulated_source_parms_GRB221009A-bl307gx1_jk_drop_timeblock_2000.csv']
         out_file_name = "JK_TimeBlock_MC.pdf"
+    elif data_method == 'jk_time_per-ant':
+        work_dir = './jk_tb_per-ant'
+        all_files = ['simulated_source_parms_GRB221009A-ba161a1_jk_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-ba161b1_jk_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-ba161c1_jk_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307bx1_jk_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307cx1_jk_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307dx1_jk_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307ex1_jk_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307fx1_jk_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307gx1_jk_drop_timeblock_per_ant_2000.csv']
+        out_file_name = "JK_Time_Per-Ant_MC.pdf"
+    else:
+        print(f"Error: Unknown data method '{data_method}'")
+        return
     os.chdir(work_dir)
     # Resolve and report missing
     missing_files = []
