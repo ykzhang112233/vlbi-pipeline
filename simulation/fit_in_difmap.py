@@ -125,6 +125,16 @@ def simple_modelfit(difmap):
     difmap.sendline('modelfit 50')
     difmap.expect('0>', timeout=1000)
                        
+def simple_modelfit_gx(difmap):
+    """简单模型拟合固定位置：执行一次 modelfit 命令"""
+    # For bl307gx only, which is known to be weak
+    difmap.sendline('addcmp 0.1,true,0.322,0.515,false,0.3,true,1,false,0,true,1')
+    difmap.expect('0>')
+    difmap.sendline('modelfit 100')
+    difmap.expect('0>', timeout=5000)
+    difmap.sendline('modelfit 50')
+    difmap.expect('0>', timeout=1000)
+
 def read_observation(difmap,filename):
     par_file = filename + '.par'
     difmap.sendline('@ %s' % par_file)
@@ -266,14 +276,22 @@ def main(
     difmap, logfile = init_difmap()
     prepare_observation(difmap, filename,file_exname, freq)
     selection = 0
+    if 'bl307gx' in filename:
+        print("Detected bl307gx, the weakest epoch, use simple_modelfit_gx with fixed positions.")
+        selection = 2
     if selection == 0:
         # simple modelfit
         print("Using simple modelfit for model fitting.")
         simple_modelfit(difmap)
     elif  selection == 1:
+        # not used currently
         filename= filename + '_scr'
         print("Using difmap script for model fitting.")
         read_difmap_script(difmap,script_name,filename)
+    elif selection == 2:
+        # simple modelfit for bl307gx
+        print("Using simple modelfit for bl307gx.")
+        simple_modelfit_gx(difmap)
     else:
         print("Using iterative modelfit for model fitting.")
         nm = iterative_modelfit(difmap, snr_threshold=3, max_iterations=1, model_type = 1)
