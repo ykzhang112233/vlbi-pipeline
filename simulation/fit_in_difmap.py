@@ -134,7 +134,7 @@ def simple_modelfit_gx(difmap):
     difmap.expect('0>', timeout=5000)
     difmap.sendline('modelfit 50')
     difmap.expect('0>', timeout=1000)
-
+ 
 def read_observation(difmap,filename):
     par_file = filename + '.par'
     difmap.sendline('@ %s' % par_file)
