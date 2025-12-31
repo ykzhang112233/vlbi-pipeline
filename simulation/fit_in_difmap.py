@@ -213,7 +213,7 @@ def parse_model_table(
         if (np.isnan(row["freq_hz"]) or row["freq_hz"] == 0.0) and default_freq is not None:
             row["freq_hz"] = float(default_freq)
         # if the fitted size is zero or too large, return a all nan row: hardcoded criteria
-        if row["major_fwhm_mas"] <= 0.02 or row["major_fwhm_mas"] >= 1.4:
+        if row["major_fwhm_mas"] <= 0.02 or row["major_fwhm_mas"] >= 2:
             print(f"The fitted size is too small or too large: {row['major_fwhm_mas']} mas, return a all nan row as a retry signal.")
             row["flux_jy"] = np.nan
         rows.append(row)
