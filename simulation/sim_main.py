@@ -111,12 +111,12 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
         out_suffix = f"jk_dropant_{i % nants + 1}"  # cycle through antennas
         print(f"[PID {pid}] Applying jackknife drop antenna simulation with suffix: {out_suffix}")
     elif sim_mode == 'jk_drop_time':
-        out_suffix = f"jk_droptbin_{i % 10 + 1}"  # cycle through 10 time bins
+        out_suffix = f"jk_droptbin_{i % 10 + 1}"  # cycle through 10 time bins  This mode only have 10 results as the time bins are fixed
         print(f"[PID {pid}] Applying jackknife drop time bin simulation with suffix: {out_suffix}")
-    elif sim_mode == 'jk_drop_timeblock':
+    elif sim_mode == 'jk_drop_timeblock': # this mode drop 1/10 times but with random starting time block to drop, all antennas go through same timeblock drop
         out_suffix = f"jk_droptblock_{i + 1}" 
         print(f"[PID {pid}] Applying jackknife drop time block simulation with suffix: {out_suffix}")
-    elif sim_mode == 'jk_drop_timeblock_per_ant':
+    elif sim_mode == 'jk_drop_timeblock_per_ant': # Compare with 'jk_drop_timeblock', this mode drop different random time block for each antenna
         out_suffix = f"jk_droptblockperant_{i + 1}" 
         print(f"[PID {pid}] Applying jackknife drop time block per antenna simulation with suffix: {out_suffix}")
     else:
