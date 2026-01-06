@@ -562,7 +562,7 @@ def save_comprehensive_statistics(all_data):
     
     print("Comprehensive statistics summary saved to: multi_column_statistics_summary.txt")
 
-def main():
+def main(mode='drop_time_per_ant'):
     """
     Main function to create and save the plot.
     """
@@ -576,9 +576,9 @@ def main():
     print("="*80)
     
     # Define desired files (will resolve to .csv when present)
-    data_method = 'jk_time_per-ant'  # gain, jk_timeblock, jk_time_per-ant
+    data_method = mode  # gain, jk_timeblock, drop_time_per_ant
     if data_method == 'gain':
-        work_dir = './gain_var_v1'
+        work_dir = './gain_var_v2'
         all_files = ['simulated_source_parms_GRB221009A-ba161a1_gain_var_2000.csv',
                     'simulated_source_parms_GRB221009A-ba161b1_gain_var_2000.csv',
                     'simulated_source_parms_GRB221009A-ba161c1_gain_var_2000.csv',
@@ -601,18 +601,18 @@ def main():
                     'simulated_source_parms_GRB221009A-bl307fx1_jk_drop_timeblock_2000.csv',
                     'simulated_source_parms_GRB221009A-bl307gx1_jk_drop_timeblock_2000.csv']
         out_file_name = "JK_TimeBlock_MC.pdf"
-    elif data_method == 'jk_time_per-ant':
-        work_dir = './jk_tb_per-ant'
-        all_files = ['simulated_source_parms_GRB221009A-ba161a1_jk_drop_timeblock_per_ant_2000.csv',
-                    'simulated_source_parms_GRB221009A-ba161b1_jk_drop_timeblock_per_ant_2000.csv',
-                    'simulated_source_parms_GRB221009A-ba161c1_jk_drop_timeblock_per_ant_2000.csv',
-                    'simulated_source_parms_GRB221009A-bl307bx1_jk_drop_timeblock_per_ant_2000.csv',
-                    'simulated_source_parms_GRB221009A-bl307cx1_jk_drop_timeblock_per_ant_2000.csv',
-                    'simulated_source_parms_GRB221009A-bl307dx1_jk_drop_timeblock_per_ant_2000.csv',
-                    'simulated_source_parms_GRB221009A-bl307ex1_jk_drop_timeblock_per_ant_2000.csv',
-                    'simulated_source_parms_GRB221009A-bl307fx1_jk_drop_timeblock_per_ant_2000.csv',
-                    'simulated_source_parms_GRB221009A-bl307gx1_jk_drop_timeblock_per_ant_2000.csv']
-        out_file_name = "JK_Time_Per-Ant_MC.pdf"
+    elif data_method == 'drop_time_per_ant':
+        work_dir = './drop_time_per_ant'
+        all_files = ['simulated_source_parms_GRB221009A-ba161a1_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-ba161b1_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-ba161c1_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307bx1_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307cx1_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307dx1_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307ex1_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307fx1_drop_timeblock_per_ant_2000.csv',
+                    'simulated_source_parms_GRB221009A-bl307gx1_drop_timeblock_per_ant_2000.csv']
+        out_file_name = "Drop_Time_Per_Ant_MC.pdf"
     else:
         print(f"Error: Unknown data method '{data_method}'")
         return
@@ -652,4 +652,5 @@ def main():
     print("="*80)
 
 if __name__ == "__main__":
-    main()
+    d_mode = 'drop_time_per_ant'  # Options: 'gain', 'jk_timeblock', 'drop_time_per_ant'
+    main(mode=d_mode)
