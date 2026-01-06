@@ -116,11 +116,11 @@ def _run_one_sim(i, filepath_str, nants, gain_range, sim_mode,out_dir_str, clear
     elif sim_mode == 'jk_drop_timeblock': # this mode drop 1/10 times but with random starting time block to drop, all antennas go through same timeblock drop
         out_suffix = f"jk_droptblock_{i + 1}" 
         print(f"[PID {pid}] Applying jackknife drop time block simulation with suffix: {out_suffix}")
-    elif sim_mode == 'jk_drop_timeblock_per_ant': # Compare with 'jk_drop_timeblock', this mode drop different random time block for each antenna
-        out_suffix = f"jk_droptblockperant_{i + 1}" 
+    elif sim_mode == 'drop_timeblock_per_ant': # Compare with 'jk_drop_timeblock', this mode drop different random time block for each antenna
+        out_suffix = f"droptblockperant_{i + 1}" 
         print(f"[PID {pid}] Applying jackknife drop time block per antenna simulation with suffix: {out_suffix}")
     else:
-        raise ValueError("sim_mode must be 'gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock', or 'jk_drop_timeblock_per_ant'")
+        raise ValueError("sim_mode must be 'gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock', or 'drop_timeblock_per_ant'")
     out_uv, outparm_name, outparm = cor_gain.main(
         gains_list=gains.tolist(), 
         input_uv=filepath, 
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     parser.set_defaults(auto_set=False)
     parser.add_argument('--gain_range', type=float, default=0.1, help='Gain variation range (e.g., 0.1 for ±10%)')
     parser.add_argument('--sim_times', type=int, default=10, help='Number of simulation times')
-    parser.add_argument('--s_mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock', 'jk_drop_timeblock_per_ant'], help='Simulation mode: gain variation or jackknife')
+    parser.add_argument('--s_mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock', 'drop_timeblock_per_ant'], help='Simulation mode: gain variation or jackknife')
     parser.add_argument('--out_dir', type=str, default='./simulations/', help='Prefix for output directory for simulation results')
     parser.add_argument('--clear_temp_uv', dest='clear_temp_uv', action='store_true', help='Clear temporary uv files after simulation')
     parser.add_argument('--no-clear_temp_uv', dest='clear_temp_uv', action='store_false', help='Do not clear temporary uv files after simulation')

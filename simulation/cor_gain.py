@@ -525,7 +525,7 @@ def main(gains_list, input_uv, out_suffix, out_dir, mode='gain_var'):
         out_par_name = "dropped_timeblock"
         out_par = f"dropped time block: {time_frac_dropped}, dropped visibilities: {vis_dropped}"
         print(f"Jackknife (drop time block {time_frac_dropped}) applied and file with {out_suffix} saved to {out_uvdata}.")
-    elif mode == 'jk_drop_timeblock_per_ant':
+    elif mode == 'drop_timeblock_per_ant':
         out_uvdata, vis_dropped, time_windows_dropped = random_drop_timeblock_per_ant(filepath,out_uv,ant_nums=ant_nums,drop_frac=0.10,edge_frac=0.01)
         out_par_name = "dropped_timeblock_per_ant"
         out_par = f"dropped time block: {time_windows_dropped}, dropped visibilities: {vis_dropped}"
@@ -543,7 +543,7 @@ if __name__ == "__main__":
     parser.add_argument('--gcor_list', type=list, required=True, help='the list contain gain factor for each antenna')
     parser.add_argument('--out_suffix', type=str, required=True, help='Suffix for the output UV data file name')
     parser.add_argument('--out_dir', type=str, default='./simulations/', help='Output directory for corrected UV data')
-    parser.add_argument('--mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock', 'jk_drop_timeblock_per_ant'], help='Mode of operation: gain variation or jackknife')
+    parser.add_argument('--mode', type=str, default='gain_var', choices=['gain_var', 'jk_drop_ant', 'jk_drop_time', 'jk_drop_timeblock', 'drop_timeblock_per_ant'], help='Mode of operation: gain variation or jackknife')
     args = parser.parse_args()
     gains_list = args.gcor_list
     input_uv = args.uv_name
