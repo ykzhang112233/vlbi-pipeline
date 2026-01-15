@@ -2,29 +2,22 @@
 
 import time
 import sys
-#import pathlib
-# import logging
-from AIPS import AIPS
 import os
-import sys
 import argparse
-# import importlib.util  
+from AIPS import AIPS
 
-# parser = argparse.ArgumentParser(description='VLBI pipeline')
-# parser.add_argument('--param-file', type=str, required=True, 
-#                     help='the input parameter file, in .py format')
-# args = parser.parse_args()
+# Parse command line arguments for config file BEFORE importing config
+parser = argparse.ArgumentParser(description='VLBI pipeline', add_help=False)
+parser.add_argument('--config', type=str, default=None,
+                    help='Path to configuration file (e.g., configs/bz111cl_input.py)')
+args, remaining_argv = parser.parse_known_args()
 
-# def load_param_module(file_path):
-#     spec = importlib.util.spec_from_file_location('dynamic_params', file_path)
-#     module = importlib.util.module_from_spec(spec)
-#     sys.modules['dynamic_params'] = module  
-#     spec.loader.exec_module(module)
-#     return module
+# Set config path as environment variable so config.py can find it
+if args.config:
+    os.environ['VLBI_CONFIG'] = args.config
+    print(f"Using configuration: {args.config}")
 
-# param_module = load_param_module(args.param_file)
-
-
+# Now import config module (it will use the VLBI_CONFIG environment variable)
 from config import *
 from utils import *
 from make_utils import *

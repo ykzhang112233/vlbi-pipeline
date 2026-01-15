@@ -1,0 +1,11 @@
+# Ignore personal configuration files
+*_input.py
+
+# Keep template and examples
+!template_input.py
+!ba158l1_input.py
+
+# Keep documentation
+!README.md
+!USAGE.md
+!.gitkeep

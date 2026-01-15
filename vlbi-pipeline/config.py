@@ -1,8 +1,54 @@
 #!/usr/bin/env python
 import sys
+import os
 import numpy as np
-import bz111cl_input as inputs
-# import dynamic_params as inputs
+import importlib.util
+import argparse
+
+# Function to load configuration file from custom path
+def load_config(config_path=None):
+    """
+    Load configuration file from specified path.
+    
+    Priority:
+    1. Environment variable VLBI_CONFIG (set by main.py from --config argument)
+    2. Default: configs/default_input.py
+    
+    Args:
+        config_path: Path to configuration file
+    
+    Returns:
+        Module object with configuration parameters
+    """
+    if config_path is None:
+        # Get from environment variable (set by main.py)
+        config_path = os.environ.get('VLBI_CONFIG')
+    
+    if config_path is None:
+        # Default configuration
+        config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 
+                                   'configs', 'default_input.py')
+        print(f"No config specified. Using default: {config_path}")
+    
+    # Convert to absolute path
+    if not os.path.isabs(config_path):
+        config_path = os.path.abspath(config_path)
+    
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Configuration file not found: {config_path}")
+    
+    print(f"Loading configuration from: {config_path}")
+    
+    # Load module from file path
+    spec = importlib.util.spec_from_file_location("config_module", config_path)
+    config_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(config_module)
+    
+    return config_module
+
+# Load configuration
+inputs = load_config()
+
 #set input parameters in sparate py files which can be one data per input and can also be tracked for history.
 
 AIPS_NUMBER = inputs.AIPS_NUMBER
@@ -28,14 +74,16 @@ p_ref_cal   = inputs.p_ref_cal
 logfilename = inputs.logfilename
 
 #####################################################
-auto_fringe = inputs.auto_fringe #for automatic step connecting step1 and step2, if =0, the following parameters must be set, please refer to the results from step1. If =1, the following parameters are ignored. It is high recommanded to set 0, especially for EVN
+auto_fringe = inputs.auto_fringe #for automatic step connecting step1 and step2, if =0, the following parameters must be set, 
+# please refer to the results from step1. If =1, the following parameters are ignored. It is high recommanded to set 0, especially for EVN
 
 reference_antenna = inputs.reference_antenna
 search_antennas = inputs.search_antennas
 scan_for_fringe = inputs.scan_for_fringe
 av_ifs_f1 = inputs.av_ifs_f1
 
-auto_mapping = inputs.auto_mapping  #automatic step connecting step2 and step3, if =0, the following parameters must be set, just file name end with .fits
+auto_mapping = inputs.auto_mapping  #automatic step connecting step2 and step3, 
+# if =0, the following parameters must be set, just file name end with .fits
 man_fr_file = inputs.man_fr_file
 #####################mannual flagging################################
 do_flag = inputs.do_flag
@@ -121,9 +169,9 @@ TECU_model = 'jplg'
 ###				  Do not change or move this part					 ####
 defdisk=1
 n = 1
-[filename, outname, outclass] = [range(n), range(n), range(n)]
-[nfiles, ncount, doconcat] = [range(n), range(n), range(n)]
-[outdisk, flagfile, antabfile] = [range(n), range(n), range(n)]
+[filename, outname, outclass] = [list(range(n)), list(range(n)), list(range(n))]
+[nfiles, ncount, doconcat] = [list(range(n)), list(range(n)), list(range(n))]
+[outdisk, flagfile, antabfile] = [list(range(n)), list(range(n)), list(range(n))]
 for i in range(n):
 	[flagfile[i], antabfile[i], outdisk[i]] = ['', '', defdisk]
 	[nfiles[i], ncount[i], doconcat[i]] = [0, 1, 1]
