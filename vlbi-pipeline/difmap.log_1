@@ -1,0 +1,16 @@
+! Started logfile: difmap.log_1 on Tue Jan  6 15:24:44 2026
+![@/data/Difmap/uvf_difmap/short_commands]
+! Obeying initialization file: /data/Difmap/uvf_difmap/short_commands
+print "\n\n------------------------------------------"
+! 
+! 
+! ------------------------------------------ 
+print "  DIFMAP short command index"
+!   DIFMAP short command index 
+print "  Version from R. Dodson Apr-2005"
+!   Version from R. Dodson Apr-2005 
+vflags="fbm3"
+![Exited script file: /data/Difmap/uvf_difmap/short_commands]
+exit
+! Exiting program
+! Log file difmap.log_1 closed on Tue Jan  6 15:24:48 2026

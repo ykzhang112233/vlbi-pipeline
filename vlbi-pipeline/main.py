@@ -655,6 +655,7 @@ def run_main():
             doband =-1
             logger.info('######################')
             logger.info('Spliting data')
+            # run_split2(pr_data, target[i], 9, 'SCL9', doband, bpver, flagver,1,split_seq)
             run_split2(pr_data, target[i], 10, 'SCL10', doband, bpver, flagver,1,split_seq)
             run_split2(pr_data, target[i], 10, 'S10av', doband, bpver, flagver,0,split_seq)
             run_split2(pr_data, target[i], 11, 'SCL11', doband, bpver, flagver,1,split_seq)
