@@ -7,13 +7,13 @@ Naming convention: {obs_code}_input.py (e.g., bz111cl_input.py)
 """
 
 # ============================================================================
-# BASIC SETTINGS
+# 1. BASIC SETTINGS
 # ============================================================================
 AIPS_NUMBER = 158  # AIPS user number
 antname = 'VLBA'  # Antenna array: 'VLBA' or 'EVN'
 
 # ============================================================================
-# DATA INFORMATION
+# 2. DATA INFORMATION
 # ============================================================================
 file_path = '/path/to/data/'  # Path to data directory
 file_name = 'obs_code.idifits'  # Better use obs_code.idifits as name
@@ -110,7 +110,7 @@ del_old_mod = 1  # Delete old model before self-cal
 no_rate = 0  # Disable rate correction
 av_ifs_f2 = 0  # Average IFs for second fringe fit
 av_ifs_ca1 = 0  # Average IFs for calibration
-rdp_parm = [0, 0, 0, 0, 0, 0, 0, 0, 0]  # Rate/delay/phase parameters
+rdp_parm = 0  # Rate/delay/phase parameters
 dwin = 0  # Delay window
 rwin = 0  # Rate window
 solint_cal = 2  # Solution interval for calibration (minutes)

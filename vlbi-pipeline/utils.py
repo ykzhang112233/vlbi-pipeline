@@ -7,7 +7,9 @@
 #from Wizardry.AIPSData import AIPSUVData as WAIPSUVData
 #import AIPSTV
 #import AIPS, os, math, time
-from pylab import *
+# from pylab import *
+import numpy as np
+# import matplotlib.pyplot as plt
 # from config import *
 from check_utils import *
 #from get_utils import *
