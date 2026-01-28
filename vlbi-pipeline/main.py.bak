@@ -239,14 +239,14 @@ def run_main():
 
     try:
         if inter_flag == 0:
-            print()
+            print
             'Running in non-interactive mode.'
         else:
-            print()
+            print
             'Running in interactive mode.'
     except:
         inter_flag = 1
-        print()
+        print
         'Running in interactive mode.'
 
     try:

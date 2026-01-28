@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 #!/usr/bin/env ParselTongue
 
 import time
@@ -6,15 +8,15 @@ import sys
 # import logging
 from AIPS import AIPS
 import os
-from config import *
+from .config import *
 import argparse
-from utils import *
-from make_utils import *
-from run_tasks import *
-from get_utils import *
-from check_utils import *
-from plot_utils import *
-from logging_config import logger
+from .utils import *
+from .make_utils import *
+from .run_tasks import *
+from .get_utils import *
+from .check_utils import *
+from .plot_utils import *
+from .logging_config import logger
 
 # Init setting
 aipsver = AIPS_VERSION
@@ -222,14 +224,14 @@ def run_main():
 
     try:
         if inter_flag == 0:
-            print
+            print()
             'Running in non-interactive mode.'
         else:
-            print
+            print()
             'Running in interactive mode.'
     except:
         inter_flag = 1
-        print
+        print()
         'Running in interactive mode.'
 
     try:
@@ -388,7 +390,7 @@ def run_main():
             if os.path.exists(parms_filename):
                 os.remove(parms_filename)
             sys.stdout = open(parms_filename,'w')
-            print (N_ant,N_obs)
+            print((N_ant,N_obs))
             print (timerange)
             print (refant)
             print (refant_candi)

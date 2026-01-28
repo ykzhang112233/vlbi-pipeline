@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import absolute_import
 #!/usr/bin/env ParselTongue
 #####!/usr/bin/python3
 
@@ -320,16 +318,16 @@ def runclcal2(indata, snver, gainver, gainuse, interpol, dobtween, refant, anten
     if type(sources) == type('string'):
         clcal.source[1] = sources
         print('str')
-        print((type(sources),sources))
+        print(type(sources),sources)
     else:
-        print((type(sources),sources))
+        print(type(sources),sources)
         clcal.source[1:] = sources
     if (type(cals) == type('string')):
         clcal.calsour[1] = cals
         print('str')
-        print((type(cals),cals))
+        print(type(cals),cals)
     else:
-        print((type(cals),cals))
+        print(type(cals),cals)
         clcal.calsour[1:] = cals
     clcal.snver = snver
     clcal.inver = 0
@@ -1337,7 +1335,7 @@ def run_grid(indata, source, cellsize, imsize, n, m, grid_offset, uvwtfn, robust
         split.outdisk = indata.disk
         split()
 
-        print()
+        print
         'Imaging ' + str(shift[0]) + ' ' + str(shift[1])
         rungridimagr(split_data, source, 10, cellsize,
                      imsize, -1, uvwtfn, robust, beam)
@@ -1449,11 +1447,11 @@ def runrpossm(indata, cvelsource, tv, interflag, antennas):
         eif = 1
 
     if bchan == echan and echan != 0:
-        print()
+        print
         'Only one channel selected.'
 
     elif bchan > echan:
-        print()
+        print
         'bchan > echan'
 
     else:

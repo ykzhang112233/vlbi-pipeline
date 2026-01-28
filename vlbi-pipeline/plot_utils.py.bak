@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # from get_utils import get_ant
 # from select_utils import *
-from __future__ import print_function
-from __future__ import absolute_import
 import os
 import logging
 import argparse
@@ -114,9 +112,9 @@ def runpossm(indata, calsource='', ant_use=[0], doband=-1, bpver=1, bchan=1, ech
     # calsource=check_calsource(indata, calsource)
 
     if bchan == echan and echan != 0:
-        print('Only one channel selected.')
+        print 'Only one channel selected.'
     elif bchan > echan:
-        print('bchan > echan')
+        print 'bchan > echan'
     else:
         possm = AIPSTask('POSSM')
         possm.eif = 0
@@ -386,7 +384,7 @@ def runprtsn_sx(indata_s, indata_x, indata):
     if indata.exists():
         f_tar = get_center_freq(indata)
     else:
-        print('Target frequency unknonw. Using 6.67 GHz.')
+        print 'Target frequency unknonw. Using 6.67 GHz.'
     f_tar = 6.67e9
 
     f = open('./geoblock/diff_files.inp', 'w')
