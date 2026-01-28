@@ -15,7 +15,10 @@ args, remaining_argv = parser.parse_known_args()
 # Set config path as environment variable so config.py can find it
 if args.config:
     os.environ['VLBI_CONFIG'] = args.config
-    print(f"Using configuration: {args.config}")
+    print("Using configuration:", args.config)
+
+# Usage:
+#   ParselTongue main.py --config configs/bz111ac_input.py
 
 # Now import config module (it will use the VLBI_CONFIG environment variable)
 from config import *

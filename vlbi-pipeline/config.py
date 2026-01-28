@@ -2,8 +2,12 @@
 import sys
 import os
 import numpy as np
-import importlib.util
 import argparse
+
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
 
 # Function to load configuration file from custom path
 def load_config(config_path=None):
@@ -28,22 +32,27 @@ def load_config(config_path=None):
         # Default configuration
         config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 
                                    'configs', 'default_input.py')
-        print(f"No config specified. Using default: {config_path}")
+        print("No configuration file specified. Using default: {0}".format(config_path))
     
     # Convert to absolute path
     if not os.path.isabs(config_path):
         config_path = os.path.abspath(config_path)
     
     if not os.path.exists(config_path):
-        raise FileNotFoundError(f"Configuration file not found: {config_path}")
+        raise FileNotFoundError("Configuration file not found: {}".format(config_path))
     
-    print(f"Loading configuration from: {config_path}")
-    
-    # Load module from file path
-    spec = importlib.util.spec_from_file_location("config_module", config_path)
-    config_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(config_module)
-    
+    print("Loading configuration from: {0}".format(config_path))
+
+    module_name = "config_module"
+    if sys.version_info[0] >= 3:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(module_name, config_path)
+        config_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(config_module)
+    else:
+        import imp
+        config_module = imp.load_source(module_name, config_path)
+    print(config_module)
     return config_module
 
 # Load configuration
@@ -155,8 +164,10 @@ do_uvshift_flag = inputs.do_uvshift_flag ###note!! this is out of any steps
 
 ########DO NOT EDIT UNLESS YOU KNOW THE MEANING #######################################################################################
 
-AIPS_VERSION = '31DEC19'
-version_date = '2016/04/06'
+# AIPS_VERSION = '31DEC19'
+# version_date = '2016/04/06'
+AIPS_VERSION = inputs.AIPS_VERSION
+version_date = inputs.version_date
 INTER_FLAG = 0 # interactive (1) or non-interactive (0)
 main_file = 'main.py'
 DEF_DISKS = 1			
