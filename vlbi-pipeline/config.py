@@ -156,8 +156,8 @@ do_uvshift_flag = inputs.do_uvshift_flag ###note!! this is out of any steps
 
 ########DO NOT EDIT UNLESS YOU KNOW THE MEANING #######################################################################################
 
-AIPS_VERSION = '31DEC19'
-version_date = '2016/04/06'
+AIPS_VERSION = inputs.AIPS_VERSION #'31DEC19' or '31DEC25'
+version_date = inputs.version_date #'2016/04/06' or '2025/06/01'
 INTER_FLAG = 0 # interactive (1) or non-interactive (0)
 main_file = 'main.py'
 DEF_DISKS = 1			
