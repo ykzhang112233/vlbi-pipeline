@@ -3,6 +3,9 @@
 .AppleDouble
 .LSOverride
 
+# old files
+docs/
+
 # IDE and configuration
 .marscode/
 .github/
