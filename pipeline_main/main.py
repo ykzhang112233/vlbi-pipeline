@@ -620,7 +620,7 @@ def run_main():
             run_fringecal_2(pr_data, fr_image, 1, 8, refant, refant_candi, p_ref_cal[i],solint,smodel, -1, 0, no_rate,rdp_parm,av_ifs_f2,dwin,rwin)
             runclcal2(pr_data,4,8,9,'AMBG',1,refant,[0],p_ref_cal[i],targets)
             run_fringecal_2(pr_data, fr_image, 1, 9, refant, refant_candi, p_ref_cal[i],solint,smodel, -1, 0, no_rate,rdp_parm,av_ifs_f2,dwin,rwin)
-            runclcal2(pr_data,5,9,10,'2PT',1,refant,[0],p_ref_cal[i],targets)
+            runclcal2(pr_data,5,9,10,'AMBG',1,refant,[0],p_ref_cal[i],targets)
             logger.info('Finish fringe fitting with FRING')
             logger.info('################################')
         if do_calib_1_flag == 1:
@@ -628,7 +628,7 @@ def run_main():
             logger.info('######################')
             logger.info('Doing Calib for possible better solutions')
             run_calib_1(pr_data,fr_image,'A&P',10,refant,6,-1,bpver,p_ref_cal[i],0,solint_cal,av_ifs_ca1)
-            runclcal2(pr_data, 6, 10, 11, '2PT', 1, refant, [0], p_ref_cal[i], targets)
+            runclcal2(pr_data, 6, 10, 11, 'AMBG', 1, refant, [0], p_ref_cal[i], targets)
             logger.info('Finishing second calibration using CALIB')
             logger.info('########################################')
         if check_delay_rate == 1:
