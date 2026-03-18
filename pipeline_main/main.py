@@ -627,8 +627,12 @@ def run_main():
             check_sncl(pr_data, 5, 10)
             logger.info('######################')
             logger.info('Doing Calib for possible better solutions')
-            run_calib_1(pr_data,fr_image,'A&P',10,refant,6,-1,bpver,p_ref_cal[i],0,solint_cal,av_ifs_ca1)
+            #run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, calsour, flagver, solint, if_av)
+            run_calib_1(pr_data,fr_image,'P',10,refant,6,-1,bpver,p_ref_cal[i],0,0,av_ifs_ca1)
             runclcal2(pr_data, 6, 10, 11, 'AMBG', 1, refant, [0], p_ref_cal[i], targets)
+            # TODO: add new loop to do phase+amp calib, but need to be careful on the solint
+            # run_calib_1(pr_data,fr_image,'A&P',11,refant,7,-1,bpver,p_ref_cal[i],0,solint_cal,av_ifs_ca1)
+            # runclcal2(pr_data, 7, 11, 12, 'AMBG', 1, refant, [0], p_ref_cal[i], targets)
             logger.info('Finishing second calibration using CALIB')
             logger.info('########################################')
         if check_delay_rate == 1:
