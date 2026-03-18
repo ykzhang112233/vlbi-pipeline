@@ -104,10 +104,11 @@ if step1 == 1:
 ## single step before step 2: find the calibrator scan as possm scan   ##
 ## and run possm, snplt(ty) to find refantenna and fill the rest info  ##
 #########################################################################
-if os.path.exists(outname[0]+'/'):
+out_path = './output/' + outname[0] + '/'  # output path for the results, please make sure the corresponding folder exists
+if os.path.exists(out_path):
     pass
 else:
-    os.system('mkdir '+ outname[0])
+    os.system('mkdir -p '+ out_path)
 calsource = calsource  # calibrator		'' => automatically
 mp_source = calsource  # fringe finder	 '' => automatically
   # constrain time range for fringe finder?
@@ -403,7 +404,7 @@ def run_main():
     if finder_man_flag == 1:
         logger.info('Automaticlly search for refant and fringe scan')
         parms_filename = 'parms-'+ outname[0] +'.txt'
-        p_path = './'+outname[0]
+        p_path = out_path
         if os.path.exists(p_path+'/'+parms_filename):
             pass
         else:
@@ -412,7 +413,7 @@ def run_main():
             refant	  = refants[0]
             refant_candi= refants[1:]+[0]
             parms_filename = 'parms-'+ outname[0] +'.txt'
-            if os.path.exists(parms_filename):
+            if os.path.exists(p_path+'/'+parms_filename):
                 os.remove(parms_filename)
             sys.stdout = open(parms_filename,'w')
             print (N_ant,N_obs)
@@ -420,10 +421,10 @@ def run_main():
             print (refant)
             print (refant_candi)
             sys.stdout = sys.__stdout__
-            logger.info('mv tmp_test*.txt ' + outname[0])
-            os.system('mv tmp_test*.txt ' + outname[0])
-            os.system('mv ' + parms_filename + ' ' + outname[0])
-        lines=open(outname[0] + '/' + parms_filename,'r').read()
+            logger.info('mv tmp_test*.txt ' + p_path)
+            os.system('mv tmp_test*.txt ' + p_path)
+            os.system('mv ' + parms_filename + ' ' + p_path)
+        lines=open(p_path + '/' + parms_filename,'r').read()
         lines=lines.splitlines()
         refant	  = int(lines[2])		  # refant=0 to select refant automatically
         refant_candi=[]
@@ -556,7 +557,7 @@ def run_main():
         if auto_difmap_flag ==1:
             if auto_mapping == 1:
                 check_sncl(pr_data, 5, 9)
-                os.system('python3 run_difmap.py '+outname[0]+'/') 
+                os.system('python3 run_difmap.py '+p_path+'/') 
             else:
                 pass
         ##up: zyk++
@@ -570,7 +571,7 @@ def run_main():
         targets=[target[i],p_ref_cal[i]]
         logger.info('Step 3 begins')
         pr_data = data[0]
-        fr_path=outname[0]+'/'
+        fr_path=out_path
         if bandcal == ['']:
             doband = -1
             bpver = -1
