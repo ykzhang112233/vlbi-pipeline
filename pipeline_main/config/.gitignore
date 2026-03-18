@@ -1,9 +1,10 @@
 # Ignore personal configuration files
 # *_input.py
 
-# Keep template and examples
+# Keep template and examples and active tasks
 !template_input.py
 !bz111ac_input.py
+!bl307ex_input.py
 
 
 # Keep documentation
