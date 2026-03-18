@@ -5,7 +5,9 @@ VLBI Pipeline Configuration Template
 Copy this file and modify for your observation.
 Naming convention: {obs_code}_input.py (e.g., bz111cl_input.py)
 """
-
+## Header information=========================================================
+AIPS_VERSION = '31DEC25'
+version_date = '2025/12/31'
 # ============================================================================
 # (step1) BASIC SETTINGS
 # ============================================================================
