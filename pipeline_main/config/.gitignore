@@ -1,5 +1,5 @@
 # Ignore personal configuration files
-*_input.py
+# *_input.py
 
 # Keep template and examples
 !template_input.py
