@@ -31,7 +31,7 @@ solint = 4  # Solution interval in minutes
 
 # Source names
 calsource = ['3C454.3']  # Calibrator for fringe fitting and bandpass
-target = ['GRB221009A']  # Target source
+target = ['GRB221009A']  # Target source, if more than one source, keep in agreement with p_ref_cal
 p_ref_cal = ['J1905+1943']  # Phase reference calibrator
 
 logfilename = file_name.split('.')[0]  # Log file name
