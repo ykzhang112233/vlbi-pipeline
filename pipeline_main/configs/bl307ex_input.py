@@ -51,7 +51,8 @@ av_ifs_f1 = 0  # Average IFs during fringe fitting
 
 
 # ============================================================================
-# (step123) MANUAL FLAGGING (can be used in all steps, but will be visuallized after step2 for checking)
+# (step123) MANUAL FLAGGING (can be used in all steps, 
+# but will only be visuallized after step2 for checking)
 # ============================================================================
 do_flag = 1  # Enable manual flagging
 
@@ -125,7 +126,7 @@ dwin = 200  # Delay window
 rwin = 100  # Rate window
 
 av_ifs_f2 = 0   # whether to averege ifs during this step's fringe fitting -->cl10 (usually set to 1 if the phase-cal is weak)
-av_ifs_ca1 = 0  # same with above but for calib -->cl11
+av_ifs_ca1 = 1  # same with above but for calib -->cl11
 # This in not used as "P" is the current version for calib -->cl11
 solint_cal = 400  # the solution interval (minutes) for task CALIB "A&P"(output file is SCL11), set as large as possible if not sure
 # ============================================================================
@@ -144,4 +145,5 @@ stepn = 0  # Additional post-processing
 do_uvshift_flag = 0  # Enable UV-shift (requires step3 completed)
 rash = [-0.186, 0, 1.144]  # RA shift (no need to multiply by cos(dec))
 decsh = [0.570, 0, 1.760]  # Dec shift
+## Output _shav data with averaged among IFs
 
