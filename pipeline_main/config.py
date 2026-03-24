@@ -62,7 +62,8 @@ inputs = load_config()
 
 AIPS_NUMBER = inputs.AIPS_NUMBER
 antname = inputs.antname  # Antenna order for FITLD
-geo_path = '../geod/'
+geo_path = inputs.geo_path
+
 #file_path = sys.argv[1]
 # data information
 #file_path = '../data/'
@@ -202,16 +203,7 @@ flagfile[0] = fgfile
 antabfile[0] = antfile
 code = ''
 smodel=[0,0]
+
+out_path = './output/' + outname[0] + '/'  # output path for the results, please make sure the corresponding folder exists
 #note: this version no bandpass used for fringe fitting.
 #### for mannual checking###########
-'''
-split_outcl = 'SPLIT'
-
-max_files = 1024
-
-outname = range(max_files)
-
-outname[0] = filename.split(',')[0]
-
-execfile(r''+main_file)
-'''
