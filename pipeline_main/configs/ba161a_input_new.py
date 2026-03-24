@@ -12,14 +12,14 @@ geo_path='/home/ykzhang/code_repo/vlbi-pipeline/geod/'  # this path is in 4022
 # ============================================================================
 # (step1) BASIC SETTINGS
 # ============================================================================
-AIPS_NUMBER = 308  # AIPS user number
+AIPS_NUMBER = 162  # AIPS user number
 antname = 'VLBA'  # Antenna array: 'VLBA' or 'EVN'
 
 # ============================================================================
 # (step1) DATA INFORMATION
 # ============================================================================
-file_path = '/home/ykzhang/data/vlba/bl307/'  # Path to data directory
-file_name = 'bl307e_x.idifits'  # Better use obs_code.idifits as name
+file_path = '/home/ykzhang/data/vlba/ba161/'  # Path to data directory
+file_name = 'ba161a.idifits'  # Better use obs_code.idifits as name
 num_files = 1  # Number of files to load
 
 # ============================================================================
@@ -31,9 +31,9 @@ ap_dofit = 1  # Opacity calibration: 1=all antennas, or list for specific antenn
 solint = 4  # Solution interval in minutes
 
 # Source names
-calsource = ['3C454.3']  # Calibrator for fringe fitting and bandpass
-target = ['GRB221009A']  # Target source, if more than one source, keep in agreement with p_ref_cal
-p_ref_cal = ['J1905+1943']  # Phase reference calibrator
+calsource = ['3C345']  # Calibrator for fringe fitting and bandpass
+target = ['P1923+2010']  # Target source
+p_ref_cal = ['P1905+1943']  # Phase reference calibrator
 
 logfilename = file_name.split('.')[0]  # Log file name
 
@@ -45,16 +45,16 @@ auto_fringe = 0  # 0=manual (recommended for EVN), 1=automatic
                  # if 1, the following parameters in this part will be ignored and automatically determined by the pipeline
 
 # Manual fringe fitting parameters (when auto_fringe=0)
-reference_antenna = 8
-search_antennas = [1, 5, 0]
-scan_for_fringe = [0,16,54,0,0,16,56,0]
-av_ifs_f1 = 0  # Average IFs during fringe fitting
+reference_antenna = 2
+search_antennas = [8, 4, 0]
+scan_for_fringe = [0,23,42,0,0,23,44,0]
+av_ifs_f1 = 1  # Average IFs during fringe fitting
 
 
 # ============================================================================
 # (step123) MANUAL FLAGGING (can be used in all steps, but will be visuallized after step2 for checking)
 # ============================================================================
-do_flag = 1  # Enable manual flagging
+do_flag = 0  # Enable manual flagging
 
 fgantennas=[[8],[1]]
 
@@ -75,7 +75,7 @@ fgtimer=[[0,14,36,36,0,15,39,0],[0,15,27,54,0,15,28,54]]
 outfg = 2  # Output flag table
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Special quack flagging
-sp_quack_flag = 0. # 0 mean no special quack flagging, 1 means enable special quack flagging and using the following parameters.
+sp_quack_flag = 0 # 0 mean no special quack flagging, 1 means enable special quack flagging and using the following parameters.
 # This special flagging is for flagging time edges of scans and/or elevation edges, which are not well handled by the normal flagging in AIPS. 
 # also, keep the elements in the following lists consistent with each other.
 sp_quack_ant = [[1,2]]
@@ -126,13 +126,13 @@ dwin = 200  # Delay window
 rwin = 100  # Rate window
 
 av_ifs_f2 = 0   # whether to averege ifs during this step's fringe fitting -->cl10 (usually set to 1 if the phase-cal is weak)
-av_ifs_ca1 = 0  # same with above but for calib -->cl11
+av_ifs_ca1 = 1  # same with above but for calib -->cl11
 # This in not used as "P" is the current version for calib -->cl11
 solint_cal = 400  # the solution interval (minutes) for task CALIB "A&P"(output file is SCL11), set as large as possible if not sure
 # ============================================================================
 # PIPELINE CONTROL FLAGS
 # ============================================================================
-step1 = 1  # Data loading and initial calibration
+step1 = 0  # Data loading and initial calibration
 step2 = 1  # Fringe fitting
 step3 = 0  # Self-calibration and imaging
 stepn = 0  # Additional post-processing
@@ -142,7 +142,8 @@ stepn = 0  # Additional post-processing
 # ============================================================================
 # Note: if you want to do averaging on IF and/or time, it is better to do UV-shift before averaging to avoid smearing effect.
 # Position shifts in arcseconds (same as difmap position values)
-do_uvshift_flag = 1  # Enable UV-shift (requires step3 completed)
+do_uvshift_flag = 0  # Enable UV-shift (requires step3 completed)
 rash = [-0.186, 0, 1.144]  # RA shift (no need to multiply by cos(dec))
 decsh = [0.570, 0, 1.760]  # Dec shift
+## Output _shav data with averaged among IFs
 

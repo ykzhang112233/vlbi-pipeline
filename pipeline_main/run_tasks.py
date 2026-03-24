@@ -18,6 +18,7 @@ import time
 from pylab import *
 from utils import *
 from config import *
+
 from check_utils import *
 from get_utils import *
 from logging_config import logger
@@ -159,6 +160,7 @@ def runTECOR(indata, year, doy, num_days, gainuse, TECU_model):
     name = TECU_model+doy+'0.'+year+'i'
 #    name2='codg'+doy+'0.'+year+'i'
     tecor = AIPSTask('TECOR')
+    print(geo_path+name)
     if os.path.exists(geo_path+name):
         tecor.infile = geo_path+name
 #    elif os.path.exists(name2):
@@ -167,6 +169,7 @@ def runTECOR(indata, year, doy, num_days, gainuse, TECU_model):
     tecor.nfiles = num_days
     tecor.gainuse = gainuse
     tecor.aparm[1:] = [1, 0]
+    tecor.input()
     tecor()
 
 
@@ -248,7 +251,7 @@ def rundtsum(indata):
     dtsum.outprint = 'PWD:'+indata.name.strip()+'.DTSM'
     dtsum()
     if (os.path.exists(dtsum.outprint) == False):
-        os.popen(r'mv '+dtsum.outprint[4:]+' '+outname[0]+'/')
+        os.popen(r'mv '+dtsum.outprint[4:]+' '+out_path+'/')
 #
 
 
@@ -262,7 +265,7 @@ def runlistr(indata):
     listr.outprint = 'PWD:'+indata.name.strip()+'.Listr'
     listr()
     if (os.path.exists(listr.outprint) == False):
-        os.popen(r'mv '+listr.outprint[4:]+' '+outname[0]+'/')
+        os.popen(r'mv '+listr.outprint[4:]+' '+out_path+'/')
 
 
 ##############################################################################
@@ -657,7 +660,7 @@ def runapcal(indata, tyver, gcver, snver, dofit, opcode):
         lwpla.go()
         indata.zap_table('PL', -1)
         if os.path.exists(filename):
-            os.popen('mv ' + filename + ' ' + outname[0] + '/')
+            os.popen('mv ' + filename + ' ' + out_path + '/')
 
 
 #################################################################################
@@ -1148,10 +1151,10 @@ def run_split2(indata, source, gainuse, outclass, doband, bpver, flagver,av_chan
     else:
         logger.info('No calibrated and splitted uv-data for '+source[0])
 
-    if os.path.exists(outname[0]+'/'+fitname):
-        os.popen(r'rm '+outname[0]+'/'+fitname)
+    if os.path.exists(out_path+'/'+fitname):
+        os.popen(r'rm '+out_path+'/'+fitname)
     if os.path.exists(fitname):
-        os.popen(r'mv '+fitname+' '+outname[0]+'/')
+        os.popen(r'mv '+fitname+' '+out_path+'/')
 #split3 specially designed for shifting
 def run_split3(indata, target, outclass, doband, bpver, gainuse, avg, fittp):
     if fittp >= 0:
@@ -1196,10 +1199,10 @@ def run_split3(indata, target, outclass, doband, bpver, gainuse, avg, fittp):
             fittp.go()
         else:
             logger.info('No calibrated and splitted uv-data for '+source[0])
-        if os.path.exists(outname[0]+'/'+fitname):
-            os.popen(r'rm '+outname[0]+'/'+fitname)
+        if os.path.exists(out_path+'/'+fitname):
+            os.popen(r'rm '+out_path+'/'+fitname)
         if os.path.exists(fitname):
-            os.popen(r'mv '+fitname+' '+outname[0]+'/')
+            os.popen(r'mv '+fitname+' '+out_path+'/')
 
 def run_split(indata, source, outclass, doband, bpver):
 

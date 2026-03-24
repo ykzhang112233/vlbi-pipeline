@@ -104,7 +104,6 @@ if step1 == 1:
 ## single step before step 2: find the calibrator scan as possm scan   ##
 ## and run possm, snplt(ty) to find refantenna and fill the rest info  ##
 #########################################################################
-out_path = './output/' + outname[0] + '/'  # output path for the results, please make sure the corresponding folder exists
 if os.path.exists(out_path):
     pass
 else:

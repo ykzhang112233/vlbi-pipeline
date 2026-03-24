@@ -203,17 +203,17 @@ def get_key_file(indata, code):
     path2=path0+mon_dir[month]+str(year)[2:4]+'/'+code_str+'/'+code_str+'.sum'
     path3=path0+mon_dir[month]+str(year)[2:4]+'/'+code_str+'/'+code_str+'log.vlba'
     path4=path0+mon_dir[month]+str(year)[2:4]+'/'+code_str+'/'+'jobs/'+'sniffer/'+code_str.upper()+'.'+str(year)+str(month).zfill(2)+str(day).zfill(2)+'.sniff'
-    if os.path.exists(outname[0]+'/'+code_str+'log.vlba'):
+    if os.path.exists(out_path+'/'+code_str+'log.vlba'):
         pass
     else:
         os.popen(r'wget '+path1)
         os.popen(r'wget '+path2)
         os.popen(r'wget '+path3)
         os.popen(r'wget '+path4)
-        os.popen(r'mv '+code_str+'.key'+' '+outname[0]+'/')
-        os.popen(r'mv '+code_str+'.sum'+' '+outname[0]+'/')
-        os.popen(r'mv '+code_str+'log.vlba'+' '+outname[0]+'/')
-        os.popen(r'mv '+'*.sniff'+' '+outname[0]+'/')
+        os.popen(r'mv '+code_str+'.key'+' '+out_path+'/')
+        os.popen(r'mv '+code_str+'.sum'+' '+out_path+'/')
+        os.popen(r'mv '+code_str+'log.vlba'+' '+out_path+'/')
+        os.popen(r'mv '+'*.sniff'+' '+out_path+'/')
 
 
 ##############################################################################
