@@ -371,7 +371,6 @@ def run_main():
             endquack(data[0],sp_quack_ant[m],sp_quack_endb[m]/60.,outfg)
             run_elvflag(data[0],sp_quack_el[m],sp_quack_ant[m],outfg)
 
-
     if RFI_clip_flag >= 1:
         if data[0].table_highver('AIPS FG')>=2:
     #data[0].zap_table('AIPS FG',outfg)

@@ -134,8 +134,8 @@ solint_cal = 400  # the solution interval (minutes) for task CALIB "A&P"(output 
 # ============================================================================
 step1 = 0  # Data loading and initial calibration
 step2 = 0  # Fringe fitting
-step3 = 1  # Self-calibration and imaging
-stepn = 0  # Additional post-processing
+step3 = 0  # Self-calibration and imaging
+stepn = 1  # Additional post-processing
 
 # ============================================================================
 # (Step n) UV-SHIFT PARAMETERS (additional post-processing)
@@ -144,7 +144,7 @@ stepn = 0  # Additional post-processing
 # Position shifts in arcseconds (same as difmap position values)
 do_uvshift_flag = 0  # Enable UV-shift (requires step3 completed)
 # per element per source (in targets)
-rash = [-0.186, 0, 1.144]  # RA shift (no need to multiply by cos(dec))
-decsh = [0.570, 0, 1.760]  # Dec shift
+rash = [-3.0733e-06, -2.2945e-03]  # RA shift (no need to multiply by cos(dec))
+decsh = [-1.3861e-04, -3.5160e-04]  # Dec shift
 ## Output _shav data with averaged among IFs
 
