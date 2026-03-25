@@ -1074,12 +1074,14 @@ def run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, 
 
 ##############################################################################
 #
-def run_uvfix(indata,rash,decsh,outclass):
+def run_uvfix(indata,rash,decsh,outclass,out_seq):
     uvfix		= AIPSTask('UVFIX')
     uvfix.indata	= indata
     uvfix.shift[1]	= rash
     uvfix.shift[2]	= decsh
     uvfix.outclass	= outclass
+    uvfix.outseq    = out_seq
+    uvfix.input()
     uvfix()
 
 def run_split2(indata, source, gainuse, outclass, doband, bpver, flagver,av_chan, split_seq):
@@ -1156,7 +1158,7 @@ def run_split2(indata, source, gainuse, outclass, doband, bpver, flagver,av_chan
     if os.path.exists(fitname):
         os.popen(r'mv '+fitname+' '+out_path+'/')
 #split3 specially designed for shifting
-def run_split3(indata, target, outclass, doband, bpver, gainuse, avg, fittp):
+def run_split3(indata, target, outclass, doband, bpver, gainuse, avg, fittp, split_seq):
     if fittp >= 0:
         split            = AIPSTask('SPLIT')
         split.indata     = indata
@@ -1181,10 +1183,11 @@ def run_split3(indata, target, outclass, doband, bpver, gainuse, avg, fittp):
         split.outdisk    = indata.disk
         split.doband     = doband
         split.bpver      = bpver
+        split.outseq = indata.seq
         #split.smooth[1:] = smooth
         split.input()
         split()
-    splt_data=AIPSUVData(target,outclass,indata.disk,1)
+    splt_data=AIPSUVData(target,outclass,indata.disk,split_seq)
     #    if uvfix_data.exists():
 #    print 'Clear old uvfix data'
 #        splt_data.clrstat()

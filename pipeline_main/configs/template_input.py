@@ -143,6 +143,7 @@ stepn = 0  # Additional post-processing
 # Note: if you want to do averaging on IF and/or time, it is better to do UV-shift before averaging to avoid smearing effect.
 # Position shifts in arcseconds (same as difmap position values)
 do_uvshift_flag = 1  # Enable UV-shift (requires step3 completed)
-rash = [-0.186, 0, 1.144]  # RA shift (no need to multiply by cos(dec))
-decsh = [0.570, 0, 1.760]  # Dec shift
+# per element per source (in targets)
+rash = [-3.0733e-06, -2.2945e-03]  # RA shift (no need to multiply by cos(dec))
+decsh = [-1.3861e-04, -3.5160e-04]  # Dec shift
 

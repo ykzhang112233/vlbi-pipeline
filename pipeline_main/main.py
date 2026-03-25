@@ -676,7 +676,7 @@ def run_main():
                 logger.info('Clear old split3 data')
                 split3_data.clrstat()
                 split3_data.zap()
-            run_split3(pr_data, target[i], '4uvsh', doband, bpver, 10, 0, 0)
+            run_split3(pr_data, target[i], '4uvsh', doband, bpver, 10, 0, 0,split_seq)
         logger.info('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
         logger.info('Step3 ends')
         #Step3
@@ -685,6 +685,7 @@ def run_main():
         for i in range(len(target)):
             doband = -1
             bpver = -1
+            split_seq = i+1
             if do_uvshift_flag ==1:
                 check_sncl(pr_data, 6,11)
                 split3_data=AIPSUVData(target[i],'4uvsh',1,split_seq)
@@ -695,13 +696,13 @@ def run_main():
                     logger.info('Clear old uvfix data')
                     uvfix_data.clrstat()
                     uvfix_data.zap()
-                run_uvfix(split3_data,rash[i],decsh[i],'UVFIX')
+                run_uvfix(split3_data,rash[i],decsh[i],'UVFIX',split_seq)
                 shav_data=AIPSUVData(target[i],'shav',1,split_seq)
                 if shav_data.exists():
                     logger.info('Clear old uvfix data')
                     shav_data.clrstat()
                     shav_data.zap()
-                run_split3(uvfix_data, target[i], 'shav', -1, 0, 0, 1, 1)
+                run_split3(uvfix_data, target[i], 'shav', -1, 0, 0, 2, 1, split_seq)
 
 
 '''
