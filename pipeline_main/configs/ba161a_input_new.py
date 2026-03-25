@@ -32,8 +32,8 @@ solint = 4  # Solution interval in minutes
 
 # Source names
 calsource = ['3C345']  # Calibrator for fringe fitting and bandpass
-target = ['P1923+2010']  # Target source
-p_ref_cal = ['P1905+1943']  # Phase reference calibrator
+target = ['P1923+2010','G221009A']  # Target source
+p_ref_cal = ['P1905+1943','P1905+1943']  # Phase reference calibrator
 
 logfilename = file_name.split('.')[0]  # Log file name
 
@@ -118,12 +118,12 @@ matxi=[[0.9,1.0,0.9,0.9,1.0,1.2,0.9,1.8,1.0],
 # ============================================================================
 # (Step 3) ADVANCED CALIBRATION PARAMETERS 
 # ============================================================================
-man_fr_file = ['J1905-v1-mod1.fits']  # Manual model files (when auto_mapping=0)
+man_fr_file = ['P1905-v1-mod2.fits','P1905-v1-mod2.fits']  # Manual model files (when auto_mapping=0). (the numbers should alighn with targets and p_refs)
 del_old_mod = True  # Delete old model before do additional fringe fitting
 no_rate = 0  # Disable rate correction, dparm(9) in AIPS task FRING
 rdp_parm = 0 # Whether to do zero delay/rate or phase, see AIPS task FRING manual for details (dparm(8))
 dwin = 200  # Delay window
-rwin = 100  # Rate window
+rwin = 200  # Rate window
 
 av_ifs_f2 = 0   # whether to averege ifs during this step's fringe fitting -->cl10 (usually set to 1 if the phase-cal is weak)
 av_ifs_ca1 = 1  # same with above but for calib -->cl11
@@ -133,8 +133,8 @@ solint_cal = 400  # the solution interval (minutes) for task CALIB "A&P"(output 
 # PIPELINE CONTROL FLAGS
 # ============================================================================
 step1 = 0  # Data loading and initial calibration
-step2 = 1  # Fringe fitting
-step3 = 0  # Self-calibration and imaging
+step2 = 0  # Fringe fitting
+step3 = 1  # Self-calibration and imaging
 stepn = 0  # Additional post-processing
 
 # ============================================================================
@@ -143,6 +143,7 @@ stepn = 0  # Additional post-processing
 # Note: if you want to do averaging on IF and/or time, it is better to do UV-shift before averaging to avoid smearing effect.
 # Position shifts in arcseconds (same as difmap position values)
 do_uvshift_flag = 0  # Enable UV-shift (requires step3 completed)
+# per element per source (in targets)
 rash = [-0.186, 0, 1.144]  # RA shift (no need to multiply by cos(dec))
 decsh = [0.570, 0, 1.760]  # Dec shift
 ## Output _shav data with averaged among IFs

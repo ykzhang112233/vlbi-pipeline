@@ -457,6 +457,7 @@ def run_main():
     n = 0
     if step2 == 1:
       print(data)
+      split_seq = i + 1
       pr_data=data[0]
       for i in range(len(target)):
         print(i)
@@ -571,6 +572,7 @@ def run_main():
         logger.info('Step 3 begins')
         pr_data = data[0]
         fr_path=out_path
+        split_seq = i+1
         if bandcal == ['']:
             doband = -1
             bpver = -1

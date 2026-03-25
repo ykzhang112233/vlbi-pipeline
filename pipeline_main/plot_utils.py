@@ -86,9 +86,9 @@ def possmplot(uvdata, sources='', timer=[0, 0, 0, 0, 0, 0, 0, 0], gainuse=0, fla
         os.popen('rm '+filename)
     lwpla.go()
     if (os.path.exists(filename) == True):
-        os.popen(r'mv '+filename+' '+outname[0]+'/')
+        os.popen(r'mv '+filename+' '+out_path+'/')
     if (os.path.exists(textname) == True):
-        os.popen(r'mv '+textname+' '+outname[0]+'/')
+        os.popen(r'mv '+textname+' '+out_path+'/')
     logger.info('POSSM done!')
 
 #################################################################################
@@ -240,7 +240,7 @@ def runsnplt(indata, inver=1, inex='cl', sources='', optype='phas', nplot=4, tim
         os.popen('rm '+filename)
     lwpla.go()
     if (os.path.exists(filename) == True):
-        os.popen(r'mv '+filename+' '+outname[0]+'/')
+        os.popen(r'mv '+filename+' '+out_path+'/')
     logger.info('Done SNPLT')
 
 
