@@ -122,8 +122,8 @@ man_fr_file = ['J1905-v1-mod1.fits']  # Manual model files (when auto_mapping=0)
 del_old_mod = True  # Delete old model before do additional fringe fitting
 no_rate = 0  # Disable rate correction, dparm(9) in AIPS task FRING
 rdp_parm = 0 # Whether to do zero delay/rate or phase, see AIPS task FRING manual for details (dparm(8))
-dwin = 200  # Delay window
-rwin = 100  # Rate window
+dwin = 6  # Delay window, centered at 0 and bound is 1/2 value, in nanosec
+rwin = 200  # Rate window, centered at 0 and bound is 1/2, in mHz
 
 av_ifs_f2 = 0   # whether to averege ifs during this step's fringe fitting -->cl10 (usually set to 1 if the phase-cal is weak)
 av_ifs_ca1 = 0  # same with above but for calib -->cl11
