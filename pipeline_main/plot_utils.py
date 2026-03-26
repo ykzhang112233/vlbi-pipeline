@@ -229,13 +229,18 @@ def runsnplt(indata, inver=1, inex='cl', sources='', refant = 0,optype='phas', o
     lwpla = AIPSTask('lwpla')
     lwpla.indata = indata
     if sources == '':
-        lwpla.outfile = 'PWD:'+outname[0]+'-'+inex+str(inver)+'-'+optype+'.snplt'
         filename = outname[0]+'-'+inex+str(inver)+'-'+optype+'.snplt'
+        lwpla.outfile = 'PWD:'+ filename
     else:
-        lwpla.outfile = 'PWD:'+outname[0]+'-'+inex + \
-        str(inver)+'-'+optype+'-'+sources[0]+'.snplt'
-        filename = outname[0]+'-'+inex + \
-        str(inver)+'-'+optype+'-'+sources[0]+'.snplt'
+        if len(sources) == 1:
+            s_names = sources[0]
+        elif len(sources) == 2:
+            s_names = sources[0][:5] + '+' + sources[1][:5]
+        else:
+            s_names = sources[0][:4] + '+more'
+        filename = outname[0]+'-'+inex + str(inver)+'-'+optype+'-'+s_names+'.snplt'
+        lwpla.outfile = 'PWD:'+ filename
+
     lwpla.plver = 1
     lwpla.inver = 500
     if os.path.exists(filename):
