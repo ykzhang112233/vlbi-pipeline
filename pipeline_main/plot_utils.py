@@ -205,7 +205,7 @@ def run_snplt(indata, inter_flag):
     indata.zap_table('PL', -1)
 
 
-def runsnplt(indata, inver=1, inex='cl', sources='', optype='phas', nplot=4, timer=[]):
+def runsnplt(indata, inver=1, inex='cl', sources='', refant = 0,optype='phas', opcode='', nplot=4, timer=[]):
     logger.info('Begin SNPLT for ' + str(inex) + str(inver) +' on ' + str(optype))
     indata.zap_table('PL', -1)
     snplt = AIPSTask('snplt')
@@ -215,7 +215,9 @@ def runsnplt(indata, inver=1, inex='cl', sources='', optype='phas', nplot=4, tim
     snplt.nplot = nplot
     snplt.inex = inex
     snplt.inver = inver
+    snplt.refant = refant
     snplt.optype = optype
+    snplt.opcode = opcode
     snplt.do3col = 2
     if (type(sources) == type('string')):
         snplt.sources[1] = sources
