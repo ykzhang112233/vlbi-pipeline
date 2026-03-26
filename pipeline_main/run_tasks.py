@@ -410,12 +410,13 @@ def run_uvflg(indata, timeran, bif, eif, bchan, echan, antennas, outfg):
     uvflg.go()
 ##############################################################################
 #
-def runsnsmo(indata, inver, outver, refant):
+def run_snsmo(indata, inver, outver, refant):
     snsmo = AIPSTask('SNSMO')
     snsmo.indata = indata
     snsmo.refant = refant
     snsmo.inver = inver
     snsmo.outver = outver
+
     snsmo.bparm[1:] = [0, 0, 1, 1, 1]
     snsmo.smotype = 'VLBI'
     snsmo()
@@ -696,7 +697,7 @@ def run_fringecal_2(indata, fr_image, nmaps, gainuse, refant, refant_candi, cals
     fringe.docal = 1
     fringe.calsour[1:] = [calsource]
     fringe.solint = solint
-    fringe.aparm[1:] = [3, 0, 0, 0, if_av, 0, 0, 0, 1]  # change if needed. if_av =0, not average if for solution, =1, avereage IFs
+    fringe.aparm[1:] = [3, 0, 0, 0, if_av, 0, 7, 0, 1]  # change if needed. if_av =0, not average if for solution, =1, avereage IFs; snr cutoff=7
     fringe.dparm[1:] = [0, dwin, rwin, 0]
     # fringe.dparm[4]    = dpfour
     fringe.dparm[8] = rdp_parm  # zeroing rate, delay, phase?
@@ -833,7 +834,6 @@ def runmaimagr(indata, source, niter, cz, iz, channel, docal, imna, uvwtfn, robu
     imagr.bmin = beam[1]
     imagr.bpa = beam[2]
     imagr()
-
 
 ##############################################################################
 #
@@ -1183,7 +1183,7 @@ def run_split3(indata, target, outclass, doband, bpver, gainuse, avg, fittp, spl
         split.outdisk    = indata.disk
         split.doband     = doband
         split.bpver      = bpver
-        split.outseq = indata.seq
+        split.outseq = split_seq
         #split.smooth[1:] = smooth
         split.input()
         split()
