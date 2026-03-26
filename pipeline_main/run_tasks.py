@@ -410,15 +410,23 @@ def run_uvflg(indata, timeran, bif, eif, bchan, echan, antennas, outfg):
     uvflg.go()
 ##############################################################################
 #
-def run_snsmo(indata, inver, outver, refant):
+def run_snsmo(indata, inver, outver, refant, avgIF):
     snsmo = AIPSTask('SNSMO')
     snsmo.indata = indata
     snsmo.refant = refant
     snsmo.inver = inver
     snsmo.outver = outver
-
-    snsmo.bparm[1:] = [0, 0, 1, 1, 1]
-    snsmo.smotype = 'VLBI'
+    snsmo.samptype = 'MWF'
+    snsmo.bparm[1:] = [0.5, 0.25, 0.5, 0.5, 0.5] # time width for smoothing
+    if avgIF == 0:
+        snsmo.smotype = 'VLBI'
+    else:
+        snsmo.smotype = 'VLDE'
+        snsmo.npiece = 1
+    snsmo.cparm[1:] = [0.5, 0.25, 0.5, 0.5, 0.5, 0.5, 15, 5, 0.25,0.5 ]  # clipping strategy (1-5, same with bparm) (6-10, clip threshold)
+    # 0.5, 15deg(phase), 5mHz (rate), 0.25ns(delay), 0.5ns(mbdly)
+    snsmo.doblanck = 1 # only replace blanck values
+    snsmo.input()
     snsmo()
 ##############################################################################
 #
