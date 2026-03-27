@@ -337,6 +337,7 @@ def runclcal2(indata, snver, gainver, gainuse, interpol, dobtween, refant, anten
     clcal.gainver = gainver
     clcal.gainuse = gainuse
     clcal.interpol = interpol
+    clcal.doblank = 1
     # if >= 1, smooth within with one source;if <=0 smooth separately
     clcal.dobtween = dobtween
     clcal.input()
@@ -425,7 +426,7 @@ def run_snsmo(indata, inver, outver, refant, avgIF):
         snsmo.npiece = 1
     snsmo.cparm[1:] = [0.5, 0.25, 0.5, 0.5, 0.5, 0.5, 15, 5, 0.25,0.5 ]  # clipping strategy (1-5, same with bparm) (6-10, clip threshold)
     # 0.5, 15deg(phase), 5mHz (rate), 0.25ns(delay), 0.5ns(mbdly)
-    snsmo.doblanck = 1 # only replace blanck values
+    snsmo.doblank = 1 # only replace blanck values
     snsmo.input()
     snsmo()
 ##############################################################################
@@ -1152,7 +1153,7 @@ def run_split2(indata, source, gainuse, outclass, doband, bpver, flagver,av_chan
 
     fittp = AIPSTask('FITTP')
     fittp.indata = split_data
-    fitname = fittp.inname+'_CL'+str(gainuse)+'_'+fittp.inclass+'_'+str(int(fittp.inseq))+'.splt'
+    fitname = fittp.inname+'_CL'+str(gainuse)+'_'+fittp.inclass+'_'+str(int(split_seq))+'.splt'
     fittp.dataout = 'PWD:'+fitname
 
     if split_data.exists():
@@ -1203,7 +1204,7 @@ def run_split3(indata, target, outclass, doband, bpver, gainuse, avg, fittp, spl
     if fittp == 1:
         fittp         = AIPSTask('FITTP')
         fittp.indata  = splt_data
-        fitname=fittp.inname+'_'+fittp.inclass+'_'+str(int(fittp.inseq))+'.splt'
+        fitname=fittp.inname+'_'+fittp.inclass+'_'+str(int(split_seq))+'.splt'
         fittp.dataout = 'PWD:'+fitname
         if splt_data.exists():
             logger.info('Writing out calibrated and splitted uv-data for '+source[0])
