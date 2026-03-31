@@ -456,10 +456,10 @@ def run_main():
     n = 0
     if step2 == 1:
       print(data)
-      split_seq = i + 1
       pr_data=data[0]
       for i in range(len(target)):
         print(i)
+        split_seq = i+1
         targets=[target[i],p_ref_cal[i]]
         #n = n + 1
         logger.info('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
@@ -517,9 +517,15 @@ def run_main():
             check_sncl(pr_data, 3, 7)
             run_fringecal_1(pr_data, refant, refant_candi, calsource[0], 7, 1, solint, -1, 0,av_ifs_f1,500,500)
             run_fringecal_1(pr_data, refant, refant_candi, p_ref_cal[i], 7, 1, solint, -1, 0,av_ifs_f1,500,500)
-            runclcal2(pr_data, 4, 7, 8, 'ambg', -1, refant, [0], calsource[0], calsource[0])
-            runclcal2(pr_data, 5, 7, 9, 'ambg', 1, refant, [0], p_ref_cal[i], targets)
+            runclcal2(pr_data, 4, 7, 8, 'AMBG', -1, refant, [0], calsource[0], calsource[0])
+            runclcal2(pr_data, 5, 7, 9, 'AMBG', 1, refant, [0], p_ref_cal[i], targets)
             logger.info('Finish fringe')
+            runsnplt(pr_data, inver=5, inex='SN', sources=[p_ref_cal[i]], refant = refant,optype='ALL', opcode='ALSI', nplot=4, timer=[], out_suffix='S2')
+            # runsnplt(pr_data, inver=5, inex='SN', sources=[p_ref_cal[i]], refant = refant,optype='DELA', opcode='ALSI', nplot=1, timer=[], out_suffix='S2')
+            # runsnplt(pr_data, inver=5, inex='SN', sources=[p_ref_cal[i]], refant = refant,optype='RATE', opcode='ALSI', nplot=1, timer=[], out_suffix='S2')
+            # runsnplt(pr_data, inver=5, inex='SN', sources=[p_ref_cal[i]], refant = refant,optype='SNR', opcode='', nplot=4, timer=[], out_suffix='S2')
+            # runsnplt(pr_data, inver=9, inex='CL', sources=targets, refant = refant,optype='RPHS', opcode='', nplot=4, timer=[], out_suffix='S2')
+            runsnplt(pr_data, inver=9, inex='CL', sources=targets, refant = refant,optype='PHAS', opcode='', nplot=4, timer=[], out_suffix='S2')
             logger.info('######################')
         if do_band_flag == 1:
             check_sncl(pr_data, 5, 9)
@@ -545,9 +551,9 @@ def run_main():
             logger.info('Begin Spliting data')
             check_sncl(pr_data, 5, 9)
             if i ==0:
-                run_split2(pr_data, calsource[0], 8, split_outcl, doband, bpver, flagver,1,split_seq)
-            run_split2(pr_data, p_ref_cal[i], 9, split_outcl, doband, bpver, flagver,1,split_seq)
-            run_split2(pr_data, target[i], 9, split_outcl, doband, bpver, flagver,1,split_seq)
+                run_split2(pr_data, calsource[0], 8, split_outcl, doband, bpver, flagver,1,split_seq,'S2_FCal')
+            run_split2(pr_data, p_ref_cal[i], 9, split_outcl, doband, bpver, flagver,1,split_seq,'S2_Pcal')
+            run_split2(pr_data, target[i], 9, split_outcl, doband, bpver, flagver,1,split_seq,'S2_Tar')
             # if len(p_ref_cal) >= 2:
             #     run_split2(pr_data, p_ref_cal[1], 9, split_outcl, doband, bpver, flagver,split_seq)
             logger.info('Data has been exported by SPLIT')
@@ -618,10 +624,15 @@ def run_main():
             logger.info('##########################')
             logger.info('Begin second fringe fitting')
             # run_fringecal_1(pr_data, refant, refant_candi, p_ref_cal[i], 8, 0, solint, -1, 0,300,300)
-            run_fringecal_2(pr_data, fr_image, 1, 8, refant, refant_candi, p_ref_cal[i],solint,smodel, -1, 0, no_rate,rdp_parm,av_ifs_f2,dwin,rwin)
+            run_fringecal_2(pr_data, fr_image, 1, 8, refant, refant_candi, p_ref_cal[i],solint,smodel, doband, bpver, no_rate,rdp_parm,av_ifs_f2,dwin,rwin)
             runclcal2(pr_data,4,8,9,'AMBG',1,refant,[0],p_ref_cal[i],targets)
-            run_fringecal_2(pr_data, fr_image, 1, 9, refant, refant_candi, p_ref_cal[i],solint,smodel, -1, 0, no_rate,rdp_parm,av_ifs_f2,dwin,rwin)
-            runclcal2(pr_data,5,9,10,'AMBG',1,refant,[0],p_ref_cal[i],targets)
+            # run_fringecal_2(pr_data, fr_image, 1, 9, refant, refant_candi, p_ref_cal[i],solint,smodel, -1, 0, no_rate,rdp_parm,av_ifs_f2,dwin,rwin)
+            # runclcal2(pr_data,5,9,10,'AMBG',1,refant,[0],p_ref_cal[i],targets)
+            # method 1, smooth using snsmo
+            run_snsmo(pr_data, 4, 5, refant, av_ifs_f2) # smooth only on coher phase, delay ,rate
+            runclcal2(pr_data,5,8,10,'AMBG',1,refant,[0],p_ref_cal[i],targets)
+            # method 2, smooth using clcal --  no change
+            # runclcal3(pr_data, 4, 8, 10, 'AMBG',refant,[0],p_ref_cal[i],targets)
             logger.info('Finish fringe fitting with FRING')
             logger.info('################################')
         if do_calib_1_flag == 1:
@@ -629,58 +640,66 @@ def run_main():
             logger.info('######################')
             logger.info('Doing Calib for possible better solutions')
             #run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, calsour, flagver, solint, if_av)
-            run_calib_1(pr_data,fr_image,'P',10,refant,6,-1,bpver,p_ref_cal[i],0,0,av_ifs_ca1)
-            runclcal2(pr_data, 6, 10, 11, 'AMBG', 1, refant, [0], p_ref_cal[i], targets)
-            # TODO: add new loop to do phase+amp calib, but need to be careful on the solint
-            # run_calib_1(pr_data,fr_image,'A&P',11,refant,7,-1,bpver,p_ref_cal[i],0,solint_cal,av_ifs_ca1)
+            # run_calib_1(pr_data,fr_image,'P',11,refant,7,-1,bpver,p_ref_cal[i],0,0,av_ifs_ca1)
             # runclcal2(pr_data, 7, 11, 12, 'AMBG', 1, refant, [0], p_ref_cal[i], targets)
+            # TODO: add new loop to do phase+amp calib, but need to be careful on the solint
+
             logger.info('Finishing second calibration using CALIB')
             logger.info('########################################')
         if check_delay_rate == 1:
             #plt_sn_cl(pr_data,6, 10, p_ref_cal[0], chk_trange, 1)
             logger.info('######################')
             logger.info('Begin phase and delay checking with SNPLT')
-            runsnplt(pr_data, inver=9, inex='CL', sources=targets, refant = refant,optype='RPHS', opcode='ALSI', nplot=1, timer=[])
-            runsnplt(pr_data, inver=10, inex='CL', sources=targets, refant = refant,optype='RPHS', opcode='ALSI', nplot=1, timer=[])
-            runsnplt(pr_data, inver=4, inex='SN', sources=targets, refant = refant,optype='RPHS', opcode='ALSI', nplot=1, timer=[])
-            runsnplt(pr_data, inver=4, inex='SN', sources=targets, refant = refant,optype='RDLY', opcode='ALSI', nplot=1, timer=[])
-            runsnplt(pr_data, inver=4, inex='SN', sources=targets, refant = refant,optype='RATE', opcode='', nplot=4, timer=[])
-            runsnplt(pr_data, inver=4, inex='SN', sources=targets, refant = refant,optype='SNR', opcode='', nplot=4, timer=[])
-            runsnplt(pr_data, inver=5, inex='SN', sources=targets, refant = refant,optype='RPHS', opcode='ALSI', nplot=1, timer=[])
-            runsnplt(pr_data, inver=5, inex='SN', sources=targets, refant = refant,optype='RDLY', opcode='ALSI', nplot=1, timer=[])
+            runsnplt(pr_data, inver=9, inex='CL', sources=targets, refant = refant,optype='ALL', opcode='', nplot=2, timer=[], out_suffix='S3')
+            runsnplt(pr_data, inver=10, inex='CL', sources=targets, refant = refant,optype='ALL', opcode='', nplot=2, timer=[], out_suffix='S3')
+            # runsnplt(pr_data, inver=11, inex='CL', sources=targets, refant = refant,optype='RPHS', opcode='ALSI', nplot=1, timer=[])
+            # runsnplt(pr_data, inver=12, inex='CL', sources=targets, refant = refant,optype='RPHS', opcode='ALSI', nplot=1, timer=[])
+            runsnplt(pr_data, inver=4, inex='SN', sources=targets, refant = refant,optype='PRST', opcode='ALSI', nplot=3, timer=[], out_suffix='S3')
+            runsnplt(pr_data, inver=4, inex='SN', sources=targets, refant = refant,optype='RDLY', opcode='ALSI', nplot=1, timer=[], out_suffix='S3')
+            runsnplt(pr_data, inver=5, inex='SN', sources=targets, refant = refant,optype='PRST', opcode='ALSI', nplot=3, timer=[], out_suffix='S3')
+            runsnplt(pr_data, inver=5, inex='SN', sources=targets, refant = refant,optype='RDLY', opcode='ALSI', nplot=1, timer=[], out_suffix='S3')
+            # runsnplt(pr_data, inver=6, inex='SN', sources=targets, refant = refant,optype='RPHS', opcode='ALSI', nplot=1, timer=[])
+            # runsnplt(pr_data, inver=6, inex='SN', sources=targets, refant = refant,optype='RDLY', opcode='ALSI', nplot=1, timer=[])
+            # runsnplt(pr_data, inver=6, inex='SN', sources=targets, refant = refant,optype='RATE', opcode='', nplot=4, timer=[])
+            # runsnplt(pr_data, inver=7, inex='SN', sources=targets, refant = refant,optype='RPHS', opcode='ALSI', nplot=1, timer=[])
+            # runsnplt(pr_data, inver=7, inex='SN', sources=targets, refant = refant,optype='RDLY', opcode='ALSI', nplot=1, timer=[])
+            # runsnplt(pr_data, inver=7, inex='SN', sources=targets, refant = refant,optype='RATE', opcode='', nplot=4, timer=[])
             #runsnplt(pr_data, inver=6, inex='SN', sources=targets, optype='PHAS', nplot=4, timer=[])
         # runsnplt(pr_data,inver=7,inex='SN',sources='',optype='DELA',nplot=4,timer=[])
         # runsnplt(pr_data,inver=7,inex='SN',sources='',optype='RATE',nplot=4,timer=[])
             logger.info('phase and delay check have been done using SNPLT')
         if split_2_flag >= 1:
-            check_sncl(pr_data, 6, 11)
+            check_sncl(pr_data, 5, 10)
             doband =-1
             logger.info('######################')
             logger.info('Spliting data')
-            run_split2(pr_data, target[i], 10, 'SCL10', doband, bpver, flagver,1,split_seq)
-            run_split2(pr_data, target[i], 10, 'S10av', doband, bpver, flagver,0,split_seq)
-            run_split2(pr_data, target[i], 11, 'SCL11', doband, bpver, flagver,1,split_seq)
-            run_split2(pr_data, target[i], 11, 'S11av', doband, bpver, flagver,0,split_seq)
-            run_split2(pr_data, p_ref_cal[i], 9, 'SCL9', doband, bpver, flagver,1,split_seq)
-            run_split2(pr_data, p_ref_cal[i], 10, 'SCL10', doband, bpver, flagver,1,split_seq)
-            run_split2(pr_data, p_ref_cal[i], 10, 'S10av', doband, bpver, flagver,0,split_seq)
-            run_split2(pr_data, p_ref_cal[i], 11, 'SCL11', doband, bpver, flagver,1,split_seq)
-            run_split2(pr_data, p_ref_cal[i], 11, 'S11av', doband, bpver, flagver,0,split_seq)
+            run_split2(pr_data, target[i], 9, 'SCL9', doband, bpver, flagver,1,split_seq,'S3_no-smo_Tar')
+            run_split2(pr_data, target[i], 10, 'SCL10', doband, bpver, flagver,1,split_seq,'S3_smo_Tar')
+            # run_split2(pr_data, target[i], 10, 'S10av', doband, bpver, flagver,0,split_seq,'S3_Tar')
+            # run_split2(pr_data, target[i], 11, 'SCL11', doband, bpver, flagver,1,split_seq)
+            # run_split2(pr_data, target[i], 11, 'S11av', doband, bpver, flagver,0,split_seq)
+            # run_split2(pr_data, target[i], 12, 'SCL12', doband, bpver, flagver,1,split_seq)
+            run_split2(pr_data, p_ref_cal[i], 9, 'SCL9', doband, bpver, flagver,1,split_seq,'S3_no-smo_Pcal')
+            run_split2(pr_data, p_ref_cal[i], 10, 'SCL10', doband, bpver, flagver,1,split_seq,'S3_smo_Pcal')
+            run_split2(pr_data, p_ref_cal[i], 10, 'S10av', doband, bpver, flagver,0,split_seq,'S3_Pcal')
+            # run_split2(pr_data, p_ref_cal[i], 11, 'SCL11', doband, bpver, flagver,1,split_seq)
+            # run_split2(pr_data, p_ref_cal[i], 11, 'S11av', doband, bpver, flagver,0,split_seq)
             logger.info('Data spliting done')
             logger.info('######################')
         if split_before_average == 1:
             logger.info('######################')
             logger.info('Spliting data before averaging, for further useage of uvshift')
-            check_sncl(pr_data, 6,11)
+            check_sncl(pr_data, 5,10)
             split3_data=AIPSUVData(target[i],'4uvsh',1,split_seq)
             if split3_data.exists():
                 logger.info('Clear old split3 data')
                 split3_data.clrstat()
                 split3_data.zap()
-            run_split3(pr_data, target[i], '4uvsh', doband, bpver, 10, 0, 0,split_seq)
+            print("Using CL version" ,final_cl_ver, "as the final version for average")
+            run_split3(pr_data, target[i], '4uvsh', doband, bpver, final_cl_ver, 0, 0,split_seq)
         logger.info('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
         logger.info('Step3 ends')
-        #Step3
+        #Step3 end here
         #further steps after step3
     if stepn == 1:
         for i in range(len(target)):
@@ -688,7 +707,7 @@ def run_main():
             bpver = -1
             split_seq = i+1
             if do_uvshift_flag ==1:
-                check_sncl(pr_data, 6,11)
+                check_sncl(pr_data, 5,10)
                 split3_data=AIPSUVData(target[i],'4uvsh',1,split_seq)
                 logger.info('######################')
                 logger.info('Using the non_averaged data before shifting')
