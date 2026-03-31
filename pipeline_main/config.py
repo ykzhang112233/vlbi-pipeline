@@ -161,6 +161,7 @@ stepn = inputs.stepn
 #uv-shift before spliting, belong to stepn
 rash=inputs.rash   #in arcsec, no need to times cos(dec)
 decsh=inputs.decsh  #in arcsec
+final_cl_ver=inputs.final_cl_ver # choose the good verison for shift (9 is no-smo, 10 is smo)
 do_uvshift_flag = inputs.do_uvshift_flag ###note!! this is out of any steps
 
 ########DO NOT EDIT UNLESS YOU KNOW THE MEANING #######################################################################################
