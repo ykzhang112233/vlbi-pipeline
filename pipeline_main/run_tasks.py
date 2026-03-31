@@ -343,6 +343,40 @@ def runclcal2(indata, snver, gainver, gainuse, interpol, dobtween, refant, anten
     clcal.input()
     clcal()
 
+def runclcal3(indata, snver, gainver, gainuse, interpol,refant, antenna, cals, sources):
+    # try smoothing using clcla, but not working well
+    clcal = AIPSTask('CLCAL')
+    clcal.indata = indata
+    clcal.refant = refant
+    clcal.antennas[1:] = antenna
+    if type(sources) == type('string'):
+        clcal.source[1] = sources
+        print('str')
+        print(type(sources),sources)
+    else:
+        print(type(sources),sources)
+        clcal.source[1:] = sources
+    if (type(cals) == type('string')):
+        clcal.calsour[1] = cals
+        print('str')
+        print(type(cals),cals)
+    else:
+        print(type(cals),cals)
+        clcal.calsour[1:] = cals
+    clcal.snver = snver
+    clcal.inver = 0
+    clcal.gainver = gainver
+    clcal.gainuse = gainuse
+    clcal.interpol = interpol
+    clcal.doblank = 1
+    # if >= 1, smooth within with one source;if <=0 smooth separately
+    clcal.dobtween = 1 # special for phase calibrating, interpolate regardless of sources
+    clcal.samptype = 'MWF'
+    clcal.bparm[1:] = [0, 0, 1, 1, 0, 0 ] # time width for smoothing, 1hour width
+    clcal.smotype = 'VLBI' # for delay and rate only
+    clcal.doblank = 1 # special, only replace blank values, not smoothing good values
+    clcal.input()
+    clcal()
 
 ##############################################################################
 # Run QUACK
@@ -417,18 +451,21 @@ def run_snsmo(indata, inver, outver, refant, avgIF):
     snsmo.refant = refant
     snsmo.inver = inver
     snsmo.outver = outver
-    snsmo.samptype = 'MWF'
-    snsmo.bparm[1:] = [0.5, 0.25, 0.5, 0.5, 0.5] # time width for smoothing
+    snsmo.samptype = 'MWF' #
+    snsmo.bparm[1:] = [0, 0, 1, 1, 0, 0] # time width for smoothing. Only do delay and rate this time
     if avgIF == 0:
         snsmo.smotype = 'VLBI'
     else:
         snsmo.smotype = 'VLDE'
         snsmo.npiece = 1
-    snsmo.cparm[1:] = [0.5, 0.25, 0.5, 0.5, 0.5, 0.5, 15, 5, 0.25,0.5 ]  # clipping strategy (1-5, same with bparm) (6-10, clip threshold)
-    # 0.5, 15deg(phase), 5mHz (rate), 0.25ns(delay), 0.5ns(mbdly)
+    snsmo.cparm[1:] = [0, 0, 1, 1, 0, 0, 0, 5, 0.25,0.5]  # clipping strategy (1-5, same with bparm) (6-10, clip threshold)
+    # 0, 0deg(phase), 5mHz (rate), 0.25ns(delay), 0.5ns(mbdly)
     snsmo.doblank = 1 # only replace blanck values
     snsmo.input()
     snsmo()
+
+
+
 ##############################################################################
 #
 
@@ -1093,7 +1130,7 @@ def run_uvfix(indata,rash,decsh,outclass,out_seq):
     uvfix.input()
     uvfix()
 
-def run_split2(indata, source, gainuse, outclass, doband, bpver, flagver,av_chan, split_seq):
+def run_split2(indata, source, gainuse, outclass, doband, bpver, flagver,av_chan, split_seq, out_prefix):
 
     channels = indata.header['naxis'][2]
     if channels == 16:
@@ -1153,7 +1190,7 @@ def run_split2(indata, source, gainuse, outclass, doband, bpver, flagver,av_chan
 
     fittp = AIPSTask('FITTP')
     fittp.indata = split_data
-    fitname = fittp.inname+'_CL'+str(gainuse)+'_'+fittp.inclass+'_'+str(int(split_seq))+'.splt'
+    fitname = fittp.inname+'_CL'+str(gainuse)+'_'+fittp.inclass+'_'+str(int(split_seq))+'_'+out_prefix+'.splt'
     fittp.dataout = 'PWD:'+fitname
 
     if split_data.exists():
@@ -1204,7 +1241,7 @@ def run_split3(indata, target, outclass, doband, bpver, gainuse, avg, fittp, spl
     if fittp == 1:
         fittp         = AIPSTask('FITTP')
         fittp.indata  = splt_data
-        fitname=fittp.inname+'_'+fittp.inclass+'_'+str(int(split_seq))+'.splt'
+        fitname=fittp.inname+'_'+fittp.inclass+'_'+str(int(split_seq))+'_S3n.splt'
         fittp.dataout = 'PWD:'+fitname
         if splt_data.exists():
             logger.info('Writing out calibrated and splitted uv-data for '+source[0])
