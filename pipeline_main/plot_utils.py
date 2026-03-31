@@ -205,7 +205,7 @@ def run_snplt(indata, inter_flag):
     indata.zap_table('PL', -1)
 
 
-def runsnplt(indata, inver=1, inex='cl', sources='', refant = 0,optype='phas', opcode='', nplot=4, timer=[]):
+def runsnplt(indata, inver=1, inex='cl', sources='', refant = 0,optype='phas', opcode='', nplot=4, timer=[],out_suffix=''):
     logger.info('Begin SNPLT for ' + str(inex) + str(inver) +' on ' + str(optype))
     indata.zap_table('PL', -1)
     snplt = AIPSTask('snplt')
@@ -217,6 +217,24 @@ def runsnplt(indata, inver=1, inex='cl', sources='', refant = 0,optype='phas', o
     snplt.inver = inver
     snplt.refant = refant
     snplt.optype = optype
+    if optype == 'PRT': # PHase, rate vs time
+        snplt.optype = 'MULT'
+        snplt.aparm[1:] = 1,4,0
+        snplt.bparm[1:] = -200,0
+        snplt.cparm[1:] = 200,0
+        snplt.nplot = 2 # force nplots
+    elif optype == 'PRST': # PHase, rate vs time
+        snplt.optype = 'MULT'
+        snplt.aparm[1:] = 1,4,8,0
+        snplt.bparm[1:] = -200,0
+        snplt.cparm[1:] = 200,0
+        snplt.nplot = 3 # force nplots
+    elif optype == 'ALL': #Phase rate delay snr vs time
+        snplt.optype = 'MULT'
+        snplt.aparm[1:] = 1,3,4,8,0
+        snplt.bparm[1:] = -200,0
+        snplt.cparm[1:] = 200,0
+        snplt.nplot = 4 # force nplots
     snplt.opcode = opcode
     snplt.do3col = 2
     if (type(sources) == type('string')):
@@ -229,16 +247,16 @@ def runsnplt(indata, inver=1, inex='cl', sources='', refant = 0,optype='phas', o
     lwpla = AIPSTask('lwpla')
     lwpla.indata = indata
     if sources == '':
-        filename = outname[0]+'-'+inex+str(inver)+'-'+optype+'.snplt'
+        filename = outname[0]+'-'+inex+str(inver)+'-'+optype+'_'+out_suffix+'.snplt'
         lwpla.outfile = 'PWD:'+ filename
     else:
         if len(sources) == 1:
             s_names = sources[0]
         elif len(sources) == 2:
-            s_names = sources[0][:5] + '+' + sources[1][:5]
+            s_names = sources[0][:5] + 'and' + sources[1][:5]
         else:
             s_names = sources[0][:4] + '+more'
-        filename = outname[0]+'-'+inex + str(inver)+'-'+optype+'-'+s_names+'.snplt'
+        filename = outname[0]+'-'+inex + str(inver)+'-'+optype+'-'+s_names+'_'+out_suffix+'.snplt'
         lwpla.outfile = 'PWD:'+ filename
 
     lwpla.plver = 1
