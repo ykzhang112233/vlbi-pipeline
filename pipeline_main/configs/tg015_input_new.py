@@ -59,7 +59,8 @@ do_flag = 0  # Enable manual flagging
 fgantennas=[[8],[1]]
 
 # [0] for all antennas, or list of antenna numbers (starting from 1)
-# each sublist corresponds to a separate flagging round, should be consistent with other flagging parameters throughout this part (before Special quack flagging)
+# each sublist corresponds to a separate flagging round, should be consistent with other 
+# flagging parameters throughout this part (before Special quack flagging)
 
 # Channel and IF flagging
 fgbchan = [0, 0]  # Beginning channels to flag
@@ -118,7 +119,8 @@ matxi=[[0.9,1.0,0.9,0.9,1.0,1.2,0.9,1.8,1.0],
 # ============================================================================
 # (Step 3) ADVANCED CALIBRATION PARAMETERS 
 # ============================================================================
-man_fr_file = ['P1905-v1-mod2.fits','P1905-v1-mod2.fits','P1905-v1-mod2.fits']#,'P1923-v1-mod2.fits']  # Manual model files (when auto_mapping=0). (the numbers should alighn with targets and p_refs)
+man_fr_file = ['P1905-v1-mod2.fits','P1905-v1-mod2.fits','P1905-v1-mod2.fits']#,'P1923-v1-mod2.fits']  # Manual model files (when auto_mapping=0). 
+# (the numbers should alighn with targets and p_refs)
 del_old_mod = True  # Delete old model before do additional fringe fitting
 # currently , the snr cutoff is hardcoded to 7 (see run_fringecal_2 in main.py)
 no_rate = 0  # do not solve for rate, dparm(9) in AIPS task FRING
