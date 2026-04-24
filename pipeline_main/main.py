@@ -639,7 +639,7 @@ def run_main():
             check_sncl(pr_data, 5, 10)
             logger.info('######################')
             logger.info('Doing Calib for possible better solutions')
-            #run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, calsour, flagver, solint, if_av)
+            # run_calib_1(indata, fr_image, smode, gainuse, refant, snout, doband, bpver, calsour, flagver, solint, if_av)
             # run_calib_1(pr_data,fr_image,'P',11,refant,7,-1,bpver,p_ref_cal[i],0,0,av_ifs_ca1)
             # runclcal2(pr_data, 7, 11, 12, 'AMBG', 1, refant, [0], p_ref_cal[i], targets)
             # TODO: add new loop to do phase+amp calib, but need to be careful on the solint
@@ -675,7 +675,7 @@ def run_main():
             logger.info('Spliting data')
             run_split2(pr_data, target[i], 9, 'SCL9', doband, bpver, flagver,1,split_seq,'S3_no-smo_Tar')
             run_split2(pr_data, target[i], 10, 'SCL10', doband, bpver, flagver,1,split_seq,'S3_smo_Tar')
-            # run_split2(pr_data, target[i], 10, 'S10av', doband, bpver, flagver,0,split_seq,'S3_Tar')
+            run_split2(pr_data, target[i], 9, 'S9av', doband, bpver, flagver,0,split_seq,'S3_no-smo_Tar')
             # run_split2(pr_data, target[i], 11, 'SCL11', doband, bpver, flagver,1,split_seq)
             # run_split2(pr_data, target[i], 11, 'S11av', doband, bpver, flagver,0,split_seq)
             # run_split2(pr_data, target[i], 12, 'SCL12', doband, bpver, flagver,1,split_seq)

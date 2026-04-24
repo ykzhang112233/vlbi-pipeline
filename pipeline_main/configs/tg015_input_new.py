@@ -31,9 +31,9 @@ ap_dofit = 1  # Opacity calibration: 1=all antennas, or list for specific antenn
 solint = 4  # Solution interval in minutes
 
 # Source names
-calsource = ['J1642+3948']  # Calibrator for fringe fitting and bandpass
-target = ['GRB221009A','J1925+2106','J1909+2014']  # Target source
-p_ref_cal = ['J1905+1943','J1905+1943','J1905+1943']  # Phase reference calibrator
+calsource = ['J2253+1608']  # Calibrator for fringe fitting and bandpass
+target = ['GRB221009A','J1925+2106']#,'J1909+2014']#, 'J1925+2106', 'J1909+2014']  # Target source
+p_ref_cal = ['J1905+1943','J1905+1943']#,'J1905+1943']#, 'J1925+2106', 'J1909+2014']  # Phase reference calibrator
 
 logfilename = file_name.split('.')[0]  # Log file name
 
@@ -47,7 +47,7 @@ auto_fringe = 0  # 0=manual (recommended for EVN), 1=automatic
 # Manual fringe fitting parameters (when auto_fringe=0)
 reference_antenna = 2
 search_antennas = [1, 4, 3, 0]
-scan_for_fringe = [0,23,1,0,0,23,3,0]
+scan_for_fringe = [1,2,59,0,1,3,1,0]
 av_ifs_f1 = 1  # Average IFs during fringe fitting
 
 
@@ -119,28 +119,28 @@ matxi=[[0.9,1.0,0.9,0.9,1.0,1.2,0.9,1.8,1.0],
 # ============================================================================
 # (Step 3) ADVANCED CALIBRATION PARAMETERS 
 # ============================================================================
-man_fr_file = ['P1905-v1-mod2.fits','P1905-v1-mod2.fits','P1905-v1-mod2.fits']#,'P1923-v1-mod2.fits']  # Manual model files (when auto_mapping=0). 
+man_fr_file = ['P1905-v1-mod1.fits','P1905-v1-mod2.fits']#,'P1905-v1-mod2.fits']#,'P1923-v1-mod2.fits']  # Manual model files (when auto_mapping=0). 
 # (the numbers should alighn with targets and p_refs)
 del_old_mod = True  # Delete old model before do additional fringe fitting
 # currently , the snr cutoff is hardcoded to 7 (see run_fringecal_2 in main.py)
 no_rate = 0  # do not solve for rate, dparm(9) in AIPS task FRING
 rdp_parm = 0 # Whether to do zero delay/rate or phase, see AIPS task FRING manual for details (dparm(8))
-dwin = 0.9  # Delay window, centered at 0 and bound is 1/2 value, in nanosec
-rwin = 14  # Rate window, centered at 0 and bound is 1/2, in mHz; e.g. 10 = +-5
+dwin = 1.6  # Delay window, centered at 0 and bound is 1/2 value, in nanosec
+rwin = 12  # Rate window, centered at 0 and bound is 1/2, in mHz; e.g. 10 = +-5
 
 av_ifs_f2 = 1   # whether to averege ifs during this step's fringe fitting -->cl10 (usually set to 1 if the phase-cal is weak)
 av_ifs_ca1 = 1  # same with above but for calib -->cl11
 # This in not used as "P" is the current version for calib -->cl11
 solint_cal = 400  # the solution interval (minutes) for task CALIB "A&P"(output file is SCL11), set as large as possible if not sure
 # Actually this parameter is for next stepp's averaging, but if you do more sources in a "for" loop, this should be set here.
-final_cl_ver = 10  # currently, 9 means no-smo versino and 10 for smo version
+final_cl_ver = 9  # currently, 9 means no-smo versino and 10 for smo version. select one for average in next stage
 # ============================================================================
 # PIPELINE CONTROL FLAGS
 # ============================================================================
-step1 = 1  # Data loading and initial calibration
+step1 = 0  # Data loading and initial calibration
 step2 = 0  # Fringe fitting
-step3 = 0  # Self-calibration and imaging
-stepn = 0  # Additional post-processing
+step3 = 1  # Self-calibration and imaging
+stepn = 1  # Additional post-processing
 
 # ============================================================================
 # (Step n) UV-SHIFT PARAMETERS (additional post-processing)
@@ -149,7 +149,7 @@ stepn = 0  # Additional post-processing
 # Position shifts in arcseconds (same as difmap position values)
 do_uvshift_flag = 1  # Enable UV-shift (requires step3 completed)
 # per element per source (in targets)
-rash = [-2.2945e-03,-3.0733e-06]#, -2.2945e-03]  # RA shift (no need to multiply by cos(dec))
-decsh = [-3.5160e-04,-1.3861e-04]#, -3.5160e-04]  # Dec shift
+rash = [-2.4867e-03, -2.2945e-03]  # RA shift (no need to multiply by cos(dec))
+decsh = [-3.9548e-04, -3.5160e-04]  # Dec shift
 ## Output _shav data with averaged among IFs
 

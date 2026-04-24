@@ -131,7 +131,7 @@ av_ifs_ca1 = 1  # same with above but for calib -->cl11
 # This in not used as "P" is the current version for calib -->cl11
 solint_cal = 400  # the solution interval (minutes) for task CALIB "A&P"(output file is SCL11), set as large as possible if not sure
 # Actually this parameter is for next stepp's averaging, but if you do more sources in a "for" loop, this should be set here.
-final_cl_ver = 10  # currently, 9 means no-smo versino and 10 for smo version
+final_cl_ver = 10  # currently, 9 means no-smo versino and 10 for smo version. select one for average in next step
 # ============================================================================
 # PIPELINE CONTROL FLAGS
 # ============================================================================
