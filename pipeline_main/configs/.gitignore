@@ -4,7 +4,7 @@
 # Keep template and examples and active tasks
 !template_input.py
 !bz111ac_input.py
-!bl307*_input.py
+!bl307*_input_new.py
 
 
 # Keep documentation

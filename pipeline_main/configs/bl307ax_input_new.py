@@ -18,7 +18,7 @@ antname = 'VLBA'  # Antenna array: 'VLBA' or 'EVN'
 # ============================================================================
 # (step1) DATA INFORMATION
 # ============================================================================
-file_path = '/home/ykzhang/data/vlba/ba161/'  # Path to data directory
+file_path = '/home/ykzhang/data/vlba/bl307/'  # Path to data directory
 file_name = 'bl307a_x.idifits'  # Better use obs_code.idifits as name
 num_files = 1  # Number of files to load
 
