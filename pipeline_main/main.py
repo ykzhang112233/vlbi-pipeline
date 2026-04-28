@@ -343,6 +343,7 @@ def run_main():
     if tasav_flag == 1:
         logger.info('Begin tasave')
         if flagfile[i] != '':
+            print("making fg table from file, this could be a EVN data")
             runuvflg(pr_data, flagfile[i])
         if antabfile[i] != '':
             if pr_data.table_highver('AIPS TY') > 0:
@@ -391,6 +392,7 @@ def run_main():
             tacop.outver  = outfg
             tacop.ncount  = 1
             tacop()
+        print("Doing manual flagging by applying parms in config")
         for i in range(len(fgbchan)):
             # print i
             # print fgbchan[i]

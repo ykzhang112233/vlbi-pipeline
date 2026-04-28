@@ -28,7 +28,7 @@ num_files = 1  # Number of files to load
 do_quack = 1  # Flag initial data
 ap_dofit = 1  # Opacity calibration: 1=all antennas, or list for specific antennas
                # ap_dofit = [-1,1,1,1,1,1,1,1,1,1] for individual antenna control
-solint = 4  # Solution interval in minutes
+solint = 2  # Solution interval in minutes
 
 # Source names
 calsource = ['3C454.3']  # Calibrator for fringe fitting and bandpass

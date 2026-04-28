@@ -1,10 +1,5 @@
 #!/usr/bin/env python
-"""
-VLBI Pipeline Configuration Template
-=====================================
-Copy this file and modify for your observation.
-Naming convention: {obs_code}_input.py (e.g., bz111cl_input.py)
-"""
+
 ## Header information=========================================================
 AIPS_VERSION = '31DEC25'
 version_date = '2026/03/27'
@@ -28,7 +23,7 @@ num_files = 1  # Number of files to load
 do_quack = 1  # Flag initial data
 ap_dofit = 1  # Opacity calibration: 1=all antennas, or list for specific antennas
                # ap_dofit = [-1,1,1,1,1,1,1,1,1,1] for individual antenna control
-solint = 4  # Solution interval in minutes
+solint = 2  # Solution interval in minutes
 
 # Source names
 calsource = ['3C454.3']  # Calibrator for fringe fitting and bandpass
@@ -47,7 +42,7 @@ auto_fringe = 0  # 0=manual (recommended for EVN), 1=automatic
 # Manual fringe fitting parameters (when auto_fringe=0)
 reference_antenna = 9
 search_antennas = [1, 5, 0]
-scan_for_fringe = [0,22,54,0,0,22,56,0]
+scan_for_fringe = [1,1,57,0,1,1,59,0]
 av_ifs_f1 = 1  # Average IFs during fringe fitting
 
 
@@ -137,7 +132,7 @@ final_cl_ver = 9  # currently, 9 means no-smo versino and 10 for smo version
 # ============================================================================
 # PIPELINE CONTROL FLAGS
 # ============================================================================
-step1 = 1  # Data loading and initial calibration
+step1 = 0  # Data loading and initial calibration
 step2 = 1  # Fringe fitting
 step3 = 0  # Self-calibration and imaging
 stepn = 0  # Additional post-processing
