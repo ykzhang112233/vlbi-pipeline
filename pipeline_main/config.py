@@ -87,6 +87,7 @@ logfilename = inputs.logfilename
 auto_fringe = inputs.auto_fringe #for automatic step connecting step1 and step2, if =0, the following parameters must be set, 
 # please refer to the results from step1. If =1, the following parameters are ignored. It is high recommanded to set 0, especially for EVN
 
+skip_tecr = getattr(inputs, "skip_tecr", False)
 reference_antenna = inputs.reference_antenna
 search_antennas = inputs.search_antennas
 scan_for_fringe = inputs.scan_for_fringe

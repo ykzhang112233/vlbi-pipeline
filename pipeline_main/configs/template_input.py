@@ -21,7 +21,7 @@ antname = 'VLBA'  # Antenna array: 'VLBA' or 'EVN'
 file_path = '/home/ykzhang/data/vlba/ba161/'  # Path to data directory, keep the last '/'
 file_name = 'ba161a.idifits'  # Better use obs_code.idifits as name
 num_files = 1  # Number of files to load
-
+skip_tecr = False  # whether to skip tecor (usuallly do True, if you can not find the tecr file or doing some testing can make it true)
 # ============================================================================
 # (step2) SOURCE INFORMATION
 # ============================================================================
