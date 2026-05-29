@@ -11,7 +11,7 @@ Starting from the 2026 version, all parameter configuration files are stored in 
 ## 快速开始 / Quick Start
 
 ### 1. 创建配置文件 / Create Configuration File
-
+example : "bz111cl_input.py"
 ```bash
 # 复制模板 / Copy template
 cp configs/template_input.py configs/bz111cl_input.py
