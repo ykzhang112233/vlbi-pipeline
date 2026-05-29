@@ -18,7 +18,7 @@ antname = 'VLBA'  # Antenna array: 'VLBA' or 'EVN'
 # ============================================================================
 # (step1) DATA INFORMATION
 # ============================================================================
-file_path = '/home/ykzhang/data/vlba/ba161/'  # Path to data directory
+file_path = '/home/ykzhang/data/vlba/ba161/'  # Path to data directory, keep the last '/'
 file_name = 'ba161a.idifits'  # Better use obs_code.idifits as name
 num_files = 1  # Number of files to load
 
@@ -137,8 +137,8 @@ final_cl_ver = 10  # currently, 9 means no-smo versino and 10 for smo version. s
 # ============================================================================
 step1 = 0  # Data loading and initial calibration
 step2 = 0  # Fringe fitting
-step3 = 1  # Self-calibration and imaging
-stepn = 1  # Additional post-processing
+step3 = 0  # Self-calibration and imaging
+stepn = 0  # Additional post-processing
 
 # ============================================================================
 # (Step n) UV-SHIFT PARAMETERS (additional post-processing)
