@@ -47,7 +47,7 @@ auto_fringe = 0  # 0=manual (recommended for EVN), 1=automatic
 # Manual fringe fitting parameters (when auto_fringe=0)
 reference_antenna = 8
 search_antennas = [2, 4, 0]
-scan_for_fringe = [0,22,24,0,0,22,26,0]
+scan_for_fringe = [1,1,28,0,1,1,29,0]
 av_ifs_f1 = 1  # Average IFs during fringe fitting
 
 
@@ -123,19 +123,19 @@ man_fr_file = ['J1905-v1-mod1.fits']  # Manual model files (when auto_mapping=0)
 del_old_mod = True  # Delete old model before do additional fringe fitting
 no_rate = 0  # do not solve for rate, dparm(9) in AIPS task FRING
 rdp_parm = 0  # Whether to do zero delay/rate or phase, see AIPS task FRING manual for details (dparm(8))
-dwin = 200  # Delay window, centered at 0 and bound is 1/2 value, in nanosec
-rwin = 100  # Rate window, centered at 0 and bound is 1/2, in mHz; e.g. 10 = +-5
+dwin = 1.4  # Delay window, centered at 0 and bound is 1/2 value, in nanosec
+rwin = 8  # Rate window, centered at 0 and bound is 1/2, in mHz; e.g. 10 = +-5
 
 av_ifs_f2 = 1   # whether to averege ifs during this step's fringe fitting -->cl10 (usually set to 1 if the phase-cal is weak)
 av_ifs_ca1 = 1  # same with above but for calib -->cl11
 solint_cal = 400  # the solution interval (minutes) for task CALIB "A&P"(output file is SCL11), set as large as possible if not sure
-final_cl_ver = 10  # currently, 9 means no-smo versino and 10 for smo version
+final_cl_ver = 9  # currently, 9 means no-smo versino and 10 for smo version. Used for SPLIT
 # ============================================================================
 # PIPELINE CONTROL FLAGS
 # ============================================================================
-step1 = 1  # Data loading and initial calibration
-step2 = 1  # Fringe fitting
-step3 = 0  # Self-calibration and imaging
+step1 = 0  # Data loading and initial calibration
+step2 = 0  # Fringe fitting
+step3 = 1  # Self-calibration and imaging
 stepn = 0  # Additional post-processing
 
 # ============================================================================

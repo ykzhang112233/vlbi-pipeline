@@ -152,4 +152,3 @@ do_uvshift_flag = 1  # Enable UV-shift (requires step3 completed)
 rash = [-2.4867e-03, -2.2945e-03]  # RA shift (no need to multiply by cos(dec))
 decsh = [-3.9548e-04, -3.5160e-04]  # Dec shift
 ## Output _shav data with averaged among IFs
-

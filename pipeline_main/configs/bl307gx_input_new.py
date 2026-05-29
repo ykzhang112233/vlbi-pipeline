@@ -31,7 +31,7 @@ ap_dofit = 1  # Opacity calibration: 1=all antennas, or list for specific antenn
 solint = 4  # Solution interval in minutes
 
 # Source names
-calsource = ['3C454.3']  # Calibrator for fringe fitting and bandpass
+calsource = ['3C345']  # Calibrator for fringe fitting and bandpass
 target = ['GRB221009A']  # Target source
 p_ref_cal = ['J1905+1943']  # Phase reference calibrator
 
@@ -47,14 +47,14 @@ auto_fringe = 0  # 0=manual (recommended for EVN), 1=automatic
 # Manual fringe fitting parameters (when auto_fringe=0)
 reference_antenna = 10
 search_antennas = [3, 5, 0]
-scan_for_fringe = [0,4,39,0,0,4,41,0]
+scan_for_fringe = [0,1,49,30,0,1,51,0]
 av_ifs_f1 = 0  # Average IFs during fringe fitting
 
 
 # ============================================================================
 # (step123) MANUAL FLAGGING (can be used in all steps, but will be visuallized after step2 for checking)
 # ============================================================================
-do_flag = 1  # Enable manual flagging
+do_flag = 0  # Enable manual flagging
 
 fgantennas=[[2],[2,5]]
 

@@ -31,7 +31,7 @@ ap_dofit = 1  # Opacity calibration: 1=all antennas, or list for specific antenn
 solint = 4  # Solution interval in minutes
 
 # Source names
-calsource = ['3C345']  # Calibrator for fringe fitting and bandpass
+calsource = ['3C454.3']  # Calibrator for fringe fitting and bandpass
 target = ['GRB221009A']  # Target source
 p_ref_cal = ['J1905+1943']  # Phase reference calibrator
 
@@ -47,14 +47,14 @@ auto_fringe = 0  # 0=manual (recommended for EVN), 1=automatic
 # Manual fringe fitting parameters (when auto_fringe=0)
 reference_antenna = 3
 search_antennas = [9, 5, 0]
-scan_for_fringe = [0,15,49,0,0,15,51,0]
+scan_for_fringe = [0,18,39,0,0,18,41,0]
 av_ifs_f1 = 0  # Average IFs during fringe fitting
 
 
 # ============================================================================
 # (step123) MANUAL FLAGGING (can be used in all steps, but will be visuallized after step2 for checking)
 # ============================================================================
-do_flag = 1  # Enable manual flagging
+do_flag = 0  # Enable manual flagging
 
 fgantennas=[[0],[2]]
 
@@ -104,7 +104,7 @@ auto_mapping = 0  # 0=manual, 1=automatic
 # ============================================================================
 # (step3, optional) MANUAL ANTENNA GAIN CALIBRATION 
 # ============================================================================
-ant_gan_cal = 0  # Enable antenna gain calibration
+ant_gan_cal = 1  # Enable antenna gain calibration
 pol = 'I'  # Polarization: 'I' for Stokes I only, 'LR' for both hands
 # Gain correction factors per antenna per source
 matxi=[[1.1,5.5,1.0,2.0,0.9,1.0,0.9,0.9,1.0,1.0],
@@ -123,19 +123,19 @@ man_fr_file = ['J1905-v2-gsmod1.fits']  # Manual model files (when auto_mapping=
 del_old_mod = True  # Delete old model before do additional fringe fitting
 no_rate = 0  # do not solve for rate, dparm(9) in AIPS task FRING
 rdp_parm = 0  # Whether to do zero delay/rate or phase, see AIPS task FRING manual for details (dparm(8))
-dwin = 200  # Delay window, centered at 0 and bound is 1/2 value, in nanosec
-rwin = 100  # Rate window, centered at 0 and bound is 1/2, in mHz; e.g. 10 = +-5
+dwin = 1.5  # Delay window, centered at 0 and bound is 1/2 value, in nanosec
+rwin = 10  # Rate window, centered at 0 and bound is 1/2, in mHz; e.g. 10 = +-5
 
 av_ifs_f2 = 1   # whether to averege ifs during this step's fringe fitting -->cl10 (usually set to 1 if the phase-cal is weak)
 av_ifs_ca1 = 1  # same with above but for calib -->cl11
 solint_cal = 400  # the solution interval (minutes) for task CALIB "A&P"(output file is SCL11), set as large as possible if not sure
-final_cl_ver = 10  # currently, 9 means no-smo versino and 10 for smo version
+final_cl_ver = 9  # currently, 9 means no-smo versino and 10 for smo version
 # ============================================================================
 # PIPELINE CONTROL FLAGS
 # ============================================================================
-step1 = 1  # Data loading and initial calibration
-step2 = 1  # Fringe fitting
-step3 = 0  # Self-calibration and imaging
+step1 = 0  # Data loading and initial calibration
+step2 = 0  # Fringe fitting
+step3 = 1  # Self-calibration and imaging
 stepn = 0  # Additional post-processing
 
 # ============================================================================
